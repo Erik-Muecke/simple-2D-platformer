@@ -29,3 +29,9 @@ class Block{
             this.startX = x;
             this.startY = y;
         }
+
+        void reset(){
+            this.x = this.startX;
+            this.y = this.startY;
+        }
+}
