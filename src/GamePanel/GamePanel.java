@@ -13,7 +13,6 @@ public class GamePanel extends JPanel {
     final int screenHeight = tileSize * MaxScreenRow; // 576 pixels
 
     public GamePanel() {
-
         System.out.println("GamePanel created");
     }
 }
