@@ -3,10 +3,10 @@ package Entity;
 import java.awt.*;
 
 public class Entity {
-    int x;
-    int y;
-    int width;
-    int height;
+    int x;  //position auf der X-Achse
+    int y;  //position auf der Y-Achse
+    int width; //Weite
+    int height;  //Höhe
     Image image;
     Image originalImage;
     boolean isDead = false;
@@ -38,3 +38,5 @@ public class Entity {
         this.y = this.startY;
     }
 }
+
+//TODO: Reevaluation der benutzten Variablen und der Notwendigkeit für das Spiel

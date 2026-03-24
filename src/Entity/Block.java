@@ -27,3 +27,6 @@ public class Block{
             this.y = this.startY;
         }
 }
+
+//TODO: Block.java ist so ziemlich dasselbe wie Entity.java. Wird diese überhaupt benötigt,
+// da sich so etwqas ja auch über die kommende Tilemap Regeln lässt. Wenn es nicht Weiter benötigt wird: TBD
