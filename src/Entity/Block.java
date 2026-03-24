@@ -1,20 +1,12 @@
-import java.awt.Color;
+package Entity;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.HashSet;
-import java.util.Random;
-import javax.swing.*;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.Font;
 
-class Block{
+public class Block{
         int x;
         int y;
         int width;
         int height;      
         Image image;
-        
         int startX;
         int startY;
         int velocityX = 0;
