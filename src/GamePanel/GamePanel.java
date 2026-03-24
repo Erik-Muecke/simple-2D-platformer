@@ -39,15 +39,18 @@ public class GamePanel extends JPanel implements Runnable {
             System.out.println("Game loop running"); //Bestätigung, nur zum Debuggen, remove in Production
 
             //UPDATE Informationen werden aktualisiert: z.B. Positionen der Spielobjekte, Kollisionen, etc.
-            update();
+
             //REPAINT Informationen werden gezeichnet: z.B. die Grafiken der Spielobjekte, Hintergrund, etc.
             repaint();
         }
     }
-
     public void update() {
         //Hier werden die Spielobjekte aktualisiert, z.B. Positionen, Kollisionen, etc.
+        if(Main.Game.keyHandler.upPressed){ //true kann in der Syntax auch weggelassen werden. überprüft, ob die taste gedrückt wurde.
+            System.out.println("Up key is pressed"); //Bestätigung, nur zum Debuggen und da ich für heute schluss mache. remove in Production
+        }
     }
+
     @Override //Die paintComponent() Methode wird überschrieben, um die Grafiken des Spiels zu zeichnen. Sie wird automatisch aufgerufen, wenn das Panel neu gezeichnet werden muss.
     public void paint(Graphics g) {
 
