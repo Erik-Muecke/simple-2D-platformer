@@ -36,10 +36,10 @@ public class GamePanel extends JPanel implements Runnable {
 
         while(gameThread != null) {
 
-            System.out.println("Game loop running"); //Bestätigung, nur zum Debuggen, remove in Production
+            //System.out.println("Game loop running"); //Bestätigung, nur zum Debuggen, remove in Production
 
             //UPDATE Informationen werden aktualisiert: z.B. Positionen der Spielobjekte, Kollisionen, etc.
-
+            update();
             //REPAINT Informationen werden gezeichnet: z.B. die Grafiken der Spielobjekte, Hintergrund, etc.
             repaint();
         }
