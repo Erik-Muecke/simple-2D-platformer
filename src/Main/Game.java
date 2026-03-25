@@ -15,6 +15,7 @@ public class Game {
             frame.add(gamepanel);
             frame.addKeyListener(keyHandler);
             frame.pack();
+            frame.add(gamepanel);
 
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
