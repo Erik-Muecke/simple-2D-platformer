@@ -41,20 +41,20 @@ public class GamePanel extends JPanel implements Runnable {
             spieler.image = spielerRightImage;//anhand der directions werden die images verändert zur passenden Richtung
         int gravity = 2;//die gravität wird eingeführt
         spieler.velocityY += gravity;//wenn der spieler durch -Y nach oben bewegt, wird er durch die gravität wieder auf den <Boden gebraacht, da die -Y abnimmt, dann zu Y wird und zunimmt
-        if (pacman.velocityX != 0)
+        if (spieler.velocityX != 0)
                 spieler.updateVelocity();  
-        spieler.x += pacman.velocityX;
+        spieler.x += spieler.velocityX;
         for (Block wall : walls) {
             if (collision(spieler, wall)) {
                 if (spieler.velocityX > 0){ 
-                    spieler.x = wall.x - pacman.width;
+                    spieler.x = wall.x - spieler.width;
                 }
                     else if (spieler.velocityX < 0){
                     spieler.x = wall.x + wall.width;   
                     }
                 spieler.velocityX = 0;
             }
-        }//ähnelt der schon vorhandenen collision, aber notendig, dasonst der sapieler im Boden feststeckt
+        }//ähnelt der schon vorhandenen collision, aber notendig, dasonst der spieler im Boden feststeckt
     }
     @Override //Die run() Methode enthält die Hauptspielschleife, die kontinuierlich ausgeführt wird, solange der gameThread nicht null ist
     public void run() {
