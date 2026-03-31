@@ -1,5 +1,6 @@
 package Entity;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class Entity {
@@ -21,7 +22,7 @@ public class Entity {
     int freezeFrames = 0;
 
 
-    Entity(Image image, int x, int y, int width, int height, int speed) {
+    public Entity(Image image, int x, int y, int width, int height, int speed) {
         this.image = image;//das anfangsbild
         this.originalImage = image;//zur möglichen zurücksetzung des Bildes
         this.x = x;
@@ -32,31 +33,18 @@ public class Entity {
         this.startY = y;//Startposition
         this.speed = speed;//Geschwindigkeit, mit der sich der Spieler bewegt
     }
+    public void draw(Graphics g) {
+        if (this.image != null) {
+            g.drawImage(this.image, this.x, this.y, this.width, this.height, null); // nur wenn bild vorhanden
+        }else{
 
-    void updateDirection(char direction) {
-            char prevDirection = this.direction;//setzt die Vorherige Direction auf die nächste Direction
-            this.direction = direction;//setzt diese direction als die jetzige Direction
-            updateVelocity();//update die Velocity/wohin sich der Spieler bewegt; Rechts links springen fallen
-            for(Block wall : walls){//Schleif, die die Kollision überprüft
-                if(collision(this, wall)){//muss später implementiert werden/ ist die AABB collision
-                    this.y -= this.velocityY;//resetet die Position, man kann also nicht durch die Wand/man bleibt vor dieser stehen
-                    this.direction = prevDirection;//wenn man eine Velocity hat, und man nicht in Richtung wand am Anfang bewegt, bewegt man sich mit der jewiligen Velocity einfach weiter
-                    updateVelocity();//updatet die Velocity/ die jetzige Velocity wird "aktiviert"
-                }
-            }
+            Graphics2D g2 = (Graphics2D) g;  //castet das Graphics-Objekt in ein Graphics2D-Objekt, um erweiterte Zeichenfunktionen zu nutzen
+
+            g2.setColor(Color.RED);  //setzt die Farbe des Graphics2D-Objekts auf Rot, damit die folgenden Zeichnungen in Rot erscheinen
+            g2.fillRect(100, 100, width, height);  //zeichnet ein gefülltes Rechteck an der Position (100, 100) mit der Breite und Höhe von tileSize (48x48 Pixel)
+            g2.dispose(); //gibt die Ressourcen des Graphics2D-Objekts frei, um Speicherlecks zu vermeiden
         }
-
-    void updateVelocity() {// die Funktion von oben/ setzt die aktive Velocity fest, hängt von der Direction ab
-            if (this.direction == 'L'){
-                this.velocityX = -speed;
-                //this.velocityY = 0; //Wenn die direction Links ist, dann bewegt man sich nach links               
-            }
-            else if (this.direction == 'R'){
-                this.velocityX = speed;
-                //this.velocityY = 0; //Wenn die direction Rechts ist, dann bewegt man sich nach rechts                
-            }
-        }
-
+    }
     void reset() {
         this.x = this.startX;
         this.y = this.startY;

@@ -2,6 +2,7 @@ package GamePanel;
 
 import javax.swing.*;
 import java.awt.*;
+import Entity.Player;
 
 public class GamePanel extends JPanel implements Runnable {
     final int originalTileSize = 16; // 16x16 tile
@@ -13,6 +14,9 @@ public class GamePanel extends JPanel implements Runnable {
     final int screenWidth = tileSize * MaxScreenCol; // 768 pixels
     final int screenHeight = tileSize * MaxScreenRow; // 576 pixels
 
+    public Player player;
+
+
     Thread gameThread; //erstellt den Thread für die Spielschleife zum Bestimmen der FPS
 
     public GamePanel() {
@@ -21,7 +25,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.setBackground(Color.BLACK); //Hintergrundfarbe zu schwarz
         this.setDoubleBuffered(true); //Screen wird zuerst unsichtbar gezeichnet und dann sichtbar gemacht, um Flackern zu vermeiden
         System.out.println("GamePanel created"); //Bestätigung, nur zum Debuggen, remove in Production
-
+        player = new Player(null, 100, 100, tileSize, tileSize, 1); //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
     }
 
     public void startGameThread() {
@@ -30,7 +34,7 @@ public class GamePanel extends JPanel implements Runnable {
         gameThread.start(); //startet den Thread, wodurch die run() Methode aufgerufen wird
 
     }
-    
+
     @Override //Die run() Methode enthält die Hauptspielschleife, die kontinuierlich ausgeführt wird, solange der gameThread nicht null ist
     public void run() {
 
@@ -56,10 +60,6 @@ public class GamePanel extends JPanel implements Runnable {
 
         super.paintComponent(g); //ruft die paintComponent() Methode der übergeordneten Klasse auf, um sicherzustellen, dass das Panel korrekt gezeichnet wird, bevor die benutzerdefinierte Zeichnung erfolgt
 
-        Graphics2D g2 = (Graphics2D) g;  //castet das Graphics-Objekt in ein Graphics2D-Objekt, um erweiterte Zeichenfunktionen zu nutzen
-
-        g2.setColor(Color.RED);  //setzt die Farbe des Graphics2D-Objekts auf Rot, damit die folgenden Zeichnungen in Rot erscheinen
-        g2.fillRect(100, 100, tileSize, tileSize);  //zeichnet ein gefülltes Rechteck an der Position (100, 100) mit der Breite und Höhe von tileSize (48x48 Pixel)
-        g2.dispose(); //gibt die Ressourcen des Graphics2D-Objekts frei, um Speicherlecks zu vermeiden
+        player.draw(g); //zeichnet den Spieler auf dem Panel, indem die draw() Methode des Player-Objekts aufgerufen wird und das Graphics-Objekt übergeben wird
     }
 }
