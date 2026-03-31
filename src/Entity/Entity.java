@@ -1,11 +1,10 @@
 package Entity;
 
-import javax.swing.*;
 import java.awt.*;
 
 public class Entity {
-    int x;  //position auf der X-Achse
-    int y;  //position auf der Y-Achse
+    public int x;  //position auf der X-Achse
+    public int y;  //position auf der Y-Achse
     int width; //Weite
     int height;  //Höhe
     Image image;
@@ -18,7 +17,7 @@ public class Entity {
     boolean onGround = true;// schaut ob der spieler sich auf dem Boden befindet
     int velocityX = 0;
     int velocityY = 0;// Bewegungsrichtungen
-    int speed;
+    public int speed;
     int freezeFrames = 0;
 
 
@@ -36,13 +35,10 @@ public class Entity {
     public void draw(Graphics g) {
         if (this.image != null) {
             g.drawImage(this.image, this.x, this.y, this.width, this.height, null); // nur wenn bild vorhanden
-        }else{
-
-            Graphics2D g2 = (Graphics2D) g;  //castet das Graphics-Objekt in ein Graphics2D-Objekt, um erweiterte Zeichenfunktionen zu nutzen
-
-            g2.setColor(Color.RED);  //setzt die Farbe des Graphics2D-Objekts auf Rot, damit die folgenden Zeichnungen in Rot erscheinen
-            g2.fillRect(100, 100, width, height);  //zeichnet ein gefülltes Rechteck an der Position (100, 100) mit der Breite und Höhe von tileSize (48x48 Pixel)
-            g2.dispose(); //gibt die Ressourcen des Graphics2D-Objekts frei, um Speicherlecks zu vermeiden
+        } else {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setColor(Color.RED);
+            g2.fillRect(x, y, width, height);
         }
     }
     void reset() {

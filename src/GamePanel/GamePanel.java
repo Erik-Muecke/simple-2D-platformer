@@ -14,8 +14,10 @@ public class GamePanel extends JPanel implements Runnable {
     final int screenWidth = tileSize * MaxScreenCol; // 768 pixels
     final int screenHeight = tileSize * MaxScreenRow; // 576 pixels
 
-    public Player player;
+    public Player player; //deklariert eine Instanz der Player Klasse
 
+    //FPS
+    int fps = 60; //Frames per second, die Anzahl der Bilder, die pro Sekunde gezeichnet werden sollen
 
     Thread gameThread; //erstellt den Thread für die Spielschleife zum Bestimmen der FPS
 
@@ -25,7 +27,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.setBackground(Color.BLACK); //Hintergrundfarbe zu schwarz
         this.setDoubleBuffered(true); //Screen wird zuerst unsichtbar gezeichnet und dann sichtbar gemacht, um Flackern zu vermeiden
         System.out.println("GamePanel created"); //Bestätigung, nur zum Debuggen, remove in Production
-        player = new Player(null, 100, 100, tileSize, tileSize, 1); //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
+        player = new Player(null, 100, 100, tileSize, tileSize, 4); //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
     }
 
     public void startGameThread() {
@@ -36,22 +38,92 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     @Override //Die run() Methode enthält die Hauptspielschleife, die kontinuierlich ausgeführt wird, solange der gameThread nicht null ist
+//    public void run() {
+//
+//        double Zeitintervall = (double) 1000000000 /fps; //Zeitintervall in Nanosekundnen, welches zwischen den Frames liegt
+//        double naechsteUpdateZeit = System.nanoTime() + Zeitintervall; //Zeitpunkt , an dem der GameLoop wweitergeht
+//        while(gameThread != null) {
+//
+//            long currentTime = System.nanoTime(); //gibt die Zeit der aktuellen Ausführung der JVM in Nanosekunden zurück.
+//            System.out.println("Current Time:" + currentTime);
+//
+//            //UPDATE Informationen werden aktualisiert: z.B. Positionen der Spielobjekte, Kollisionen, etc.
+//            update();
+//            //REPAINT Informationen werden gezeichnet: z.B. die Grafiken der Spielobjekte, Hintergrund, etc.
+//            repaint();
+//
+//
+//            try {
+//                double uebrigeZeit = naechsteUpdateZeit - System.nanoTime(); //berechnet die verbleibende Zeit bis zum nächsten Update, indem die aktuelle Zeit von der geplanten nächsten Update-Zeit abgezogen wird
+//                // Es wird also die Zeit zwischen dem anfang der Schleife und dem Abschluss derSchleife berechnet, damit die übrige Zeit, in der nichts
+//                // passieren soll ermittelt werden kann
+//                uebrigeZeit = uebrigeZeit / 1000000; //Umwandlung von Nanosekunden in Millisekunden, da die sleep() Methode Millisekunden erwartet
+//                Thread.sleep((long) uebrigeZeit);
+//                if (uebrigeZeit < 0) {
+//                    uebrigeZeit = 0; //Wenn die verbleibende Zeit negativ ist, wird sie auf 0 gesetzt, da der Thread bei negativen werten eine Exception ausgibt.
+//                }
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//
+//            naechsteUpdateZeit += Zeitintervall; //Zeitintervall wird zur Zielzeit addiert, umd die nächste Zeit zum Updaten zu berechnen
+//        }
+//
+//    }
     public void run() {
+
+        double Zeitintervall = (double) 1000000000 /fps;
+        double delta = 0;
+        long lastTime = System.nanoTime();
+        long currentTime;
+        long timer = 0;
+        int drawCount = 0;
+
 
         while(gameThread != null) {
 
-            //System.out.println("Game loop running"); //Bestätigung, nur zum Debuggen, remove in Production
+            currentTime = System.nanoTime();
 
-            //UPDATE Informationen werden aktualisiert: z.B. Positionen der Spielobjekte, Kollisionen, etc.
-            update();
-            //REPAINT Informationen werden gezeichnet: z.B. die Grafiken der Spielobjekte, Hintergrund, etc.
-            repaint();
+            delta += (currentTime - lastTime) / Zeitintervall; //berechnet die Anzahl der Zeitintervalle,
+            // die seit dem letzten Update vergangen sind, indem die Differenz zwischen der aktuellen Zeit und der letzten Zeit durch das Zeitintervall dividiert wird
+
+            timer += (currentTime - lastTime); //berechnet die verstrichene Zeit seit dem letzten Update, indem die Differenz zwischen der aktuellen Zeit und der letzten Zeit zum Timer addiert wird
+
+            lastTime = currentTime; //aktualisiert die letzte Zeit auf die aktuelle Zeit, damit die nächste Berechnung der verstrichenen Zeit korrekt ist
+            if (delta >= 1) { //Wenn delta größer oder gleich 1 ist, bedeutet dies, dass genug Zeit vergangen ist, um ein Update durchzuführen
+                update(); //Aktualisiert die Spielinformationen
+
+                repaint(); //Zeichnet die Grafiken neu
+                delta--; //delta wird um 1 verringert, um die Anzahl der durchgeführten Updates zu verfolgen
+                drawCount++;
+            } else {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+                if(timer >= 1000000000) { //Wenn der Timer eine Sekunde erreicht oder überschreitet, wird die Anzahl der gezeichneten Frames pro Sekunde ausgegeben und der Timer sowie der drawCount zurückgesetzt
+                    System.out.println("FPS: " + drawCount);
+                    drawCount = 0;
+                    timer = 0;
+                }
+            }
         }
     }
     public void update() {
         //Hier werden die Spielobjekte aktualisiert, z.B. Positionen, Kollisionen, etc.
         if(Main.Game.keyHandler.upPressed){ //true kann in der Syntax auch weggelassen werden. überprüft, ob die taste gedrückt wurde.
-            System.out.println("Up key is pressed"); //Bestätigung, nur zum Debuggen und da ich für heute schluss mache. remove in Production
+            player.y -= player.speed; //bewegt den Spieler nach oben, indem die y-Position um die Geschwindigkeit des Spielers verringert wird
+        }
+        if(Main.Game.keyHandler.downPressed){
+            player.y += player.speed; //bewegt den Spieler nach unten, indem die y-Position um die Geschwindigkeit des Spielers erhöht wird
+        }
+        if(Main.Game.keyHandler.leftPressed){
+            player.x -= player.speed; //bewegt den Spieler nach links, indem die x-Position um die Geschwindigkeit des Spielers verringert wird
+        }
+        if(Main.Game.keyHandler.rightPressed){
+            player.x += player.speed; //bewegt den Spieler nach rechts, indem die x-Position um die Geschwindigkeit des Spielers erhöht wird
         }
     }
 
