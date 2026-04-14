@@ -1,11 +1,11 @@
-package Main;
+package main;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
 
-    public boolean upPressed, downPressed, leftPressed, rightPressed; //Booleans um den Status der gedrückten Tasten zu verfolgen
+    public boolean upPressed, downPressed, leftPressed, rightPressed, jumpPressed; //Booleans um den Status der gedrückten Tasten zu verfolgen
 
 
     @Override
@@ -35,6 +35,9 @@ public class KeyHandler implements KeyListener {
             rightPressed = true;
         }
 
+        if (key == KeyEvent.VK_SPACE) {
+            jumpPressed = true;
+        }
     }
 
     @Override
@@ -57,6 +60,10 @@ public class KeyHandler implements KeyListener {
 
         if (key == KeyEvent.VK_D) {
             rightPressed = false;
+        }
+
+        if (key == KeyEvent.VK_SPACE) {
+            jumpPressed = false;
         }
     }
 

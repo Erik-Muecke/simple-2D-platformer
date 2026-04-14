@@ -1,10 +1,9 @@
-package Entity;
+package entity;
 
-import javax.swing.*;
 import java.awt.*;
 
 public class Entity {
-    public int x;  //position auf der X-Achse
+    public int x;  //position auf der x-Achse
     public int y;  //position auf der Y-Achse
     int width; //Weite
     int height;  //Höhe
@@ -22,20 +21,12 @@ public class Entity {
     int freezeFrames = 0;
 
 
-    public Entity(Image image, int x, int y, int width, int height, int speed) {
-        this.image = image;//das anfangsbild
-        this.originalImage = image;//zur möglichen zurücksetzung des Bildes
-        this.x = x;
-        this.y = y;//wo befindet sich der Spieler/Gegner definition
-        this.width = width;
-        this.height = height;//GRösse und weite des Spielers
-        this.startX = x;
-        this.startY = y;//Startposition
-        this.speed = speed;//Geschwindigkeit, mit der sich der Spieler bewegt
+    public Entity() {
+
     }
     public void draw(Graphics g) {
-        if (this.image != null) {
-            g.drawImage(this.image, this.x, this.y, this.width, this.height, null); // nur wenn bild vorhanden
+        if (image != null) {
+            g.drawImage(image, this.x, this.y, this.width, this.height, null); // nur wenn bild vorhanden
         }else{
 
             Graphics2D g2 = (Graphics2D) g;  //castet das Graphics-Objekt in ein Graphics2D-Objekt, um erweiterte Zeichenfunktionen zu nutzen

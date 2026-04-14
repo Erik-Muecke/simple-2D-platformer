@@ -1,25 +1,28 @@
-package GamePanel;
+package main;
 
 import javax.swing.*;
 import java.awt.*;
-import Entity.Player;
+import entity.Player;
 
 public class GamePanel extends JPanel implements Runnable {
-    final int originalTileSize = 16; // 16x16 tile
-    final int scale = 3; //resolution of the tiles will be 3 times bigger than the original tile size
+    final int originalTileSize = 32; // 16x16 tile
+    public static final int scale = 2; //resolution of the tiles will be 3 times bigger than the original tile size
 
     public final int tileSize = originalTileSize * scale; // 48x48 tile Berechnung der endgültigen Tilegröße
-    final int MaxScreenCol = 16; //Breite des Bildschirms in Tiles
-    final int MaxScreenRow = 12; //Höhe des Bildschirms in Tiles
+    final static int MaxScreenCol = 16; //Breite des Bildschirms in Tiles
+    final static int MaxScreenRow = 12; //Höhe des Bildschirms in Tiles
     final int screenWidth = tileSize * MaxScreenCol; // 768 pixels
     final int screenHeight = tileSize * MaxScreenRow; // 576 pixels
 
-    public Player player; //deklariert eine Instanz der Player Klasse
 
     //FPS
     int fps = 60; //Frames per second, die Anzahl der Bilder, die pro Sekunde gezeichnet werden sollen
 
+    static KeyHandler keyHandler = new KeyHandler();
+
     Thread gameThread; //erstellt den Thread für die Spielschleife zum Bestimmen der FPS
+
+    Player player = new Player(this, keyHandler); //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
 
     public GamePanel() {
 
@@ -27,7 +30,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.setBackground(Color.BLACK); //Hintergrundfarbe zu schwarz
         this.setDoubleBuffered(true); //Screen wird zuerst unsichtbar gezeichnet und dann sichtbar gemacht, um Flackern zu vermeiden
         System.out.println("GamePanel created"); //Bestätigung, nur zum Debuggen, remove in Production
-        player = new Player(null, 100, 100, tileSize, tileSize, 4); //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
+
     }
 
     public void startGameThread() {
@@ -65,7 +68,7 @@ public class GamePanel extends JPanel implements Runnable {
 //            } catch (InterruptedException e) {
 //                e.printStackTrace();
 //            }
-//
+//            durchlauf = durchlauf + 1;
 //            naechsteUpdateZeit += Zeitintervall; //Zeitintervall wird zur Zielzeit addiert, umd die nächste Zeit zum Updaten zu berechnen
 //        }
 //
@@ -104,28 +107,20 @@ public class GamePanel extends JPanel implements Runnable {
                     break;
                 }
                 if(timer >= 1000000000) { //Wenn der Timer eine Sekunde erreicht oder überschreitet, wird die Anzahl der gezeichneten Frames pro Sekunde ausgegeben und der Timer sowie der drawCount zurückgesetzt
-                    System.out.println("FPS: " + drawCount);
-                    drawCount = 0;
-                    timer = 0;
+                    System.out.println("FPS: " + drawCount); //gibt die FPS, also Schleifendurchgäng in einer Sekunde an
+                    drawCount = 0; //setzt alles zurück, damit die nächste Sekunde neu gezählt werden kann
+                    timer = 0; //setzt alles zurück, damit die nächste Sekunde neu gezählt werden kann
                 }
             }
         }
     }
+
     public void update() {
-        //Hier werden die Spielobjekte aktualisiert, z.B. Positionen, Kollisionen, etc.
-        if(Main.Game.keyHandler.upPressed){ //true kann in der Syntax auch weggelassen werden. überprüft, ob die taste gedrückt wurde.
-            player.y -= player.speed; //bewegt den Spieler nach oben, indem die y-Position um die Geschwindigkeit des Spielers verringert wird
-        }
-        if(Main.Game.keyHandler.downPressed){
-            player.y += player.speed; //bewegt den Spieler nach unten, indem die y-Position um die Geschwindigkeit des Spielers erhöht wird
-        }
-        if(Main.Game.keyHandler.leftPressed){
-            player.x -= player.speed; //bewegt den Spieler nach links, indem die x-Position um die Geschwindigkeit des Spielers verringert wird
-        }
-        if(Main.Game.keyHandler.rightPressed){
-            player.x += player.speed; //bewegt den Spieler nach rechts, indem die x-Position um die Geschwindigkeit des Spielers erhöht wird
-        }
+
+        player.update(); //aktualisiert die Informationen des Spielers, indem die update() Methode des Player-Objekts aufgerufen wird
+
     }
+
 
     @Override //Die paintComponent() Methode wird überschrieben, um die Grafiken des Spiels zu zeichnen. Sie wird automatisch aufgerufen, wenn das Panel neu gezeichnet werden muss.
     public void paint(Graphics g) {
