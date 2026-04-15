@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Objects;
 import javax.imageio.ImageIO;
 
-import main.Game;
 import main.GamePanel;
 import main.KeyHandler;
 
@@ -13,9 +12,9 @@ public class Player extends Entity {
 
     GamePanel gp;
     KeyHandler keyH;
-    private final int jumpStrength =30;
-    private final int gravity =2;
-    private final int maxFallSpeed =12;
+    private int jumpStrength =30;
+    private int gravity =2;
+    private int maxFallSpeed =12;
 
 
     public Player( GamePanel gp, KeyHandler keyH) {
@@ -23,6 +22,8 @@ public class Player extends Entity {
         speed = 4; //Geschwindigkeit des Spielers, wie viele Pixel er sich pro Update bewegen soll
         width = 32*GamePanel.scale; //Breite des Spielers in Pixeln
         height = 32*GamePanel.scale; //Höhe des Spielers in Pixeln
+        x = 100;
+        y = gp.screenHeight;
         this.gp = gp;
         this.keyH = keyH;
         this.image = loadPlayerImage();
@@ -39,12 +40,6 @@ public class Player extends Entity {
     
     public void update(){
         //Hier werden die Spielobjekte aktualisiert, z.B. Positionen, Kollisionen, etc.
-        if(keyH.upPressed){ //true kann in der Syntax auch weggelassen werden. überprüft, ob die taste gedrückt wurde.
-            y -= speed; //bewegt den Spieler nach oben, indem die y-Position um die Geschwindigkeit des Spielers verringert wird
-        }
-        if(keyH.downPressed){
-            y += speed; //bewegt den Spieler nach unten, indem die y-Position um die Geschwindigkeit des Spielers erhöht wird
-        }
         if(keyH.leftPressed){
             x -= speed; //bewegt den Spieler nach links, indem die x-Position um die Geschwindigkeit des Spielers verringert wird
         }
