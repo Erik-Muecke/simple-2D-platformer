@@ -17,6 +17,9 @@ public class Game {
             frame.addKeyListener(GamePanel.keyHandler);
             frame.pack();
 
+            //frame.setFocusable(true);
+            //frame.requestFocus();
+
 
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
