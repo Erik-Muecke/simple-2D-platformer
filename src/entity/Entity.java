@@ -1,6 +1,7 @@
 package entity;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Entity {
     public int x;  //position auf der x-Achse
@@ -8,7 +9,6 @@ public class Entity {
     int width; //Weite
     int height;  //Höhe
     Image image;
-    Image originalImage;
     boolean isDead = false;
 
     int startX;
@@ -20,7 +20,7 @@ public class Entity {
     public int speed;
     int freezeFrames = 0;
 
-
+    public BufferedImage img1, img2, img3, img4, img5, img6;
     public Entity() {
 
     }
@@ -33,7 +33,7 @@ public class Entity {
 
             g2.setColor(Color.RED);  //setzt die Farbe des Graphics2D-Objekts auf Rot, damit die folgenden Zeichnungen in Rot erscheinen
             g2.fillRect(x, y, width, height);  //zeichnet ein gefülltes Rechteck an der Position (100, 100) mit der Breite und Höhe von tileSize (48x48 Pixel)
-            g2.dispose(); //gibt die Ressourcen des Graphics2D-Objekts frei, um Speicherlecks zu vermeiden
+            // Kein dispose(): Swing verwaltet den Graphics-Kontext selbst.
         }
     }
     void reset() {

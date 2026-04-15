@@ -122,11 +122,11 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
 
-    @Override //Die paintComponent() Methode wird überschrieben, um die Grafiken des Spiels zu zeichnen. Sie wird automatisch aufgerufen, wenn das Panel neu gezeichnet werden muss.
-    public void paint(Graphics g) {
+    @Override //Die paintComponent() Methode wird ueberschrieben, um die Grafiken des Spiels zu zeichnen.
+    protected void paintComponent(Graphics g) {
 
-        super.paintComponent(g); //ruft die paintComponent() Methode der übergeordneten Klasse auf, um sicherzustellen, dass das Panel korrekt gezeichnet wird, bevor die benutzerdefinierte Zeichnung erfolgt
+        super.paintComponent(g); //Panel-Hintergrund korrekt neu zeichnen
 
-        player.draw(g); //zeichnet den Spieler auf dem Panel, indem die draw() Methode des Player-Objekts aufgerufen wird und das Graphics-Objekt übergeben wird
+        player.draw(g); //zeichnet den Spieler auf dem Panel
     }
 }
