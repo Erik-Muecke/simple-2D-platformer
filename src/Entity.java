@@ -1,4 +1,4 @@
-package Entity;
+package src;
 
 import java.awt.*;
 
@@ -32,19 +32,6 @@ public class Entity {
         this.startY = y;//Startposition
         this.speed = speed;//Geschwindigkeit, mit der sich der Spieler bewegt
     }
-
-    void updateDirection(char direction) {
-            char prevDirection = this.direction;//setzt die Vorherige Direction auf die nächste Direction
-            this.direction = direction;//setzt diese direction als die jetzige Direction
-            updateVelocity();//update die Velocity/wohin sich der Spieler bewegt; Rechts links springen fallen
-            for(Block wall : walls){//Schleif, die die Kollision überprüft
-                if(collision(this, wall)){//muss später implementiert werden/ ist die AABB collision
-                    this.y -= this.velocityY;//resetet die Position, man kann also nicht durch die Wand/man bleibt vor dieser stehen
-                    this.direction = prevDirection;//wenn man eine Velocity hat, und man nicht in Richtung wand am Anfang bewegt, bewegt man sich mit der jewiligen Velocity einfach weiter
-                    updateVelocity();//updatet die Velocity/ die jetzige Velocity wird "aktiviert"
-                }
-            }
-        }
 
     void updateVelocity() {// die Funktion von oben/ setzt die aktive Velocity fest, hängt von der Direction ab
             if (this.direction == 'L'){

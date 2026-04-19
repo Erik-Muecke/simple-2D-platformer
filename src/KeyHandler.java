@@ -1,12 +1,11 @@
-package Main;
+package src;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
-
+    
     public boolean upPressed, downPressed, leftPressed, rightPressed; //Booleans um den Status der gedrückten Tasten zu verfolgen
-
 
     @Override
     public void keyTyped(java.awt.event.KeyEvent e) {

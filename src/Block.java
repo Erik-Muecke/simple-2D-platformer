@@ -1,4 +1,4 @@
-package Entity;
+package src;
 import java.awt.*;
 
 public class Block{
