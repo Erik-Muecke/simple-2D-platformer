@@ -97,9 +97,6 @@ public class TileManager {
                     col = 0; //setzt den Spaltenzähler zurück auf 0
                     row ++; //nächste Zeile
                 }
-
-
-                row++; //erhöht den Zeilenzähler um 1
             }
             br.close();
 
