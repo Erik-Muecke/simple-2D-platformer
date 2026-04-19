@@ -3,14 +3,15 @@ package main;
 import javax.swing.*;
 import java.awt.*;
 import entity.Player;
+import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
     final int originalTileSize = 32; // 16x16 tile
     public static final int scale = 2; //resolution of the tiles will be 3 times bigger than the original tile size
 
     public final int tileSize = originalTileSize * scale; // 48x48 tile Berechnung der endgültigen Tilegröße
-    final static int MaxScreenCol = 16; //Breite des Bildschirms in Tiles
-    final static int MaxScreenRow = 12; //Höhe des Bildschirms in Tiles
+    public final static int MaxScreenCol = 16; //Breite des Bildschirms in Tiles
+    public final static int MaxScreenRow = 12; //Höhe des Bildschirms in Tiles
     final public int screenWidth = tileSize * MaxScreenCol; // 768 pixels
     final public int screenHeight = tileSize * MaxScreenRow; // 576 pixels
 
@@ -18,10 +19,11 @@ public class GamePanel extends JPanel implements Runnable {
     //FPS
     int fps = 60; //Frames per second, die Anzahl der Bilder, die pro Sekunde gezeichnet werden sollen
 
+    TileManager tileManager = new TileManager(this);
+
     static KeyHandler keyHandler = new KeyHandler();
 
     Thread gameThread; //erstellt den Thread für die Spielschleife zum Bestimmen der FPS
-
     Player player = new Player(this, keyHandler); //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
 
     public GamePanel() {
@@ -43,7 +45,7 @@ public class GamePanel extends JPanel implements Runnable {
     @Override //Die run() Methode enthält die Hauptspielschleife, die kontinuierlich ausgeführt wird, solange der gameThread nicht null ist
 //    public void run() {
 //
-//        double Zeitintervall = (double) 1000000000 /fps; //Zeitintervall in Nanosekundnen, welches zwischen den Frames liegt
+//        double Zeitintervall = (double) 1000000000 /fps; //Zeitintervall in Nanosekundnen, welches zwischen den Frames liegt.
 //        double naechsteUpdateZeit = System.nanoTime() + Zeitintervall; //Zeitpunkt , an dem der GameLoop wweitergeht
 //        while(gameThread != null) {
 //
@@ -126,7 +128,8 @@ public class GamePanel extends JPanel implements Runnable {
     protected void paintComponent(Graphics g) {
 
         super.paintComponent(g); //Panel-Hintergrund korrekt neu zeichnen
-
-        player.draw(g); //zeichnet den Spieler auf dem Panel
+        Graphics2D g2 = (Graphics2D) g;
+        tileManager.draw(g2); //zeichnet die Spielkacheln mit der draw() Methode im TileManager
+        player.draw(g2); //zeichnet den Spieler auf dem Panel
     }
 }

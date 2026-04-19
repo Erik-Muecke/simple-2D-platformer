@@ -87,8 +87,8 @@ public class Player extends Entity {
     }
 
     @Override
-    public void draw(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
+    public void draw(Graphics2D g2) {
+
         BufferedImage img = switch (direction) { //Wechselt das Bild des Spielers je nach Richtung, in die er schaut
             case 'U' -> img1;
             case 'D' -> img1;
