@@ -1,4 +1,5 @@
-package src;
+package game;
+
 import java.awt.*;
 
 public class Block{

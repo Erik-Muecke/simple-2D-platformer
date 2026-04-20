@@ -1,4 +1,9 @@
-package src;
+package game;
+
+import game.entity.Entity;
+import game.system.CollisionSystem;
+import game.system.MovementSystem;
+import game.system.RenderSystem;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,10 +47,10 @@ public class GamePanel extends JPanel implements Runnable {
         this.setBackground(Color.BLACK); //Hintergrundfarbe zu schwarz
         this.setDoubleBuffered(true); //Screen wird zuerst unsichtbar gezeichnet und dann sichtbar gemacht, um Flackern zu vermeiden
         setFocusable(true);
-        wallImage = new ImageIcon(getClass().getResource("/src/wall.png")).getImage();
-        playerImage = new ImageIcon(getClass().getResource("/src/player.png")).getImage();
-        opponentImage = new ImageIcon(getClass().getResource("/src/opponent.png")).getImage();
-        fireballImage= new ImageIcon(getClass().getResource("/src/fireball.png")).getImage();
+        wallImage = new ImageIcon(getClass().getResource("wall.png")).getImage();
+        playerImage = new ImageIcon(getClass().getResource("player.png")).getImage();
+        opponentImage = new ImageIcon(getClass().getResource("opponent.png")).getImage();
+        fireballImage= new ImageIcon(getClass().getResource("fireball.png")).getImage();
         System.out.println("GamePanel created"); //Bestätigung, nur zum Debuggen, remove in Production
         collisionSystem = new CollisionSystem();
         movementSystem = new MovementSystem(screenWidth, screenHeight, tileSize, collisionSystem);

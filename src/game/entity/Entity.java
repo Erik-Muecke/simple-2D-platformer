@@ -1,27 +1,27 @@
-package src;
+package game.entity;
 
 import java.awt.*;
 
 public class Entity {
-    int x;  //position auf der X-Achse
-    int y;  //position auf der Y-Achse
-    int width; //Weite
-    int height;  //Höhe
-    Image image;
+    public int x;  //position auf der X-Achse
+    public int y;  //position auf der Y-Achse
+    public int width; //Weite
+    public int height;  //Höhe
+    public Image image;
     Image originalImage;
-    boolean isDead = false;
+    public boolean isDead = false;
 
     int startX;
     int startY;// Die Startpositionen
-    char direction = 'U'; //Richtung, in welche der Spieler schaut
-    boolean onGround = true;// schaut ob der spieler sich auf dem Boden befindet
-    int velocityX = 0;
-    int velocityY = 0;// Bewegungsrichtungen
-    int speed;
-    int freezeFrames = 0;
+    public char direction = 'U'; //Richtung, in welche der Spieler schaut
+    public boolean onGround = true;// schaut ob der spieler sich auf dem Boden befindet
+    public int velocityX = 0;
+    public int velocityY = 0;// Bewegungsrichtungen
+    public int speed;
+    public int freezeFrames = 0;
 
 
-    Entity(Image image, int x, int y, int width, int height, int speed) {
+    public Entity(Image image, int x, int y, int width, int height, int speed) {
         this.image = image;//das anfangsbild
         this.originalImage = image;//zur möglichen zurücksetzung des Bildes
         this.x = x;

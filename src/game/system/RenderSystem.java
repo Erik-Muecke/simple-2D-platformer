@@ -1,4 +1,6 @@
-package src;
+package game.system;
+
+import game.entity.Entity;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -6,12 +8,12 @@ import java.util.HashSet;
 public class RenderSystem {
     private int tileSize;
 
-    RenderSystem(int tileSize) {
+    public RenderSystem(int tileSize) {
         this.tileSize = tileSize;
     }
 
     public void draw(Graphics g, Entity player, HashSet<Entity> opponents,
-                     HashSet<Entity> walls,HashSet<Entity> pFfoods, HashSet<Entity> fireballs,
+                     HashSet<Entity> walls, HashSet<Entity> pFfoods, HashSet<Entity> fireballs,
                      int lives, int score, boolean gameOver) {
         // Draw player
         g.setColor(Color.RED);
@@ -46,6 +48,7 @@ public class RenderSystem {
                         fireball.width, fireball.height, null);
         }
 
+        // Draw score and lives
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.PLAIN, 18));
         if (gameOver) {
