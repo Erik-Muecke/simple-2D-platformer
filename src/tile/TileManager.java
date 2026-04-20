@@ -62,7 +62,7 @@ public class TileManager {
 
             x += gp.tileSize; //erhöht die x-Position um die Größe einer Kachel
 
-            if(col == GamePanel.MaxScreenCol) { //wenn das Ende der Spalten erreicht ist
+            if(col == GamePanel.MaxScreenCol) { //wenn das Ende der Spalten erreicht ist-0
 
                 col = 0; //setzt den Spaltenzähler zurück auf 0
                 x = 0; //setzt die x-Position zurück auf 0
@@ -78,10 +78,10 @@ public class TileManager {
     public void loadMap() {
         //Hier wird die Karte geladen, indem die Nummer der Kachel für jede Position im mapTileNum Array festgelegt wird
         try {
-            InputStream is = getClass().getResourceAsStream("tilemap.txt"); //öffnet die Textdatei
+            InputStream is = getClass().getResourceAsStream("/tiles/tilemap.txt"); //öffnet die Textdatei
 
             if (is == null) {
-                throw new Exception("Ressource nicht gefunden: tilemap.txt"); //erstellt neue Exception, wenn der wert null ist
+                throw new Exception("Ressource nicht gefunden: /tiles/tilemap.txt"); //erstellt neue Exception, wenn der wert null ist
 
 
             }
@@ -96,9 +96,9 @@ public class TileManager {
             while(col < GamePanel.MaxScreenCol && row < GamePanel.MaxScreenRow) {
                 String line = br.readLine(); //liest eine Zeile aus der Textdatei
                 if(line == null) {
-                    throw new IllegalStateException("Tilemap hat weniger als" + GamePanel.MaxScreenRow + " Zeilen."); //erstellt neue Exception, wenn die Zeile null ist, also das Ende der Datei erreicht ist, bevor alle Zeilen gelesen wurden
+                    throw new IllegalStateException("Tilemap hat weniger als " + GamePanel.MaxScreenRow + " Zeilen."); //erstellt neue Exception, wenn die Zeile null ist, also das Ende der Datei erreicht ist, bevor alle Zeilen gelesen wurden
                 }
-                String numbers[] = line.trim().split("\\s+");
+                String numbers[] = line.trim().split("\\s+"); //teilt die zeile in einzelne Strings ein, wenn sie durch Leerzeichen getrennt sind.
 
                 while(col < GamePanel.MaxScreenCol) {
 
@@ -139,7 +139,7 @@ public class TileManager {
                 return ImageIO.read(no_image);
 
             }catch(Exception f){
-                System.out.println("Fehler beim Laden der Standardfehlermeldung: " + e.getMessage());
+                System.out.println("Fehler beim Laden der Standardfehlermeldung: " + f.getMessage());
                 return null;
             }
         }
