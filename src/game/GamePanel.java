@@ -238,12 +238,25 @@ public class GamePanel extends JPanel implements Runnable {
             movementSystem.updateOpponent(opponent, walls, directions, random);
         }
     }
-        
-    
+    public void resetPositions() {
+        player.reset();
+        player.velocityX = 0;
+        player.velocityY = 0;
+        player.direction = 'R';
+        player.image = playerRightImage;
+        fireballs.clear();
+        for (Entity opponent : opponents) {
+            opponent.reset();
+            char newDirection = directions[random.nextInt(2)];
+            movementSystem.updateOpponentDirection(opponent, newDirection, walls);
+        }
+    }
 
-    @Override //Die paintComponent() Methode wird überschrieben, um die Grafiken des Spiels zu zeichnen. Sie wird automatisch aufgerufen, wenn das Panel neu gezeichnet werden muss.
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g); //ruft die paintComponent() Methode der übergeordneten Klasse auf, um sicherzustellen, dass das Panel korrekt gezeichnet wird, bevor die benutzerdefinierte Zeichnung erfolgt
+
+        @Override
+        //Die paintComponent() Methode wird überschrieben, um die Grafiken des Spiels zu zeichnen. Sie wird automatisch aufgerufen, wenn das Panel neu gezeichnet werden muss.
+        public void paintComponent (Graphics g){
+            super.paintComponent(g); //ruft die paintComponent() Methode der übergeordneten Klasse auf, um sicherzustellen, dass das Panel korrekt gezeichnet wird, bevor die benutzerdefinierte Zeichnung erfolgt
 
         RenderSystem renderSystem = new RenderSystem(tileSize);
         renderSystem.draw(g, player, opponents, walls, pFfoods, fireballs,
