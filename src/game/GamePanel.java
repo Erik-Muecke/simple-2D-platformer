@@ -188,10 +188,12 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
-    
-  public void update() {
-    
-    if (player.velocityX != 0) {
+
+    public void update() {
+        if (player.direction == 'L') player.image = playerLeftImage;
+        else if (player.direction == 'R') player.image = playerRightImage;
+
+        if (player.velocityX != 0) {
             movementSystem.updatePlayerVelocity(player);
         }
     if (keyHandler.upPressed && player.onGround == true) {
