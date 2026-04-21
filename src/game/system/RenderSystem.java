@@ -6,16 +6,16 @@ import java.awt.*;
 import java.util.HashSet;
 
 public class RenderSystem {
-    private int tileSize;
+    private int tileSize;//tile size reference
 
     public RenderSystem(int tileSize) {
-        this.tileSize = tileSize;
+        this.tileSize = tileSize;//store tile size
     }
 
     public void draw(Graphics g, Entity player, HashSet<Entity> opponents,
                      HashSet<Entity> walls, HashSet<Entity> pFfoods, HashSet<Entity> fireballs,
-                     int lives, int score, boolean gameOver) {
-        // Draw player
+                     int lives, int score, boolean gameOver) {//render all objects
+        // draw player
         g.setColor(Color.RED);
         g.drawImage(player.image, player.x, player.y,
                     player.width, player.height, null);
@@ -52,9 +52,9 @@ public class RenderSystem {
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.PLAIN, 18));
         if (gameOver) {
-            g.drawString("Game Over: " + score, tileSize / 2, tileSize / 2);
+            g.drawString("Game Over: " + score, tileSize / 2, tileSize / 2);//game over text
         } else {
-            g.drawString("x" + lives + " Score" + score, tileSize / 2, tileSize / 2);
+            g.drawString("x" + lives + " Score" + score, tileSize / 2, tileSize / 2);//typical text
         }
     }
 }

@@ -44,7 +44,7 @@ public class Entity {
             }
         }
 
-    void reset() {
+    public void reset() {
         this.x = this.startX;
         this.y = this.startY;
     }//setzt den Spieler auf seine Startposition zurück(löschen, falls unnötig)

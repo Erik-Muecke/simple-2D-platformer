@@ -8,6 +8,7 @@ import game.system.RenderSystem;
 import javax.swing.*;
 import java.awt.*;
 import java.util.HashSet;
+import java.util.Random;
 
 public class GamePanel extends JPanel implements Runnable {
     public KeyHandler keyHandler;
@@ -24,15 +25,18 @@ public class GamePanel extends JPanel implements Runnable {
     private HashSet<Entity> walls;
     private HashSet<Entity> pFfoods;
     private HashSet<Entity> fireballs;
-    private HashSet<Entity> opponents;
+    private HashSet<Entity> opponents;//Hahset der Entities für spätere Benutzung erstellen
     private int score = 0;
-    private int lives = 3;
+    private int lives = 3;//typische Spielmerkmale, wie score oder leben erstellen
     private boolean gameOver = false;
     private MovementSystem movementSystem;
     private CollisionSystem collisionSystem;
-    
+    private Random random = new Random();//created a random
+    private char[] directions = {'L', 'R'};//opponentmovemntrandomation
+
     private Image wallImage;
-    private Image playerImage;
+    private Image playerLeftImage;
+    private Image playerRightImage;
     private Image opponentImage;
     private Image fireballImage;
 
@@ -42,7 +46,7 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread; //erstellt den Thread für die Spielschleife zum Bestimmen der FPS
 
     public GamePanel(KeyHandler keyHandler) {
-    this.keyHandler = keyHandler;
+        this.keyHandler = keyHandler;
         this.setPreferredSize(new Dimension(screenWidth, screenHeight)); // Set the size of the panel to the calculated screen width and height
         this.setBackground(Color.BLACK); //Hintergrundfarbe zu schwarz
         this.setDoubleBuffered(true); //Screen wird zuerst unsichtbar gezeichnet und dann sichtbar gemacht, um Flackern zu vermeiden
@@ -51,7 +55,7 @@ public class GamePanel extends JPanel implements Runnable {
         playerLeftImage = new ImageIcon(getClass().getResource("playerLeft.png")).getImage();
         playerRightImage = new ImageIcon(getClass().getResource("playerRight.png")).getImage();
         opponentImage = new ImageIcon(getClass().getResource("opponent.png")).getImage();
-        fireballImage= new ImageIcon(getClass().getResource("fireball.png")).getImage();
+        fireballImage= new ImageIcon(getClass().getResource("fireball.png")).getImage();//imagepath, to get images
         System.out.println("GamePanel created"); //Bestätigung, nur zum Debuggen, remove in Production
         collisionSystem = new CollisionSystem();
         movementSystem = new MovementSystem(screenWidth, screenHeight, tileSize, collisionSystem);
@@ -59,7 +63,7 @@ public class GamePanel extends JPanel implements Runnable {
         for (Entity opponent : opponents) {
             char newDirection = directions[random.nextInt(2)];
             movementSystem.updateOpponentDirection(opponent, newDirection, walls);
-        }
+        }//movement of the opponents
     }
 
     public void startGameThread() {
@@ -75,28 +79,28 @@ public class GamePanel extends JPanel implements Runnable {
             "X              X",
             "X              X",
             "X              X",
-            "X              X",
-            "X        X     X",
+            "X         X    X",
+            "X         o    X",
             "X       X      X",
             "X     X        X",
             "X   XX         X",
             "X P        o   X",
             "XXXXXXXXXXXXXXXX"};
-
+//creating a tilemap for the game
     
     
     public void loadMap() {
         walls = new HashSet<Entity>();
         pFfoods = new HashSet<Entity>();
         fireballs = new HashSet<Entity>();
-        opponents = new HashSet<Entity>();
+        opponents = new HashSet<Entity>();//creating Hashsets
 
         for (int r = 0; r < MaxScreenRow; r++) {
-            for (int c = 0; c < MaxScreenCol; c++) {
+            for (int c = 0; c < MaxScreenCol; c++) {//proving the tilemap for signs
                 String row = tileMap1[r];
                 char tileMapChar = row.charAt(c);
                 int x = c * tileSize;
-                int y = r * tileSize;
+                int y = r * tileSize;//creating the length and wide of the tilemap
 
                 if (tileMapChar == 'X') {
                     Entity wall = new Entity(wallImage, x, y, tileSize, tileSize, 0);
@@ -109,7 +113,7 @@ public class GamePanel extends JPanel implements Runnable {
                 } else if (tileMapChar == 'F') {
                     Entity pFfood = new Entity(null, x + 12, y + 12, 8, 8, 0);
                     pFfoods.add(pFfood);
-                }
+                }//creating objects for the signs, they are standing for
             }
         }
     }
@@ -173,7 +177,7 @@ public class GamePanel extends JPanel implements Runnable {
                     resetPositions();
                     lives = 3;
                     score = 0;
-                    gameOver = false;
+                    gameOver = false;//restarting the level if gameover
                 }
                 if (!gameOver) {
                     update();   // only run game logic if NOT game over
@@ -203,21 +207,21 @@ public class GamePanel extends JPanel implements Runnable {
 
         if (player.velocityX != 0) {
             movementSystem.updatePlayerVelocity(player);
-        }
+    }
         if (keyHandler.upPressed && player.onGround == true) {
             player.velocityY = -20;
-            player.onGround = false;
+            player.onGround = false;//sprung
         } else if (keyHandler.leftPressed) {
             player.direction = 'L';
-            movementSystem.updatePlayerVelocity(player);
+            movementSystem.updatePlayerVelocity(player);//moving lleft
         } else if (keyHandler.rightPressed) {
             player.direction = 'R';
-            movementSystem.updatePlayerVelocity(player);
+            movementSystem.updatePlayerVelocity(player);//nmoving right
         } else {
-            player.velocityX = 0;
+            player.velocityX = 0;//stop, if nothing = true
         }
 
-        movementSystem.updatePlayer(player, walls);
+        movementSystem.updatePlayer(player, walls);//proving for collisions between player and wall
 
         for (Entity opponent : opponents) {
 
@@ -228,28 +232,24 @@ public class GamePanel extends JPanel implements Runnable {
                     return;
                 }
                 resetPositions();
-                return;
+                return;//taking lives and reseting positions, or, if lives =0, gameOver
             }
 
-            if (opponent.y == tileSize * 9 && opponent.velocityY == 0) {
-                movementSystem.updateOpponentDirection(opponent, 'U', walls);
-            }
-
-            movementSystem.updateOpponent(opponent, walls, directions, random);
+            movementSystem.updateOpponent(opponent, walls, directions, random);//opponent movement
         }
     }
     public void resetPositions() {
-        player.reset();
+        player.reset();//reseting playerposition
         player.velocityX = 0;
         player.velocityY = 0;
-        player.direction = 'R';
-        player.image = playerRightImage;
-        fireballs.clear();
+        player.direction = 'R';//movementreseting
+        player.image = playerRightImage;//imagereseting
+        fireballs.clear();//deleting fireballs, for fireballs, if pllanned
         for (Entity opponent : opponents) {
             opponent.reset();
             char newDirection = directions[random.nextInt(2)];
             movementSystem.updateOpponentDirection(opponent, newDirection, walls);
-        }
+        }//reseting opponentmovement
     }
 
 
@@ -258,7 +258,7 @@ public class GamePanel extends JPanel implements Runnable {
         public void paintComponent (Graphics g){
             super.paintComponent(g); //ruft die paintComponent() Methode der übergeordneten Klasse auf, um sicherzustellen, dass das Panel korrekt gezeichnet wird, bevor die benutzerdefinierte Zeichnung erfolgt
 
-            RenderSystem renderSystem = new RenderSystem(tileSize);
+            RenderSystem renderSystem = new RenderSystem(tileSize);//initialisieren des Rendersystems
             renderSystem.draw(g, player, opponents, walls, pFfoods, fireballs,
                     lives, score, gameOver); //zeichnet den Spieler auf dem Panel, indem die draw() Methode des Player-Objekts aufgerufen wird und das Graphics-Objekt übergeben wird}
         }
