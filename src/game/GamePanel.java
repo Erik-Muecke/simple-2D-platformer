@@ -70,18 +70,18 @@ public class GamePanel extends JPanel implements Runnable {
     }
     
     private String[] tileMap1 = {
-    "XXXXXXXXXXXXXXXX",
-    "X              X",
-    "X              X",
-    "X              X",
-    "X              X",
-    "X              X",
-    "X        X     X",
-    "X       X      X",
-    "X     X        X",
-    "X   XX         X",
-    "X P            X",
-    "XXXXXXXXXXXXXXXX"};
+            "XXXXXXXXXXXXXXXX",
+            "X              X",
+            "X              X",
+            "X              X",
+            "X              X",
+            "X              X",
+            "X        X     X",
+            "X       X      X",
+            "X     X        X",
+            "X   XX         X",
+            "X P        o   X",
+            "XXXXXXXXXXXXXXXX"};
 
     
     
