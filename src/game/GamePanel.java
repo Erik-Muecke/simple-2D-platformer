@@ -167,11 +167,12 @@ public class GamePanel extends JPanel implements Runnable {
             timer += (currentTime - lastTime); //berechnet die verstrichene Zeit seit dem letzten Update, indem die Differenz zwischen der aktuellen Zeit und der letzten Zeit zum Timer addiert wird
 
             lastTime = currentTime; //aktualisiert die letzte Zeit auf die aktuelle Zeit, damit die nächste Berechnung der verstrichenen Zeit korrekt ist
-            if (delta >= 1) { //Wenn delta größer oder gleich 1 ist, bedeutet dies, dass genug Zeit vergangen ist, um ein Update durchzuführen
-                update(); //Aktualisiert die Spielinformationen
-
-                repaint(); //Zeichnet die Grafiken neu
-                delta--; //delta wird um 1 verringert, um die Anzahl der durchgeführten Updates zu verfolgen
+            if (delta >= 1) {
+                if (!gameOver) {
+                    update();   // only run game logic if NOT game over
+                }
+                repaint();      // always draw (so Game Over screen shows)
+                delta--;
                 drawCount++;
             } else {
                 try {
