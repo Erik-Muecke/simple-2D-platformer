@@ -196,18 +196,18 @@ public class GamePanel extends JPanel implements Runnable {
         if (player.velocityX != 0) {
             movementSystem.updatePlayerVelocity(player);
         }
-    if (keyHandler.upPressed && player.onGround == true) {
-         player.velocityY = -20;
-         player.onGround = false;
-    } else if (keyHandler.leftPressed) {
-         player.direction = 'L';
-         movementSystem.updatePlayerVelocity(player);  
-    } else if (keyHandler.rightPressed) {
-        player.direction = 'R';
-        movementSystem.updatePlayerVelocity(player);
-    } else {
-        player.velocityX = 0;
-    }
+        if (keyHandler.upPressed && player.onGround == true) {
+            player.velocityY = -20;
+            player.onGround = false;
+        } else if (keyHandler.leftPressed) {
+            player.direction = 'L';
+            movementSystem.updatePlayerVelocity(player);
+        } else if (keyHandler.rightPressed) {
+            player.direction = 'R';
+            movementSystem.updatePlayerVelocity(player);
+        } else {
+            player.velocityX = 0;
+        }
 
     movementSystem.updatePlayer(player, walls);
     }
