@@ -48,7 +48,8 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true); //Screen wird zuerst unsichtbar gezeichnet und dann sichtbar gemacht, um Flackern zu vermeiden
         setFocusable(true);
         wallImage = new ImageIcon(getClass().getResource("wall.png")).getImage();
-        playerImage = new ImageIcon(getClass().getResource("player.png")).getImage();
+        playerLeftImage = new ImageIcon(getClass().getResource("playerLeft.png")).getImage();
+        playerRightImage = new ImageIcon(getClass().getResource("playerRight.png")).getImage();
         opponentImage = new ImageIcon(getClass().getResource("opponent.png")).getImage();
         fireballImage= new ImageIcon(getClass().getResource("fireball.png")).getImage();
         System.out.println("GamePanel created"); //Bestätigung, nur zum Debuggen, remove in Production
