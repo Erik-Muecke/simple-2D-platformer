@@ -217,7 +217,26 @@ public class GamePanel extends JPanel implements Runnable {
             player.velocityX = 0;
         }
 
-    movementSystem.updatePlayer(player, walls);
+        movementSystem.updatePlayer(player, walls);
+
+        for (Entity opponent : opponents) {
+
+            if (collisionSystem.collides(opponent, player)) {
+                lives--;
+                if (lives == 0) {
+                    gameOver = true;
+                    return;
+                }
+                resetPositions();
+                return;
+            }
+
+            if (opponent.y == tileSize * 9 && opponent.velocityY == 0) {
+                movementSystem.updateOpponentDirection(opponent, 'U', walls);
+            }
+
+            movementSystem.updateOpponent(opponent, walls, directions, random);
+        }
     }
         
     
