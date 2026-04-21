@@ -168,6 +168,13 @@ public class GamePanel extends JPanel implements Runnable {
 
             lastTime = currentTime; //aktualisiert die letzte Zeit auf die aktuelle Zeit, damit die nächste Berechnung der verstrichenen Zeit korrekt ist
             if (delta >= 1) {
+                if (keyHandler.downPressed && gameOver == true){
+                    loadMap();
+                    resetPositions();
+                    lives = 3;
+                    score = 0;
+                    gameOver = false;
+                }
                 if (!gameOver) {
                     update();   // only run game logic if NOT game over
                 }
