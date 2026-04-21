@@ -105,7 +105,7 @@ public class GamePanel extends JPanel implements Runnable {
                     Entity opponent = new Entity(opponentImage, x, y, tileSize, tileSize, 6);
                     opponents.add(opponent);
                 } else if (tileMapChar == 'P') {
-                    player = new Entity(playerImage, x, y, tileSize, tileSize, 8);
+                    player = new Entity(playerRightImage, x, y, tileSize, tileSize, 8);
                 } else if (tileMapChar == 'F') {
                     Entity pFfood = new Entity(null, x + 12, y + 12, 8, 8, 0);
                     pFfoods.add(pFfood);
