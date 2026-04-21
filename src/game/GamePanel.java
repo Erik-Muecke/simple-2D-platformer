@@ -258,8 +258,8 @@ public class GamePanel extends JPanel implements Runnable {
         public void paintComponent (Graphics g){
             super.paintComponent(g); //ruft die paintComponent() Methode der übergeordneten Klasse auf, um sicherzustellen, dass das Panel korrekt gezeichnet wird, bevor die benutzerdefinierte Zeichnung erfolgt
 
-        RenderSystem renderSystem = new RenderSystem(tileSize);
-        renderSystem.draw(g, player, opponents, walls, pFfoods, fireballs,
-              lives, score, gameOver); //zeichnet den Spieler auf dem Panel, indem die draw() Methode des Player-Objekts aufgerufen wird und das Graphics-Objekt übergeben wird
+            RenderSystem renderSystem = new RenderSystem(tileSize);
+            renderSystem.draw(g, player, opponents, walls, pFfoods, fireballs,
+                    lives, score, gameOver); //zeichnet den Spieler auf dem Panel, indem die draw() Methode des Player-Objekts aufgerufen wird und das Graphics-Objekt übergeben wird}
+        }
     }
-}
