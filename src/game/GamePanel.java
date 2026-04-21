@@ -56,6 +56,10 @@ public class GamePanel extends JPanel implements Runnable {
         collisionSystem = new CollisionSystem();
         movementSystem = new MovementSystem(screenWidth, screenHeight, tileSize, collisionSystem);
         loadMap();
+        for (Entity opponent : opponents) {
+            char newDirection = directions[random.nextInt(2)];
+            movementSystem.updateOpponentDirection(opponent, newDirection, walls);
+        }
     }
 
     public void startGameThread() {
