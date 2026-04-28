@@ -6,10 +6,10 @@ import java.awt.image.BufferedImage;
 public class Entity {
     public int x;  //position auf der x-Achse
     public int y;  //position auf der Y-Achse
-    int width; //Weite
-    int height;  //Höhe
-    Image image;
-    boolean isDead = false;
+    public int width; //Weite
+    public int height;  //Höhe
+    public Image image;
+    public boolean isDead = false;
 
     int startX;
     int startY;// Die Startpositionen
