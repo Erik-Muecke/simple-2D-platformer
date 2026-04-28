@@ -13,10 +13,10 @@ public class Entity {
 
     int startX;
     int startY;// Die Startpositionen
-    char direction = 'U'; //Richtung, in welche der Spieler schaut
-    boolean onGround = true;// schaut ob der spieler sich auf dem Boden befindet
-    int velocityX = 0;
-    int velocityY = 0;// Bewegungsrichtungen
+    public char direction = 'U'; //Richtung, in welche der Spieler schaut
+    public boolean onGround = true;// schaut ob der spieler sich auf dem Boden befindet
+    public int velocityX = 0;
+    public int velocityY = 0;// Bewegungsrichtungen
     public int speed;
     int freezeFrames = 0;
 
