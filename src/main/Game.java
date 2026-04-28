@@ -14,7 +14,9 @@ public class Game {
             frame.setResizable(false);
             frame.setTitle("2D Platformer");
             frame.add(gamepanel);
-            frame.addKeyListener(GamePanel.keyHandler);
+            gamepanel.addKeyListener(GamePanel.keyHandler);
+            gamepanel.setFocusable(true);
+            gamepanel.requestFocusInWindow();
             frame.pack();
 
             //frame.setFocusable(true);

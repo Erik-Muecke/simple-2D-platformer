@@ -63,34 +63,22 @@ public class Player extends Entity {
         // Handle horizontal input
         if (keyH.leftPressed) {
             direction = 'L';
-            x -= speed; //bewegt den Spieler nach links, indem die x-Position um die Geschwindigkeit des Spielers verringert wird
-        }
-        if(keyH.rightPressed){
+            velocityX = -speed;
+        } else if (keyH.rightPressed) {
             direction = 'R';
-            x += speed; //bewegt den Spieler nach rechts, indem die x-Position um die Geschwindigkeit des Spielers erhöht wird
+            velocityX = speed;
+        } else {
+            velocityX = 0;
         }
 
-        if(keyH.upPressed){
-            direction = 'U';
+        // Handle jump
+        if (keyH.jumpPressed && onGround) {
+            velocityY = -20;
+            onGround = false;
         }
 
-
-
-        if (keyH.jumpPressed && onGround) { // Überprüft ob am Boden und ob Sprungtaste gedrückt
-            velocityY = -jumpStrength; // Geschwindigkeit wird mit der negativen Sprungkraft gleihgesetzt, damit später die Y Koordinate abnehmen kann
-            onGround = false; //nicht mehr auf dem Boden
-        }
-
-        velocityY += gravity; //Geschwindigkeit wird um den Wert der Schwerkraft erhöht höherer Wert -> schnelleres Fallen
-        if (velocityY > maxFallSpeed) velocityY = maxFallSpeed; //Fallgeschwindigkeit wird gedeckelt, damit man nicht "unendlich" schnell fällt
-        y += velocityY; //Y position wird aktualisiert, da die aktuelle geschwindigkeit in Y Richtung entweder addiert oder subtrahiert wird, je nachdem was größer ist.
-
-        int groundY = gp.getPreferredSize().height - height; // berechnet den y wert des bodens, wenn nicht vorhanden würde man ewig nach unten fallen
-        if (y >= groundY) { //überprüft ob Player y wert auf oder unter dem boden liegt, wenn ja,
-            y = groundY; //wird die Position dem Boden gleichgesetzt
-            velocityY =0; //Die Geschwindigkeit auf 0
-            onGround = true; // und die variable onGround auf true gesetzt, damit man erst nachdem man wieder unten ist erneut springen kann.
-        }
+        // Delegate all physics + collision to MovementSystem
+        movementSystem.updatePlayer(this);
     }
 
     @Override
