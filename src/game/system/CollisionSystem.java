@@ -17,6 +17,7 @@ public class CollisionSystem {
                a.x + a.width > b.x &&
                a.y < b.y + b.height &&
                a.y + a.height > b.y;
+
     }
 
     // Checks if a given entity collides with any wall in the provided set

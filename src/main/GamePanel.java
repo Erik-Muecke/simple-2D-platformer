@@ -1,4 +1,4 @@
-package game;
+package main;
 
 import game.entity.Entity;
 import game.system.CollisionSystem;
@@ -51,11 +51,11 @@ public class GamePanel extends JPanel implements Runnable {
         this.setBackground(Color.BLACK); //Hintergrundfarbe zu schwarz
         this.setDoubleBuffered(true); //Screen wird zuerst unsichtbar gezeichnet und dann sichtbar gemacht, um Flackern zu vermeiden
         setFocusable(true);
-        wallImage = new ImageIcon(getClass().getResource("wall.png")).getImage();
-        playerLeftImage = new ImageIcon(getClass().getResource("playerLeft.png")).getImage();
-        playerRightImage = new ImageIcon(getClass().getResource("playerRight.png")).getImage();
-        opponentImage = new ImageIcon(getClass().getResource("opponent.png")).getImage();
-        fireballImage= new ImageIcon(getClass().getResource("fireball.png")).getImage();//imagepath, to get images
+        wallImage = new ImageIcon(getClass().getResource("/game/wall.png")).getImage();
+        playerLeftImage = new ImageIcon(getClass().getResource("/game/playerLeft.png")).getImage();
+        playerRightImage = new ImageIcon(getClass().getResource("/game/playerRight.png")).getImage();
+        opponentImage = new ImageIcon(getClass().getResource("/game/opponent.png")).getImage();
+        fireballImage = new ImageIcon(getClass().getResource("/game/fireball.png")).getImage();//imagepath, to get images
         System.out.println("GamePanel created"); //Bestätigung, nur zum Debuggen, remove in Production
         collisionSystem = new CollisionSystem();
         movementSystem = new MovementSystem(screenWidth, screenHeight, tileSize, collisionSystem);
