@@ -18,7 +18,9 @@ public class Entity {
     public int velocityX = 0;
     public int velocityY = 0;// Bewegungsrichtungen
     public int speed;
-    int freezeFrames = 0;
+    public int freezeFrames = 0;
+    public Rectangle solidArea;
+    public boolean collisionOn = false;
 
     public BufferedImage img1, img2, img3, img4, img5, img6;
     public Entity() {
