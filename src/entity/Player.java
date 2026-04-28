@@ -58,10 +58,10 @@ public class Player extends Entity {
         }
         return ImageIO.read(stream);
     }
-    
-    public void update(){
-        //Hier werden die Spielobjekte aktualisiert, z.B. Positionen, Kollisionen, etc.
-        if(keyH.leftPressed){
+
+    public void update() {
+        // Handle horizontal input
+        if (keyH.leftPressed) {
             direction = 'L';
             x -= speed; //bewegt den Spieler nach links, indem die x-Position um die Geschwindigkeit des Spielers verringert wird
         }
