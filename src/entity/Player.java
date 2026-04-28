@@ -33,6 +33,8 @@ public class Player extends Entity {
         y = gp.screenHeight - height;
         this.gp = gp;
         this.keyH = keyH;
+        solidArea = new Rectangle(0, 0, 48, 40);
+        this.movementSystem = new MovementSystem(gp.screenWidth, gp.screenHeight, gp.tileSize, gp.collisionsystem);
         loadPlayerImage();
     }
 
