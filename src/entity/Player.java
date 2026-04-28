@@ -16,9 +16,11 @@ public class Player extends Entity {
 
     private final GamePanel gp;
     private final KeyHandler keyH;
-    private int jumpStrength =30;
-    private int gravity =2;
-    private int maxFallSpeed =12;
+    private TileManager tileManager;
+    private int jumpStrength = 30;
+    private int gravity = 2;
+    private int maxFallSpeed = 12;
+    private MovementSystem movementSystem;
 
 
     public Player( GamePanel gp, KeyHandler keyH) {
