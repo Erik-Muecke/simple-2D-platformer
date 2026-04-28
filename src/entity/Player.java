@@ -6,8 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.imageio.ImageIO;
 
+import tile.TileManager;
+
 import main.GamePanel;
 import main.KeyHandler;
+import system.MovementSystem;
 
 public class Player extends Entity {
 
