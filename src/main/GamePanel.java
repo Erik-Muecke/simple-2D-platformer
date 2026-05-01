@@ -23,7 +23,7 @@ public class GamePanel extends JPanel implements Runnable {
     public int MaxWorldRow = 16; //Höhe der Welts in Tiles
     public int worldWidth = tileSize * MaxWorldCol;
     public int worldHeight = tileSize * MaxWorldRow;
-    
+
     //FPS
     int fps = 60; //Frames per second, die Anzahl der Bilder, die pro Sekunde gezeichnet werden sollen
 
@@ -34,6 +34,7 @@ public class GamePanel extends JPanel implements Runnable {
     public CollisionSystem collisionsystem = new CollisionSystem(this);
     public Camera camera;
     public SuperObject obj[] = new SuperObject[10];
+    AssetSetter aSetter = new AssetSetter(this);
     public Player player = new Player(this, keyHandler); //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
 
     public GamePanel() {
@@ -131,7 +132,6 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-
         player.update(); //aktualisiert die Informationen des Spielers, indem die update() Methode des Player-Objekts aufgerufen wird
         camera.update(player);
     }
@@ -149,5 +149,6 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
         player.draw(g2); //zeichnet den Spieler auf dem Panel
+        g2.dispose();
     }
 }

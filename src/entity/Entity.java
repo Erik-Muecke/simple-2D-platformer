@@ -24,7 +24,6 @@ public class Entity {
 
     public BufferedImage img1, img2, img3, img4, img5, img6;
     public Entity() {
-
     }
     public void draw(Graphics2D g2) {
         if (image != null) {

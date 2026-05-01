@@ -23,18 +23,16 @@ public class Player extends Entity {
     private MovementSystem movementSystem;
 
 
-    public Player( GamePanel gp, KeyHandler keyH) {
+    public Player(GamePanel gp, KeyHandler keyH) {
         super();
         speed = 4; //Geschwindigkeit des Spielers, wie viele Pixel er sich pro Update bewegen soll
-        width = 32*GamePanel.scale; //Breite des Spielers in Pixeln
-        height = 32*GamePanel.scale; //Höhe des Spielers in Pixeln
+        width = 32 * GamePanel.scale; //Breite des Spielers in Pixeln
+        height = 32 * GamePanel.scale; //Höhe des Spielers in Pixeln
         direction = 'D';
-        x = 100;
-        y = gp.screenHeight - height;
         this.gp = gp;
         this.keyH = keyH;
-        solidArea = new Rectangle(0, 0, 48, 40);
-        this.movementSystem = new MovementSystem(gp.screenWidth, gp.screenHeight, gp.tileSize, gp.collisionsystem);
+        solidArea = new Rectangle(4, 4, 40, 40);
+        this.movementSystem = new MovementSystem(gp.worldWidth, gp.worldHeight, gp.tileSize, gp.collisionsystem);
         loadPlayerImage();
     }
 
@@ -86,13 +84,16 @@ public class Player extends Entity {
 
         BufferedImage img = switch (direction) { //Wechselt das Bild des Spielers je nach Richtung, in die er schaut
             case 'U' -> img1;
-            case 'D' -> img1;
+            case 'D' -> img4;
             case 'L' -> img2;
             case 'R' -> img3;
             default -> img1;
         };
         if (img != null) {
-            g2.drawImage(img, x, y, width, height, null);
+            int screenX = x - gp.camera.x;
+            int screenY = y - gp.camera.y;
+
+            g2.drawImage(img, screenX, screenY, width, height, null);
         }
     }
 }

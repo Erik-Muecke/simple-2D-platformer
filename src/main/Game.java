@@ -25,6 +25,7 @@ public class Game {
 
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
+            gamepanel.requestFocusInWindow();
 
             gamepanel.startGameThread();
         });
