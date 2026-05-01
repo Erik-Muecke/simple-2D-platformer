@@ -141,7 +141,12 @@ public class GamePanel extends JPanel implements Runnable {
 
         super.paintComponent(g); //Panel-Hintergrund korrekt neu zeichnen
         Graphics2D g2 = (Graphics2D) g;
-        tileManager.draw(g2); //zeichnet die Spielkacheln mit der draw() Methode im TileManager
+        tileM.draw(g2); //zeichnet die Spielkacheln mit der draw() Methode im TileManager
+        for(int i = 0; i < obj.length; i++) {
+            if(obj[i] != null) {
+                obj[i].draw(g2, this);
+            }
+        }
         player.draw(g2); //zeichnet den Spieler auf dem Panel
     }
 }
