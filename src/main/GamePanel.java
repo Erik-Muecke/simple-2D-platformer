@@ -6,6 +6,7 @@ import entity.Player;
 import system.CollisionSystem;
 import main.Camera;
 import tile.TileManager;
+import object.SuperObject;
 
 public class GamePanel extends JPanel implements Runnable {
     final int originalTileSize = 32; // 16x16 tile
