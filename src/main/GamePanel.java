@@ -43,6 +43,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true); //Screen wird zuerst unsichtbar gezeichnet und dann sichtbar gemacht, um Flackern zu vermeiden
         System.out.println("GamePanel created"); //Bestätigung, nur zum Debuggen, remove in Production
         camera = new Camera(screenWidth, screenHeight, worldWidth, worldHeight);
+        aSetter.setObject();
         player.x = tileM.playerSpawnX;
         player.y = tileM.playerSpawnY;
     }
