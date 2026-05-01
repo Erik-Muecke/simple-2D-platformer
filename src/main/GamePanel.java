@@ -33,6 +33,7 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread; //erstellt den Thread für die Spielschleife zum Bestimmen der FPS
     public CollisionSystem collisionsystem = new CollisionSystem(this);
     public Camera camera;
+    public SuperObject obj[] = new SuperObject[10];
     public Player player = new Player(this, keyHandler); //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
 
     public GamePanel() {
