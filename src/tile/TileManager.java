@@ -107,6 +107,13 @@ public class TileManager {
                     int num = Integer.parseInt(numbers[col]); //Gelesene Zahl wird von String zu Integer konvertiert
 
                     mapTileNum[col][row] = num;
+
+                    if (num == 9) {
+                        playerSpawnX = col * gp.tileSize;
+                        playerSpawnY = row * gp.tileSize;
+                        mapTileNum[col][row] = 0; // replace with earth so it doesn't render as spawn tile
+                    }
+
                     col ++; //nächste Spalte
                 }
                 if(col == GamePanel.MaxScreenCol) {
