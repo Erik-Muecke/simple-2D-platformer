@@ -19,12 +19,13 @@ public class GamePanel extends JPanel implements Runnable {
     //FPS
     int fps = 60; //Frames per second, die Anzahl der Bilder, die pro Sekunde gezeichnet werden sollen
 
-    TileManager tileManager = new TileManager(this);
-
+    public TileManager tileM = new TileManager(this);
     static KeyHandler keyHandler = new KeyHandler();
 
     Thread gameThread; //erstellt den Thread für die Spielschleife zum Bestimmen der FPS
-    Player player = new Player(this, keyHandler); //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
+    public CollisionSystem collisionsystem = new CollisionSystem(this);
+    public Camera camera;
+    public Player player = new Player(this, keyHandler); //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
 
     public GamePanel() {
 
