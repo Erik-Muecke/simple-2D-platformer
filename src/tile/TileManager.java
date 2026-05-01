@@ -56,7 +56,13 @@ public class TileManager {
         while(col < GamePanel.MaxScreenCol && row < GamePanel.MaxScreenRow) {
             int tileNum = mapTileNum[col][row]; //holt die Nummer der Kachel, die an der Position (col, row) gezeichnet werden soll
 
-            g2.drawImage(tile[tileNum].image, x, y, gp.tileSize, gp.tileSize, null); //zeichnet die Kachel an der Position (x, y) mit der Größe von tileSize
+            int x = col * gp.tileSize;
+            int y = row * gp.tileSize;
+
+            int screenX = x - gp.camera.x;
+            int screenY = y - gp.camera.y;
+
+            g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null); //zeichnet die Kachel an der Position (x, y) mit der Größe von tileSize
 
             col++; //erhöht den Spaltenzähler um 1
 
