@@ -3,6 +3,8 @@ package main;
 import javax.swing.*;
 import java.awt.*;
 import entity.Player;
+import system.CollisionSystem;
+import main.Camera;
 import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
