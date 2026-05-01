@@ -75,6 +75,10 @@ public class TileManager {
         }
 
     }
+
+    public int playerSpawnX = 0;
+    public int playerSpawnY = 0;
+
     public void loadMap() {
         //Hier wird die Karte geladen, indem die Nummer der Kachel für jede Position im mapTileNum Array festgelegt wird
         try {
