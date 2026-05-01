@@ -42,6 +42,10 @@ public class TileManager {
         tile[2] = new Tile();
         tile[2].image = loadTileImage("/tiles/earth.png");
 
+        tile[9] = new Tile();
+        tile[9].image = loadTileImage("/tiles/earth.png");
+        tile[9].collision = false;
+
     }catch(Exception e){
     System.out.println("Fehler beim Laden der Kachelbilder: " + e.getMessage());}
     }
