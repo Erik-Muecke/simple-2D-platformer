@@ -130,7 +130,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
 
         player.update(); //aktualisiert die Informationen des Spielers, indem die update() Methode des Player-Objekts aufgerufen wird
-
+        camera.update(player);
     }
 
 
