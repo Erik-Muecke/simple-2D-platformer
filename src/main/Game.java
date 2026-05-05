@@ -2,10 +2,7 @@ package main;
 
 import javax.swing.*;
 
-
-
 public class Game {
-
     public Game() {
         SwingUtilities.invokeLater(() ->{
             GamePanel gamepanel = new GamePanel();
@@ -14,7 +11,7 @@ public class Game {
             frame.setResizable(false);
             frame.setTitle("2D Platformer");
             frame.add(gamepanel);
-            gamepanel.addKeyListener(GamePanel.keyHandler);
+            gamepanel.addKeyListener(gamepanel.keyHandler);
             gamepanel.setFocusable(true);
             gamepanel.requestFocusInWindow();
             frame.pack();
@@ -25,6 +22,7 @@ public class Game {
 
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
+            gamepanel.requestFocusInWindow();
 
             gamepanel.startGameThread();
         });

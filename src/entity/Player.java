@@ -21,20 +21,21 @@ public class Player extends Entity {
     private int gravity = 2;
     private int maxFallSpeed = 12;
     private MovementSystem movementSystem;
+    public int hasKey = 0;
 
 
-    public Player( GamePanel gp, KeyHandler keyH) {
+    public Player(GamePanel gp, KeyHandler keyH) {
         super();
         speed = 4; //Geschwindigkeit des Spielers, wie viele Pixel er sich pro Update bewegen soll
-        width = 32*GamePanel.scale; //Breite des Spielers in Pixeln
-        height = 32*GamePanel.scale; //Höhe des Spielers in Pixeln
+        width = 32 * GamePanel.scale; //Breite des Spielers in Pixeln
+        height = 32 * GamePanel.scale; //Höhe des Spielers in Pixeln
         direction = 'D';
-        x = 100;
-        y = gp.screenHeight - height;
         this.gp = gp;
         this.keyH = keyH;
-        solidArea = new Rectangle(0, 0, 48, 40);
-        this.movementSystem = new MovementSystem(gp.screenWidth, gp.screenHeight, gp.tileSize, gp.collisionsystem);
+        solidArea = new Rectangle(4, 4, 40, 40);
+        solidAreaDefaultX = solidArea.x;
+        solidAreaDefaultY = solidArea.y;
+        this.movementSystem = new MovementSystem(gp.worldWidth, gp.worldHeight, gp.tileSize, gp.collisionsystem);
         loadPlayerImage();
     }
 
@@ -73,12 +74,38 @@ public class Player extends Entity {
 
         // Handle jump
         if (keyH.jumpPressed && onGround) {
-            velocityY = -20;
+            velocityY = -jumpStrength;
             onGround = false;
         }
 
+        int objectIndex = gp.collisionsystem.collisionObject(this, true);
+        pickUpObject(objectIndex);
+
         // Delegate all physics + collision to MovementSystem
         movementSystem.updatePlayer(this);
+    }
+
+    public void pickUpObject(int i) {
+        if (i != 999) {
+            String objectName = gp.obj[i].name;
+            switch (objectName) {
+                case "Key":
+                    hasKey++;
+                    System.out.println("You got a key! Total: " + hasKey);
+                    gp.obj[i] = null;
+                    break;
+
+                case "Door":
+                    if (hasKey > 0) {
+                        System.out.println("You opened the door!");
+                        hasKey--;
+                        gp.obj[i] = null; // door disappears
+                    } else {
+                        System.out.println("You need a key!");
+                    }
+                    break;
+            }
+        }
     }
 
     @Override
@@ -86,13 +113,16 @@ public class Player extends Entity {
 
         BufferedImage img = switch (direction) { //Wechselt das Bild des Spielers je nach Richtung, in die er schaut
             case 'U' -> img1;
-            case 'D' -> img1;
+            case 'D' -> img4;
             case 'L' -> img2;
             case 'R' -> img3;
             default -> img1;
         };
         if (img != null) {
-            g2.drawImage(img, x, y, width, height, null);
+            int screenX = x - gp.camera.x;
+            int screenY = y - gp.camera.y;
+
+            g2.drawImage(img, screenX, screenY, width, height, null);
         }
     }
 }
