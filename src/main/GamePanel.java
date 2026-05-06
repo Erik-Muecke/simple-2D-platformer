@@ -23,18 +23,26 @@ public class GamePanel extends JPanel implements Runnable {
     public int MaxWorldRow = 16; //Höhe der Welts in Tiles
     public int worldWidth = tileSize * MaxWorldCol;
     public int worldHeight = tileSize * MaxWorldRow;
-    
+
     //FPS
     int fps = 60; //Frames per second, die Anzahl der Bilder, die pro Sekunde gezeichnet werden sollen
 
     public TileManager tileM = new TileManager(this);
-    static KeyHandler keyHandler = new KeyHandler();
+    public KeyHandler keyHandler;
 
     Thread gameThread; //erstellt den Thread für die Spielschleife zum Bestimmen der FPS
     public CollisionSystem collisionsystem = new CollisionSystem(this);
     public Camera camera;
     public SuperObject obj[] = new SuperObject[10];
-    public Player player = new Player(this, keyHandler); //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
+    AssetSetter aSetter = new AssetSetter(this);
+    public Player player; //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
+
+    // Game States
+    public UI ui;
+    public int gameState;
+    public final int playState = 1;
+    public final int pauseState = 2;
+    public final int titleState = 0;
 
     public GamePanel() {
 
@@ -43,9 +51,13 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true); //Screen wird zuerst unsichtbar gezeichnet und dann sichtbar gemacht, um Flackern zu vermeiden
         System.out.println("GamePanel created"); //Bestätigung, nur zum Debuggen, remove in Production
         camera = new Camera(screenWidth, screenHeight, worldWidth, worldHeight);
+        keyHandler = new KeyHandler(this);
+        player = new Player(this, keyHandler);
         aSetter.setObject();
         player.x = tileM.playerSpawnX;
         player.y = tileM.playerSpawnY;
+        gameState = titleState;
+        ui = new UI(this);
     }
 
     public void startGameThread() {
@@ -131,9 +143,13 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-
-        player.update(); //aktualisiert die Informationen des Spielers, indem die update() Methode des Player-Objekts aufgerufen wird
-        camera.update(player);
+        if(gameState == playState) {
+            player.update();
+            camera.update(player);
+        }
+        if(gameState == pauseState) {
+            // do nothing (game is frozen)
+        } //aktualisiert die Informationen des Spielers, indem die update() Methode des Player-Objekts aufgerufen wird
     }
 
 
@@ -142,12 +158,19 @@ public class GamePanel extends JPanel implements Runnable {
 
         super.paintComponent(g); //Panel-Hintergrund korrekt neu zeichnen
         Graphics2D g2 = (Graphics2D) g;
-        tileM.draw(g2); //zeichnet die Spielkacheln mit der draw() Methode im TileManager
-        for(int i = 0; i < obj.length; i++) {
-            if(obj[i] != null) {
-                obj[i].draw(g2, this);
+        if (gameState == titleState) {
+            ui.draw(g2);
+        } else {
+            tileM.draw(g2);//zeichnet die Spielkacheln mit der draw() Methode im TileManager
+            for (int i = 0; i < obj.length; i++) {
+                if (obj[i] != null) {
+                    obj[i].draw(g2, this);
+                }
             }
+            player.draw(g2);
+            ui.draw(g2);  // always last so pause screen renders on top
         }
-        player.draw(g2); //zeichnet den Spieler auf dem Panel
+        g2.dispose();
+
     }
 }
