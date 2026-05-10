@@ -11,13 +11,13 @@ public class TileManager {
 
     GamePanel gp;
     public Tile[] tile; //Array um die verschiedenen Kacheln zu speichern
-    public int mapTileNum[][]; //2D Array um die Nummer der Kachel zu speichern, die an jeder Position gezeichnet werden soll
+    public int[][] mapTileNum; //2D Array um die Nummer der Kachel zu speichern, die an jeder Position gezeichnet werden soll
 
     public TileManager(GamePanel gp) {
 
         this.gp = gp;
 
-        tile = new Tile[10]; //konstruiert 10 Tile Objekte im Tile Array
+        tile = new Tile[20]; //konstruiert 10 Tile Objekte im Tile Array
 
         mapTileNum = new int[gp.MaxWorldCol][gp.MaxWorldRow];
 
@@ -31,7 +31,7 @@ public class TileManager {
     try {
 
         tile[0] = new Tile();  //erstellt ein neues Tile Objekt an der Stelle 0 im Array
-        tile[0].image = loadTileImage("/tiles/grass.png");  //laedt das Bild aus dem res Ordner
+        tile[0].image = loadTileImage("/tiles/transparent.png");  //laedt das Bild aus dem res Ordner
 
         tile[1] = new Tile();
         tile[1].image = loadTileImage("/tiles/wall.png");
@@ -40,9 +40,15 @@ public class TileManager {
         tile[2] = new Tile();
         tile[2].image = loadTileImage("/tiles/earth.png");
 
+        tile[3] = new Tile();
+        tile[3].image = loadTileImage("/tiles/transparent.png");
+
         tile[9] = new Tile();
         tile[9].image = loadTileImage("/tiles/earth.png");
         tile[9].collision = false;
+
+        tile[10] = new Tile();
+        tile[10].image = loadTileImage("/tiles/sand.png");
 
     }catch(Exception e){
     System.out.println("Fehler beim Laden der Kachelbilder: " + e.getMessage());}
