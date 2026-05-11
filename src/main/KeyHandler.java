@@ -2,11 +2,16 @@ package main;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import main.GamePanel;
 
 public class KeyHandler implements KeyListener {
 
+    GamePanel gp;
     public boolean upPressed, downPressed, leftPressed, rightPressed, jumpPressed; //Booleans um den Status der gedrückten Tasten zu verfolgen
 
+    public KeyHandler(GamePanel gp) {
+        this.gp = gp;
+    }
 
     @Override
     public void keyTyped(java.awt.event.KeyEvent e) {
@@ -19,24 +24,33 @@ public class KeyHandler implements KeyListener {
         int key = e.getKeyCode(); //Gibt den Code der gedrückten Taste zurück
 
         //Wenn die Taste gedrückt wird, wird der zugehörige boolean auf true gesetzt, somit ist die Taste gerade im Betrieb
-        if (key == KeyEvent.VK_W) {
-            upPressed = true;
+        if (gp.gameState == gp.titleState) {
+
+            if (key == KeyEvent.VK_ENTER) {
+                gp.gameState = gp.playState;
+            }
         }
 
-        if (key == KeyEvent.VK_S) {
-            downPressed = true;
+        // PLAY STATE
+        else if (gp.gameState == gp.playState) {
+
+            if (key == KeyEvent.VK_W) upPressed = true;
+            if (key == KeyEvent.VK_S) downPressed = true;
+            if (key == KeyEvent.VK_A) leftPressed = true;
+            if (key == KeyEvent.VK_D) rightPressed = true;
+            if (key == KeyEvent.VK_SPACE) jumpPressed = true;
+
+            if (key == KeyEvent.VK_P) {
+                gp.gameState = gp.pauseState;
+            }
         }
 
-        if (key == KeyEvent.VK_A) {
-            leftPressed = true;
-        }
+        // PAUSE STATE
+        else if (gp.gameState == gp.pauseState) {
 
-        if (key == KeyEvent.VK_D) {
-            rightPressed = true;
-        }
-
-        if (key == KeyEvent.VK_SPACE) {
-            jumpPressed = true;
+            if (key == KeyEvent.VK_P) {
+                gp.gameState = gp.playState;
+            }
         }
     }
 
