@@ -9,10 +9,10 @@ import tile.TileManager;
 import object.SuperObject;
 
 public class GamePanel extends JPanel implements Runnable {
-    final int originalTileSize = 32; // 16x16 tile
+    final int originalTileSize = 32; // 32x32 tile
     public static final int scale = 2; //resolution of the tiles will be 3 times bigger than the original tile size
 
-    public final int tileSize = originalTileSize * scale; // 48x48 tile Berechnung der endgültigen Tilegröße
+    public final int tileSize = originalTileSize * scale; // 64x64 tile Berechnung der endgültigen Tilegröße
     public final static int MaxScreenCol = 16; //Breite des Bildschirms in Tiles
     public final static int MaxScreenRow = 12; //Höhe des Bildschirms in Tiles
     final public int screenWidth = tileSize * MaxScreenCol; // 768 pixels
@@ -29,6 +29,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     public TileManager tileM = new TileManager(this);
     public KeyHandler keyHandler;
+
+    public BackgroundManager bg = new BackgroundManager(this);
 
     Thread gameThread; //erstellt den Thread für die Spielschleife zum Bestimmen der FPS
     public CollisionSystem collisionsystem = new CollisionSystem(this);
@@ -161,6 +163,7 @@ public class GamePanel extends JPanel implements Runnable {
         if (gameState == titleState) {
             ui.draw(g2);
         } else {
+            bg.draw(g2);
             tileM.draw(g2);//zeichnet die Spielkacheln mit der draw() Methode im TileManager
             for (int i = 0; i < obj.length; i++) {
                 if (obj[i] != null) {
@@ -168,7 +171,9 @@ public class GamePanel extends JPanel implements Runnable {
                 }
             }
             player.draw(g2);
-            ui.draw(g2);  // always last so pause screen renders on top
+            ui.draw(g2);
+
+            // always last so pause screen renders on top
         }
         g2.dispose();
 
