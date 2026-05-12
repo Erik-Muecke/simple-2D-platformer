@@ -6,15 +6,15 @@ import java.awt.image.BufferedImage;
 
 import main.GamePanel;
 
-public class SuperObject {
+public class SuperObject {//creating a superclass for all objects
 
     public BufferedImage image;
     public String name;
     public boolean collision = false;
     public int x, y;
     public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
-    public int solidAreaDefaultX = 0;
-    public int solidAreaDefaultY = 0;
+//    public int solidAreaDefaultX = 0;
+//    public int solidAreaDefaultY = 0;
 
     public void draw(Graphics2D g2, GamePanel gp) {
         int screenX = x - gp.camera.x;

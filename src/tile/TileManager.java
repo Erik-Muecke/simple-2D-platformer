@@ -40,6 +40,9 @@ public class TileManager {
         tile[2] = new Tile();
         tile[2].image = loadTileImage("/tiles/earth.png");
 
+        tile[3] = new Tile();
+        tile[3].image = loadTileImage("/tiles/water.png");
+
         tile[9] = new Tile();
         tile[9].image = loadTileImage("/tiles/earth.png");
         tile[9].collision = false;
@@ -60,7 +63,7 @@ public class TileManager {
             int y = row * gp.tileSize;
 
             int screenX = x - gp.camera.x;
-            int screenY = y - gp.camera.y;
+            int screenY = y - gp.camera.y;//getting Screen X and Y
 
             g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null); //zeichnet die Kachel an der Position (x, y) mit der Größe von tileSize
 

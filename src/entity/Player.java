@@ -23,6 +23,11 @@ public class Player extends Entity {
     private MovementSystem movementSystem;
     public int hasKey = 0;
 
+    public int maxLife;
+    public int life;
+    public boolean invincible = false;
+    public int invincibleCounter = 0;
+
 
     public Player(GamePanel gp, KeyHandler keyH) {
         super();
@@ -34,7 +39,9 @@ public class Player extends Entity {
         this.keyH = keyH;
         solidArea = new Rectangle(4, 4, 40, 40);
         solidAreaDefaultX = solidArea.x;
-        solidAreaDefaultY = solidArea.y;
+        solidAreaDefaultY = solidArea.y;//declaring the solid parts of the player
+        maxLife = 6;
+        life = maxLife;
         this.movementSystem = new MovementSystem(gp.worldWidth, gp.worldHeight, gp.tileSize, gp.collisionsystem);
         loadPlayerImage();
     }
@@ -49,7 +56,7 @@ public class Player extends Entity {
             img6 = loadImage("/player/kartoni6.png");
         } catch (IOException e) {
             System.err.println("Fehler beim Laden der Player-Sprites: " + e.getMessage());
-        }
+        }//laden der verschiedenen Player Bilder
     }
 
     private BufferedImage loadImage(String path) throws IOException {
@@ -76,6 +83,15 @@ public class Player extends Entity {
         if (keyH.jumpPressed && onGround) {
             velocityY = -jumpStrength;
             onGround = false;
+        }
+
+        if (invincible == true) {
+            invincibleCounter++;
+
+            if (invincibleCounter > 60) {
+                invincible = false;
+                invincibleCounter = 0;
+            }
         }
 
         int objectIndex = gp.collisionsystem.collisionObject(this, true);
@@ -105,11 +121,23 @@ public class Player extends Entity {
                     }
                     break;
             }
+        }//function, which is enabling the collision and interaction with the different objects
+    }
+
+    public void damagePlayer() {
+
+        if (invincible == false) {
+            life -= 1;
+            invincible = true;
         }
     }
 
     @Override
     public void draw(Graphics2D g2) {
+
+        if (invincible == true) {
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
+        }
 
         BufferedImage img = switch (direction) { //Wechselt das Bild des Spielers je nach Richtung, in die er schaut
             case 'U' -> img1;
@@ -123,6 +151,8 @@ public class Player extends Entity {
             int screenY = y - gp.camera.y;
 
             g2.drawImage(img, screenX, screenY, width, height, null);
-        }
+        }//using the camera for the player
+
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
 }

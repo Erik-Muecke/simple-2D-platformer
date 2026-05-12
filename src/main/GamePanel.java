@@ -44,6 +44,8 @@ public class GamePanel extends JPanel implements Runnable {
     public final int pauseState = 2;
     public final int titleState = 0;
 
+    public EventHandler eHandler;
+
     public GamePanel() {
 
         this.setPreferredSize(new Dimension(screenWidth, screenHeight)); // Set the size of the panel to the calculated screen width and height
@@ -56,6 +58,7 @@ public class GamePanel extends JPanel implements Runnable {
         aSetter.setObject();
         player.x = tileM.playerSpawnX;
         player.y = tileM.playerSpawnY;
+        eHandler = new EventHandler(this);
         gameState = titleState;
         ui = new UI(this);
     }
@@ -146,10 +149,11 @@ public class GamePanel extends JPanel implements Runnable {
         if(gameState == playState) {
             player.update();
             camera.update(player);
-        }
-        if(gameState == pauseState) {
-            // do nothing (game is frozen)
+            eHandler.checkEvent();
         } //aktualisiert die Informationen des Spielers, indem die update() Methode des Player-Objekts aufgerufen wird
+        if(gameState == pauseState) {
+          // do nothing (game is frozen)
+        }
     }
 
 
@@ -159,7 +163,7 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g); //Panel-Hintergrund korrekt neu zeichnen
         Graphics2D g2 = (Graphics2D) g;
         if (gameState == titleState) {
-            ui.draw(g2);
+            ui.draw(g2);//draw the tite screen
         } else {
             tileM.draw(g2);//zeichnet die Spielkacheln mit der draw() Methode im TileManager
             for (int i = 0; i < obj.length; i++) {
@@ -171,6 +175,5 @@ public class GamePanel extends JPanel implements Runnable {
             ui.draw(g2);  // always last so pause screen renders on top
         }
         g2.dispose();
-
     }
 }
