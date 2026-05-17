@@ -50,6 +50,8 @@ public class TileManager {
         tile[10] = new Tile();
         tile[10].image = loadTileImage("/tiles/sand.png");
 
+
+
     }catch(Exception e){
     System.out.println("Fehler beim Laden der Kachelbilder: " + e.getMessage());}
     }
@@ -86,16 +88,32 @@ public class TileManager {
         }
     }
 
+    public void update() {
+            if (gp.previousmapIndicator != gp.mapIndicator) {
+                gp.player.x = 2 * gp.tileSize;
+                gp.player.y = 8 * gp.tileSize;
+                loadMap();
+                switch (gp.mapIndicator) {
+                    case 0:
+                        //TODO: hier die jeweiligen platzierungen der objekte, Gegener, Backgrounds für die Karte festlegen.
+                        //Startpositionen ebenso
+                        break;
+                }
+                gp.previousmapIndicator = gp.mapIndicator;
+            }
+
+    }
+
     public int playerSpawnX = 0;
     public int playerSpawnY = 0;
 
     public void loadMap() {
         //Hier wird die Karte geladen, indem die Nummer der Kachel für jede Position im mapTileNum Array festgelegt wird
         try {
-            InputStream is = getClass().getResourceAsStream("/tiles/tilemap.txt"); //öffnet die Textdatei
+            InputStream is = getClass().getResourceAsStream("/tiles/tilemap"+ gp.mapIndicator + ".txt"); //öffnet die Textdatei
 
             if (is == null) {
-                throw new Exception("Ressource nicht gefunden: /tiles/tilemap.txt"); //erstellt neue Exception, wenn der wert null ist
+                throw new Exception("Ressource nicht gefunden: /tiles/tilemap" + gp.mapIndicator + ".txt"); //erstellt neue Exception, wenn der wert null ist
             }
 
             BufferedReader br = new BufferedReader(new InputStreamReader(is)); //lädt die Textdatei in einen Buffered reader um sie zu benutzen
