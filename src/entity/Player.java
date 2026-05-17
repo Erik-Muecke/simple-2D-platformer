@@ -129,13 +129,13 @@ public class Player extends Entity {
         }
 
         int objectIndex = gp.collisionsystem.collisionObject(this, true);
-        pickUpObject(objectIndex);
+        InteractObject(objectIndex);
 
         // Delegate all physics + collision to MovementSystem
         movementSystem.updatePlayer(this);
     }
 
-    public void pickUpObject(int i) {
+    public void InteractObject(int i) {
         if (i != 999) {
             String objectName = gp.obj[i].name;
             switch (objectName) {

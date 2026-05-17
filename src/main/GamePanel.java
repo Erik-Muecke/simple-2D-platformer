@@ -19,6 +19,7 @@ public class GamePanel extends JPanel implements Runnable {
     final public int screenWidth = tileSize * MaxScreenCol; // 768 pixels
     final public int screenHeight = tileSize * MaxScreenRow; // 576 pixels
 
+
     public int MaxWorldCol = 32; //Breite der Welt in Tiles
     public int MaxWorldRow = 16; //Höhe der Welts in Tiles
     public int worldWidth = tileSize * MaxWorldCol;
@@ -29,6 +30,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     public TileManager tileM = new TileManager(this);
     public KeyHandler keyHandler;
+
+    public BackgroundManager bg = new BackgroundManager(this);
 
     Thread gameThread; //erstellt den Thread für die Spielschleife zum Bestimmen der FPS
     public CollisionSystem collisionsystem = new CollisionSystem(this);
@@ -79,6 +82,38 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     @Override //Die run() Methode enthält die Hauptspielschleife, die kontinuierlich ausgeführt wird, solange der gameThread nicht null ist
+//    public void run() {
+//
+//        double Zeitintervall = (double) 1000000000 /fps; //Zeitintervall in Nanosekundnen, welches zwischen den Frames liegt.
+//        double naechsteUpdateZeit = System.nanoTime() + Zeitintervall; //Zeitpunkt , an dem der GameLoop wweitergeht
+//        while(gameThread != null) {
+//
+//            long currentTime = System.nanoTime(); //gibt die Zeit der aktuellen Ausführung der JVM in Nanosekunden zurück.
+//            System.out.println("Current Time:" + currentTime);
+//
+//            //UPDATE Informationen werden aktualisiert: z.B. Positionen der Spielobjekte, Kollisionen, etc.
+//            update();
+//            //REPAINT Informationen werden gezeichnet: z.B. die Grafiken der Spielobjekte, Hintergrund, etc.
+//            repaint();
+//
+//
+//            try {
+//                double uebrigeZeit = naechsteUpdateZeit - System.nanoTime(); //berechnet die verbleibende Zeit bis zum nächsten Update, indem die aktuelle Zeit von der geplanten nächsten Update-Zeit abgezogen wird
+//                // Es wird also die Zeit zwischen dem anfang der Schleife und dem Abschluss derSchleife berechnet, damit die übrige Zeit, in der nichts
+//                // passieren soll ermittelt werden kann
+//                uebrigeZeit = uebrigeZeit / 1000000; //Umwandlung von Nanosekunden in Millisekunden, da die sleep() Methode Millisekunden erwartet
+//                Thread.sleep((long) uebrigeZeit);
+//                if (uebrigeZeit < 0) {
+//                    uebrigeZeit = 0; //Wenn die verbleibende Zeit negativ ist, wird sie auf 0 gesetzt, da der Thread bei negativen werten eine Exception ausgibt.
+//                }
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            durchlauf = durchlauf + 1;
+//            naechsteUpdateZeit += Zeitintervall; //Zeitintervall wird zur Zielzeit addiert, umd die nächste Zeit zum Updaten zu berechnen
+//        }
+//
+//    }
     public void run() {
 
         double Zeitintervall = (double) 1000000000 /fps;
@@ -123,6 +158,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         if(gameState == playState) {
+            tileM.update();
             player.update();
             camera.update(player);
             eHandler.checkEvent();
@@ -141,8 +177,8 @@ public class GamePanel extends JPanel implements Runnable {
             }
         } //aktualisiert die Informationen des Spielers, indem die update() Methode des Player-Objekts aufgerufen wird
         if(gameState == pauseState) {
-          // do nothing (game is frozen)
-        }
+            // do nothing (game is frozen)
+        } //aktualisiert die Informationen des Spielers, indem die update() Methode des Player-Objekts aufgerufen wird
     }
 
 
@@ -158,8 +194,9 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g); //Panel-Hintergrund korrekt neu zeichnen
         Graphics2D g2 = (Graphics2D) g;
         if (gameState == titleState) {
-            ui.draw(g2);//draw the tite screen
+            ui.draw(g2);
         } else {
+            bg.draw(g2);
             tileM.draw(g2);//zeichnet die Spielkacheln mit der draw() Methode im TileManager
             for (int i = 0; i < obj.length; i++) {
                 if (obj[i] != null) {
@@ -172,6 +209,7 @@ public class GamePanel extends JPanel implements Runnable {
                 }
             }
             player.draw(g2);
+            ui.draw(g2);
 
             if (showCollisionDebug) {
                 collisionsystem.drawDebugBoxes(g2, player);
@@ -183,5 +221,6 @@ public class GamePanel extends JPanel implements Runnable {
             ui.draw(g2);  // always last so pause screen renders on top
         }
         g2.dispose();
+
     }
 }
