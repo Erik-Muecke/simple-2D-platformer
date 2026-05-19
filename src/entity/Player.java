@@ -99,7 +99,6 @@ public class Player extends Entity {
 
         if (invincible == true) {
             invincibleCounter++;
-
             if (invincibleCounter > 60) {
                 invincible = false;
                 invincibleCounter = 0;
