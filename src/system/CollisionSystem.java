@@ -69,19 +69,42 @@ public class CollisionSystem {
         }
     }
 
-    public void collidesWithEntity(Entity a, Entity b) {
-        if (a == b) return;
+//    public void collidesWithEntity(Entity a, Entity b) {
+//        if (a == b) return;
+//
+//        int[] boxA = getProjectedAABB(a);
+//        int bLeft   = b.x + b.solidArea.x;
+//        int bRight  = bLeft + b.solidArea.width;
+//        int bTop    = b.y  + b.solidArea.y;
+//        int bBottom = bTop + b.solidArea.height;
+//
+//        if (overlaps(boxA[0], boxA[1], boxA[2], boxA[3],
+//                bLeft,   bRight,  bTop,    bBottom)) {
+//            a.collisionOn = true;
+//        }
+//    }
 
-        int[] boxA = getProjectedAABB(a);
-        int bLeft   = b.x + b.solidArea.x;
-        int bRight  = bLeft + b.solidArea.width;
-        int bTop    = b.y  + b.solidArea.y;
-        int bBottom = bTop + b.solidArea.height;
+    public boolean collidesWithPlayer(Entity entity) {
+        int entityLeft = entity.x + entity.solidArea.x;
+        int entityRight = entityLeft + entity.solidArea.width;
+        int entityTop = entity.y + entity.solidArea.y;
+        int entityBottom = entityTop + entity.solidArea.height;
 
-        if (overlaps(boxA[0], boxA[1], boxA[2], boxA[3],
-                bLeft,   bRight,  bTop,    bBottom)) {
-            a.collisionOn = true;
+        int playerLeft = gp.player.x + gp.player.solidArea.x;
+        int playerRight = playerLeft + gp.player.solidArea.width;
+        int playerTop = gp.player.y + gp.player.solidArea.y;
+        int playerBottom = playerTop + gp.player.solidArea.height;
+
+        boolean contactPlayer = overlaps(
+                entityLeft, entityRight, entityTop, entityBottom,
+                playerLeft, playerRight, playerTop, playerBottom
+        );
+
+        if (contactPlayer) {
+            entity.collisionOn = true;
         }
+
+        return contactPlayer;
     }
 
     public void collidesWithObject(Entity entity) {

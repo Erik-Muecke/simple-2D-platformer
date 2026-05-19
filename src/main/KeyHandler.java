@@ -8,6 +8,7 @@ public class KeyHandler implements KeyListener {
 
     GamePanel gp;
     public boolean upPressed, downPressed, leftPressed, rightPressed, jumpPressed, enterPressed; //Booleans um den Status der gedrückten Tasten zu verfolgen
+    public boolean shotKeyPressed;
     public int commandNum = 0;
 
     public KeyHandler(GamePanel gp) {
@@ -74,6 +75,9 @@ public class KeyHandler implements KeyListener {
             if (key == KeyEvent.VK_ENTER){
                 enterPressed = true;
             }
+            if (key == KeyEvent.VK_F){
+                shotKeyPressed = true;
+            }
 
             if (key == KeyEvent.VK_P) {
                 gp.gameState = gp.pauseState;
@@ -114,6 +118,9 @@ public class KeyHandler implements KeyListener {
         }
         if(key == KeyEvent.VK_ENTER) {
             enterPressed = false;
+        }
+        if(key == KeyEvent.VK_F) {
+            shotKeyPressed = false;
         }
     }
 }

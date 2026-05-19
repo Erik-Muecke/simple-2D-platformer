@@ -3,6 +3,7 @@ package main;
 import object.OBJ_Key;
 import object.OBJ_Door;
 import object.OBJ_Chest;
+import monster.GreenSlime;
 
 public class AssetSetter {
 
@@ -30,4 +31,15 @@ public class AssetSetter {
         gp.obj[3].x = 20 * gp.tileSize;
         gp.obj[3].y = 10 * gp.tileSize;
     }//just actually placing all the objects
+
+    public void setMonster() {
+
+        gp.monster[0] = new GreenSlime(gp);
+        gp.monster[0].x = gp.tileSize * 7;
+        gp.monster[0].y = gp.tileSize * 10;
+
+        gp.monster[1] = new GreenSlime(gp);
+        gp.monster[1].x = gp.tileSize * 8;
+        gp.monster[1].y = gp.tileSize * 3;
+    }
 }

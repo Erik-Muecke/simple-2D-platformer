@@ -2,6 +2,7 @@ package main;
 
 import javax.swing.*;
 import java.awt.*;
+import entity.Entity;
 import entity.Player;
 import system.CollisionSystem;
 import main.Camera;
@@ -35,6 +36,7 @@ public class GamePanel extends JPanel implements Runnable {
     public Camera camera;
     public SuperObject obj[] = new SuperObject[10];
     AssetSetter aSetter = new AssetSetter(this);
+    public Entity monster[] = new Entity[20];
     public Player player; //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
 
     // Game States
@@ -56,6 +58,7 @@ public class GamePanel extends JPanel implements Runnable {
         keyHandler = new KeyHandler(this);
         player = new Player(this, keyHandler);
         aSetter.setObject();
+        aSetter.setMonster();
         player.x = tileM.playerSpawnX;
         player.y = tileM.playerSpawnY;
         eHandler = new EventHandler(this);
@@ -150,6 +153,19 @@ public class GamePanel extends JPanel implements Runnable {
             player.update();
             camera.update(player);
             eHandler.checkEvent();
+            if(player.projectile.alive) {
+                player.projectile.update();
+                player.checkProjectileMonsterHit();
+            }
+            for(int i = 0; i < monster.length; i++) {
+                if(monster[i] != null) {
+                    if(monster[i].isDead) {
+                        monster[i] = null;
+                    } else {
+                        monster[i].update();
+                    }
+                }
+            }
         } //aktualisiert die Informationen des Spielers, indem die update() Methode des Player-Objekts aufgerufen wird
         if(gameState == pauseState) {
           // do nothing (game is frozen)
@@ -171,7 +187,15 @@ public class GamePanel extends JPanel implements Runnable {
                     obj[i].draw(g2, this);
                 }
             }
+            for(int i = 0; i < monster.length; i++) {
+                if(monster[i] != null) {
+                    monster[i].draw(g2);
+                }
+            }
             player.draw(g2);
+            if(player.projectile != null) {
+                player.projectile.draw(g2);
+            }
             ui.draw(g2);  // always last so pause screen renders on top
         }
         g2.dispose();

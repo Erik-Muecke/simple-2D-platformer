@@ -24,8 +24,8 @@ public class EventHandler {
 
     public void checkEvent() {
         boolean damage = hit(9, 11);
-        boolean healing = hit(4, 10);
-        boolean teleport = hit(12, 11);
+        boolean healing = isHealingPoolHit();
+        boolean teleport = hit(12, 10);
 
         if (healing) {
             healingPool();
@@ -73,6 +73,10 @@ public class EventHandler {
         eventRect.y = eventRectDefaultY;
 
         return result;
+    }
+
+    public boolean isHealingPoolHit() {
+        return hit(4, 10);
     }
 
     public void healingPool() {
