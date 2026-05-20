@@ -1,10 +1,13 @@
 package main;
 
+import object.OBJ_Flag;
 import object.OBJ_Key;
 import object.OBJ_Door;
 import object.OBJ_Chest;
 import object.OBJ_Flag;
 import monster.GreenSlime;
+
+import java.util.Arrays;
 
 public class AssetSetter {
 
@@ -14,7 +17,7 @@ public class AssetSetter {
         this.gp = gp;
     }
 
-    public void setObject() {
+    public void setObjectScene0() {
 
         gp.obj[0] = new OBJ_Key();
         gp.obj[0].x = 10 * gp.tileSize;
@@ -46,5 +49,55 @@ public class AssetSetter {
         gp.monster[1] = new GreenSlime(gp);
         gp.monster[1].x = gp.tileSize * 8;
         gp.monster[1].y = gp.tileSize * 3;
+    }
+
+    public void setObjectScene1() {
+        gp.obj[4] = new OBJ_Flag();
+        gp.obj[4].x = 25 * gp.tileSize;
+        gp.obj[4].y = 10 * gp.tileSize;
+    }
+
+    public void setObjectScene2() {
+        gp.obj[4] = new OBJ_Flag();
+        gp.obj[4].x = 25 * gp.tileSize;
+        gp.obj[4].y = 10 * gp.tileSize;
+    }
+
+    public void setObjectScene3() {
+        gp.obj[4] = new OBJ_Flag();
+        gp.obj[4].x = 25 * gp.tileSize;
+        gp.obj[4].y = 10 * gp.tileSize;
+    }
+
+    public void setObjectScene4() {
+        gp.obj[4] = new OBJ_Flag();
+        gp.obj[4].x = 25 * gp.tileSize;
+        gp.obj[4].y = 10 * gp.tileSize;
+    }
+
+    public void setObjectScene5() {
+        gp.obj[4] = new OBJ_Flag();
+        gp.obj[4].x = 25 * gp.tileSize;
+        gp.obj[4].y = 10 * gp.tileSize;
+    }
+
+
+    public void updateObject() {
+        Arrays.fill(gp.obj, null);
+        switch(gp.mapIndicator){
+            case 0:
+                setObjectScene0();
+                break;
+            case 1:
+                setObjectScene1();
+                break;
+            case 2:
+                setObjectScene2();
+                break;
+            case 3:
+                setObjectScene3();
+                break;
+
+        }
     }
 }

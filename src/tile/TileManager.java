@@ -93,10 +93,15 @@ public class TileManager {
                 gp.player.x = 2 * gp.tileSize;
                 gp.player.y = 8 * gp.tileSize;
                 loadMap();
+                gp.aSetter.updateObject();
                 switch (gp.mapIndicator) {
                     case 0:
-                        //TODO: hier die jeweiligen platzierungen der objekte, Gegener, Backgrounds für die Karte festlegen.
+                        //TODO: hier die jeweiligen platzierungen der objekte, Gegner, Backgrounds für die Karte festlegen.
                         //Startpositionen ebenso
+                        break;
+                    case 1:
+                        break;
+                    case 2:
                         break;
                 }
                 gp.previousmapIndicator = gp.mapIndicator;

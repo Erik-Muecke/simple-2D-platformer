@@ -39,6 +39,8 @@ public class GamePanel extends JPanel implements Runnable {
     public SuperObject obj[] = new SuperObject[10];
     AssetSetter aSetter = new AssetSetter(this);
     public Entity monster[] = new Entity[20];
+    public SuperObject[] obj = new SuperObject[10];
+    public AssetSetter aSetter = new AssetSetter(this);
     public Player player; //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
 
     // Game States
@@ -54,7 +56,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     //Map indicator which map to load
     public int mapIndicator = 0;
-    public int previousmapIndicator = -1;
+    public int previousmapIndicator = 0;
 
     public GamePanel() {
 
@@ -82,38 +84,6 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     @Override //Die run() Methode enthält die Hauptspielschleife, die kontinuierlich ausgeführt wird, solange der gameThread nicht null ist
-//    public void run() {
-//
-//        double Zeitintervall = (double) 1000000000 /fps; //Zeitintervall in Nanosekundnen, welches zwischen den Frames liegt.
-//        double naechsteUpdateZeit = System.nanoTime() + Zeitintervall; //Zeitpunkt , an dem der GameLoop wweitergeht
-//        while(gameThread != null) {
-//
-//            long currentTime = System.nanoTime(); //gibt die Zeit der aktuellen Ausführung der JVM in Nanosekunden zurück.
-//            System.out.println("Current Time:" + currentTime);
-//
-//            //UPDATE Informationen werden aktualisiert: z.B. Positionen der Spielobjekte, Kollisionen, etc.
-//            update();
-//            //REPAINT Informationen werden gezeichnet: z.B. die Grafiken der Spielobjekte, Hintergrund, etc.
-//            repaint();
-//
-//
-//            try {
-//                double uebrigeZeit = naechsteUpdateZeit - System.nanoTime(); //berechnet die verbleibende Zeit bis zum nächsten Update, indem die aktuelle Zeit von der geplanten nächsten Update-Zeit abgezogen wird
-//                // Es wird also die Zeit zwischen dem anfang der Schleife und dem Abschluss derSchleife berechnet, damit die übrige Zeit, in der nichts
-//                // passieren soll ermittelt werden kann
-//                uebrigeZeit = uebrigeZeit / 1000000; //Umwandlung von Nanosekunden in Millisekunden, da die sleep() Methode Millisekunden erwartet
-//                Thread.sleep((long) uebrigeZeit);
-//                if (uebrigeZeit < 0) {
-//                    uebrigeZeit = 0; //Wenn die verbleibende Zeit negativ ist, wird sie auf 0 gesetzt, da der Thread bei negativen werten eine Exception ausgibt.
-//                }
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            durchlauf = durchlauf + 1;
-//            naechsteUpdateZeit += Zeitintervall; //Zeitintervall wird zur Zielzeit addiert, umd die nächste Zeit zum Updaten zu berechnen
-//        }
-//
-//    }
     public void run() {
 
         double Zeitintervall = (double) 1000000000 /fps;
@@ -180,12 +150,6 @@ public class GamePanel extends JPanel implements Runnable {
             // do nothing (game is frozen)
         } //aktualisiert die Informationen des Spielers, indem die update() Methode des Player-Objekts aufgerufen wird
     }
-
-
-
-
-
-
 
 
     @Override //Die paintComponent() Methode wird ueberschrieben, um die Grafiken des Spiels zu zeichnen.
