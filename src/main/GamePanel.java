@@ -18,7 +18,6 @@ public class GamePanel extends JPanel implements Runnable {
     final public int screenWidth = tileSize * MaxScreenCol; // 768 pixels
     final public int screenHeight = tileSize * MaxScreenRow; // 576 pixels
 
-
     public int MaxWorldCol = 32; //Breite der Welt in Tiles
     public int MaxWorldRow = 16; //Höhe der Welts in Tiles
     public int worldWidth = tileSize * MaxWorldCol;
@@ -36,7 +35,7 @@ public class GamePanel extends JPanel implements Runnable {
     public CollisionSystem collisionsystem = new CollisionSystem(this);
     public Camera camera;
     public SuperObject[] obj = new SuperObject[10];
-    AssetSetter aSetter = new AssetSetter(this);
+    public AssetSetter aSetter = new AssetSetter(this);
     public Player player; //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
 
     // Game States
@@ -48,7 +47,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     //Map indicator which map to load
     public int mapIndicator = 0;
-    public int previousmapIndicator = 0;
+    public int previousmapIndicator = -1;
 
     public GamePanel() {
 
@@ -59,7 +58,6 @@ public class GamePanel extends JPanel implements Runnable {
         camera = new Camera(screenWidth, screenHeight, worldWidth, worldHeight);
         keyHandler = new KeyHandler(this);
         player = new Player(this, keyHandler);
-        aSetter.setObject();
         player.x = tileM.playerSpawnX;
         player.y = tileM.playerSpawnY;
         gameState = titleState;
