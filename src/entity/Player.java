@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.imageio.ImageIO;
 
+import projectile.PT_Fireball;
+import projectile.Projectile;
 import tile.TileManager;
 
 import main.GamePanel;
@@ -18,10 +20,17 @@ public class Player extends Entity {
     private final KeyHandler keyH;
     private TileManager tileManager;
     private int jumpStrength = 30;
-    private int gravity = 2;
-    private int maxFallSpeed = 12;
+//    private int gravity = 2;
+//    private int maxFallSpeed = 12;
     private MovementSystem movementSystem;
     public int hasKey = 0;
+
+    public int maxLife;
+    public int life;
+    public boolean invincible = false;
+    public int invincibleCounter = 0;
+    // Player additions
+    public Projectile projectile;
 
 
     public Player(GamePanel gp, KeyHandler keyH) {
@@ -32,9 +41,23 @@ public class Player extends Entity {
         direction = 'D';
         this.gp = gp;
         this.keyH = keyH;
-        solidArea = new Rectangle(0, 0, gp.tileSize-6, gp.tileSize-6);
+
+        int hitboxWidth = 48;
+        int hitboxHeight = 48;
+        solidArea = new Rectangle(
+                (width - hitboxWidth) / 2,  //inkrement um das die x position verschoben wird, damit die box mittig ist
+                (height - hitboxHeight) / 2,  //inkrement um das die y position verschoben wird, damit die box mittig ist
+                hitboxWidth,
+                hitboxHeight
+        );
+
+        projectile = new PT_Fireball(gp);
         solidAreaDefaultX = solidArea.x;
-        solidAreaDefaultY = solidArea.y;
+        solidAreaDefaultY = solidArea.y;//declaring the solid parts of the player
+        maxLife = 6;
+        life = maxLife;
+        attackWidth = gp.tileSize;
+        attackHeight = gp.tileSize;
         this.movementSystem = new MovementSystem(gp.worldWidth, gp.worldHeight, gp.tileSize, gp.collisionsystem);
         loadPlayerImage();
     }
@@ -49,7 +72,7 @@ public class Player extends Entity {
             img6 = loadImage("/player/kartoni6.png");
         } catch (IOException e) {
             System.err.println("Fehler beim Laden der Player-Sprites: " + e.getMessage());
-        }
+        }//laden der verschiedenen Player Bilder
     }
 
     private BufferedImage loadImage(String path) throws IOException {
@@ -78,14 +101,41 @@ public class Player extends Entity {
             onGround = false;
         }
 
+        if (keyH.enterPressed && !gp.eHandler.isHealingPoolHit()) {
+            attack();
+            keyH.enterPressed = false;
+        }
+
+        if (invincible == true) {
+            invincibleCounter++;
+            if (invincibleCounter > 60) {
+                invincible = false;
+                invincibleCounter = 0;
+            }
+
+        }
+
+        if(keyH.shotKeyPressed && projectile.alive == false) {
+            int projectileX = x + (width - projectile.width) / 2;
+            int projectileY = y + (height - projectile.height) / 2;
+            char projectileDirection = direction;
+
+            if (projectileDirection != 'L' && projectileDirection != 'R') {
+                projectileDirection = 'R';
+            }
+
+            projectile.set(projectileX, projectileY, projectileDirection, true);
+            keyH.shotKeyPressed = false;
+        }
+
         int objectIndex = gp.collisionsystem.collisionObject(this, true);
-        InteractObject(objectIndex);
+        pickUpObject(objectIndex);
 
         // Delegate all physics + collision to MovementSystem
         movementSystem.updatePlayer(this);
     }
 
-    public void InteractObject(int i) {
+    public void pickUpObject(int i) {
         if (i != 999) {
             String objectName = gp.obj[i].name;
             switch (objectName) {
@@ -110,11 +160,110 @@ public class Player extends Entity {
                     System.out.println("You win!");
                     break;
             }
+        }//function, which is enabling the collision and interaction with the different objects
+    }
+
+    public void attack() {
+        Rectangle attackBox = new Rectangle();
+
+        switch (direction) {
+            case 'L':
+                attackBox.x = x + solidArea.x - attackWidth;
+                attackBox.y = y + solidArea.y;
+                break;
+            case 'R':
+                attackBox.x = x + solidArea.x + solidArea.width;
+                attackBox.y = y + solidArea.y;
+                break;
+        }
+
+        attackBox.width = attackWidth;
+        attackBox.height = attackHeight;
+
+        checkMonsterHit(attackBox);
+    }
+
+    public void checkMonsterHit(Rectangle attackBox) {
+        for (Entity monster : gp.monster) {
+            if (monster == null || monster.isDead) {
+                continue;
+            }
+
+            Rectangle monsterBox = new Rectangle(
+                    monster.x + monster.solidArea.x,
+                    monster.y + monster.solidArea.y,
+                    monster.solidArea.width,
+                    monster.solidArea.height
+            );
+
+            if (attackBox.intersects(monsterBox)) {
+                damageMonster(monster);
+            }
+        }
+    }
+
+    public void checkProjectileMonsterHit() {
+        if (projectile == null || !projectile.alive) {
+            return;
+        }
+
+        Rectangle projectileBox = new Rectangle(
+                projectile.x + projectile.solidArea.x,
+                projectile.y + projectile.solidArea.y,
+                projectile.solidArea.width,
+                projectile.solidArea.height
+        );
+
+        for (Entity monster : gp.monster) {
+            if (monster == null || monster.isDead) {
+                continue;
+            }
+
+            Rectangle monsterBox = new Rectangle(
+                    monster.x + monster.solidArea.x,
+                    monster.y + monster.solidArea.y,
+                    monster.solidArea.width,
+                    monster.solidArea.height
+            );
+
+            if (projectileBox.intersects(monsterBox)) {
+                monster.life -= projectile.damage;
+                projectile.alive = false;
+
+                if (monster.life <= 0) {
+                    monster.isDead = true;
+                }
+
+                return;
+            }
+        }
+    }
+
+    public void damageMonster(Entity monster) {
+        if (!monster.invincible) {
+            monster.life--;
+            monster.invincible = true;
+
+            if (monster.life <= 0) {
+                monster.isDead = true;
+            }
+        }
+    }
+
+    public void damagePlayer() {
+
+        if (invincible == false) {
+            life -= 1;
+            invincible = true;
         }
     }
 
     @Override
     public void draw(Graphics2D g2) {
+
+        if (invincible == true) {
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
+        }
 
         BufferedImage img = switch (direction) { //Wechselt das Bild des Spielers je nach Richtung, in die er schaut
             case 'U' -> img1;
@@ -128,6 +277,8 @@ public class Player extends Entity {
             int screenY = y - gp.camera.y;
 
             g2.drawImage(img, screenX, screenY, width, height, null);
-        }
+        }//using the camera for the player
+
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
 }

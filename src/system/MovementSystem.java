@@ -1,8 +1,6 @@
 package system;
 
 import entity.Entity;
-import main.GamePanel;
-import system.CollisionSystem;
 
 import java.util.HashSet;
 

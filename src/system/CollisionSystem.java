@@ -4,6 +4,8 @@ import entity.Entity;
 import main.GamePanel;
 import object.SuperObject;
 
+import java.awt.*;
+
 public class CollisionSystem {
 
     GamePanel gp;
@@ -12,7 +14,7 @@ public class CollisionSystem {
         this.gp = gp;
     }
 
-    private int[] getProjectedAABB(Entity entity) {
+    public int[] getProjectedAABB(Entity entity) {
         int left   = entity.x + entity.solidArea.x;
         int right  = entity.x + entity.solidArea.x + entity.solidArea.width;
         int top    = entity.y + entity.solidArea.y;
@@ -26,6 +28,35 @@ public class CollisionSystem {
         }
 
         return new int[]{ left, right, top, bottom };
+    }
+
+    public void drawDebugBoxes(Graphics2D g2, Entity entity) {
+        if (entity == null || entity.solidArea == null) return;
+
+        int currentLeft = entity.x + entity.solidArea.x;
+        int currentTop = entity.y + entity.solidArea.y;
+        int currentWidth = entity.solidArea.width;
+        int currentHeight = entity.solidArea.height;
+
+        int[] projected = getProjectedAABB(entity);
+
+        int screenCurrentX = currentLeft - gp.camera.x;
+        int screenCurrentY = currentTop - gp.camera.y;
+
+        int screenProjectedX = projected[0] - gp.camera.x;
+        int screenProjectedY = projected[2] - gp.camera.y;
+        int projectedWidth = projected[1] - projected[0];
+        int projectedHeight = projected[3] - projected[2];
+
+        g2.setStroke(new BasicStroke(2));
+
+        // aktuelle Hitbox
+        g2.setColor(new Color(0, 255, 0, 180));
+        g2.drawRect(screenCurrentX, screenCurrentY, currentWidth, currentHeight);
+
+        // projected AABB
+        g2.setColor(new Color(255, 0, 0, 180));
+        g2.drawRect(screenProjectedX, screenProjectedY, projectedWidth, projectedHeight);
     }
 
     private boolean overlaps(int aLeft, int aRight, int aTop, int aBottom,
@@ -69,6 +100,29 @@ public class CollisionSystem {
         }
     }
 
+    public boolean collidesWithPlayer(Entity entity) {
+        int entityLeft = entity.x + entity.solidArea.x;
+        int entityRight = entityLeft + entity.solidArea.width;
+        int entityTop = entity.y + entity.solidArea.y;
+        int entityBottom = entityTop + entity.solidArea.height;
+
+        int playerLeft = gp.player.x + gp.player.solidArea.x;
+        int playerRight = playerLeft + gp.player.solidArea.width;
+        int playerTop = gp.player.y + gp.player.solidArea.y;
+        int playerBottom = playerTop + gp.player.solidArea.height;
+
+        boolean contactPlayer = overlaps(
+                entityLeft, entityRight, entityTop, entityBottom,
+                playerLeft, playerRight, playerTop, playerBottom
+        );
+
+        if (contactPlayer) {
+            entity.collisionOn = true;
+        }
+
+        return contactPlayer;
+    }
+
     public void collidesWithEntity(Entity a, Entity b) {
         if (a == b) return;
 
@@ -108,6 +162,8 @@ public class CollisionSystem {
         }
     }
 
+
+
     public int collisionObject(Entity entity, boolean player) {
         int index = 999;
 
@@ -144,4 +200,5 @@ public class CollisionSystem {
         }
         return index;
     }
+
 }

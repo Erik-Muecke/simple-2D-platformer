@@ -11,7 +11,7 @@ public class TileManager {
 
     GamePanel gp;
     public Tile[] tile; //Array um die verschiedenen Kacheln zu speichern
-    public int[][] mapTileNum; //2D Array um die Nummer der Kachel zu speichern, die an jeder Position gezeichnet werden soll
+    public int mapTileNum[][]; //2D Array um die Nummer der Kachel zu speichern, die an jeder Position gezeichnet werden soll
 
     public TileManager(GamePanel gp) {
 
@@ -41,7 +41,7 @@ public class TileManager {
         tile[2].image = loadTileImage("/tiles/earth.png");
 
         tile[3] = new Tile();
-        tile[3].image = loadTileImage("/tiles/transparent.png");
+        tile[3].image = loadTileImage("/tiles/water.png");
 
         tile[9] = new Tile();
         tile[9].image = loadTileImage("/tiles/earth.png");
@@ -68,7 +68,7 @@ public class TileManager {
             int y = row * gp.tileSize;
 
             int screenX = x - gp.camera.x;
-            int screenY = y - gp.camera.y;
+            int screenY = y - gp.camera.y;//getting Screen X and Y
 
             g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null); //zeichnet die Kachel an der Position (x, y) mit der Größe von tileSize
 
@@ -88,37 +88,16 @@ public class TileManager {
         }
     }
 
-    public void update() {
-            if (gp.previousmapIndicator != gp.mapIndicator) {
-                loadMap();
-                gp.player.x = playerSpawnX * gp.tileSize;
-                gp.player.y = playerSpawnY * gp.tileSize;
-                gp.aSetter.updateObject();
-                switch (gp.mapIndicator) {
-                    case 0:
-                        //TODO: hier die jeweiligen platzierungen der objekte, Gegner, Backgrounds für die Karte festlegen.
-                        //Startpositionen ebenso
-                        break;
-                    case 1:
-                        break;
-                    case 2:
-                        break;
-                }
-                gp.previousmapIndicator = gp.mapIndicator;
-            }
-
-    }
-
     public int playerSpawnX = 0;
     public int playerSpawnY = 0;
 
     public void loadMap() {
         //Hier wird die Karte geladen, indem die Nummer der Kachel für jede Position im mapTileNum Array festgelegt wird
         try {
-            InputStream is = getClass().getResourceAsStream("/tiles/tilemap"+ gp.mapIndicator + ".txt"); //öffnet die Textdatei
+            InputStream is = getClass().getResourceAsStream("/tiles/tilemap.txt"); //öffnet die Textdatei
 
             if (is == null) {
-                throw new Exception("Ressource nicht gefunden: /tiles/tilemap" + gp.mapIndicator + ".txt"); //erstellt neue Exception, wenn der wert null ist
+                throw new Exception("Ressource nicht gefunden: /tiles/tilemap.txt"); //erstellt neue Exception, wenn der wert null ist
             }
 
             BufferedReader br = new BufferedReader(new InputStreamReader(is)); //lädt die Textdatei in einen Buffered reader um sie zu benutzen

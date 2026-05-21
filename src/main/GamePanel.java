@@ -2,6 +2,7 @@ package main;
 
 import javax.swing.*;
 import java.awt.*;
+import entity.Entity;
 import entity.Player;
 import system.CollisionSystem;
 import main.Camera;
@@ -29,13 +30,12 @@ public class GamePanel extends JPanel implements Runnable {
     public TileManager tileM = new TileManager(this);
     public KeyHandler keyHandler;
 
-    public BackgroundManager bg = new BackgroundManager(this);
-
     Thread gameThread; //erstellt den Thread für die Spielschleife zum Bestimmen der FPS
     public CollisionSystem collisionsystem = new CollisionSystem(this);
     public Camera camera;
-    public SuperObject[] obj = new SuperObject[10];
-    public AssetSetter aSetter = new AssetSetter(this);
+    public SuperObject obj[] = new SuperObject[10];
+    AssetSetter aSetter = new AssetSetter(this);
+    public Entity monster[] = new Entity[20];
     public Player player; //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
 
     // Game States
@@ -44,6 +44,10 @@ public class GamePanel extends JPanel implements Runnable {
     public final int playState = 1;
     public final int pauseState = 2;
     public final int titleState = 0;
+
+    public EventHandler eHandler;
+
+    public boolean showCollisionDebug = true;
 
     //Map indicator which map to load
     public int mapIndicator = 0;
@@ -58,8 +62,11 @@ public class GamePanel extends JPanel implements Runnable {
         camera = new Camera(screenWidth, screenHeight, worldWidth, worldHeight);
         keyHandler = new KeyHandler(this);
         player = new Player(this, keyHandler);
+        aSetter.setObject();
+        aSetter.setMonster();
         player.x = tileM.playerSpawnX;
         player.y = tileM.playerSpawnY;
+        eHandler = new EventHandler(this);
         gameState = titleState;
         ui = new UI(this);
     }
@@ -116,15 +123,33 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         if(gameState == playState) {
-            tileM.update();
             player.update();
             camera.update(player);
-
-        }
-        if(gameState == pauseState) {
-            // do nothing (game is frozen)
+            eHandler.checkEvent();
+            if(player.projectile.alive) {
+                player.projectile.update();
+                player.checkProjectileMonsterHit();
+            }
+            for(int i = 0; i < monster.length; i++) {
+                if(monster[i] != null) {
+                    if(monster[i].isDead) {
+                        monster[i] = null;
+                    } else {
+                        monster[i].update();
+                    }
+                }
+            }
         } //aktualisiert die Informationen des Spielers, indem die update() Methode des Player-Objekts aufgerufen wird
+        if(gameState == pauseState) {
+          // do nothing (game is frozen)
+        }
     }
+
+
+
+
+
+
 
 
     @Override //Die paintComponent() Methode wird ueberschrieben, um die Grafiken des Spiels zu zeichnen.
@@ -133,21 +158,30 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g); //Panel-Hintergrund korrekt neu zeichnen
         Graphics2D g2 = (Graphics2D) g;
         if (gameState == titleState) {
-            ui.draw(g2);
+            ui.draw(g2);//draw the tite screen
         } else {
-            bg.draw(g2);
             tileM.draw(g2);//zeichnet die Spielkacheln mit der draw() Methode im TileManager
             for (int i = 0; i < obj.length; i++) {
                 if (obj[i] != null) {
                     obj[i].draw(g2, this);
                 }
             }
+            for(int i = 0; i < monster.length; i++) {
+                if(monster[i] != null) {
+                    monster[i].draw(g2);
+                }
+            }
             player.draw(g2);
-            ui.draw(g2);
 
-            // always last so pause screen renders on top
+            if (showCollisionDebug) {
+                collisionsystem.drawDebugBoxes(g2, player);
+            }
+
+            if(player.projectile != null) {
+                player.projectile.draw(g2);
+            }
+            ui.draw(g2);  // always last so pause screen renders on top
         }
         g2.dispose();
-
     }
 }

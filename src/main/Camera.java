@@ -12,7 +12,6 @@ public class Camera {
     public int worldHeight;
 
     public Camera(int screenWidth, int screenHeight, int worldWidth, int worldHeight) {
-        System.out.println("worldHeight: " + worldHeight + " screenHeight: " + screenHeight + " y: " + y);
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         this.worldWidth = worldWidth;
