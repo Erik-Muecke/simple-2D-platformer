@@ -32,7 +32,7 @@ public class Player extends Entity {
         direction = 'D';
         this.gp = gp;
         this.keyH = keyH;
-        solidArea = new Rectangle(4, 4, 40, 40);
+        solidArea = new Rectangle(0, 0, gp.tileSize-6, gp.tileSize-6);
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
         this.movementSystem = new MovementSystem(gp.worldWidth, gp.worldHeight, gp.tileSize, gp.collisionsystem);
@@ -79,13 +79,13 @@ public class Player extends Entity {
         }
 
         int objectIndex = gp.collisionsystem.collisionObject(this, true);
-        pickUpObject(objectIndex);
+        InteractObject(objectIndex);
 
         // Delegate all physics + collision to MovementSystem
         movementSystem.updatePlayer(this);
     }
 
-    public void pickUpObject(int i) {
+    public void InteractObject(int i) {
         if (i != 999) {
             String objectName = gp.obj[i].name;
             switch (objectName) {
@@ -103,6 +103,11 @@ public class Player extends Entity {
                     } else {
                         System.out.println("You need a key!");
                     }
+                    break;
+
+                case "Flag":
+                    gp.mapIndicator++;
+                    System.out.println("You win!");
                     break;
             }
         }
