@@ -90,9 +90,9 @@ public class TileManager {
 
     public void update() {
             if (gp.previousmapIndicator != gp.mapIndicator) {
-                gp.player.x = 2 * gp.tileSize;
-                gp.player.y = 8 * gp.tileSize;
                 loadMap();
+                gp.player.x = playerSpawnX * gp.tileSize;
+                gp.player.y = playerSpawnY * gp.tileSize;
                 gp.aSetter.updateObject();
                 switch (gp.mapIndicator) {
                     case 0:
