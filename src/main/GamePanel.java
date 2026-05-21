@@ -5,6 +5,7 @@ import java.awt.*;
 import entity.Entity;
 import entity.Player;
 import system.CollisionSystem;
+import main.Camera;
 import tile.TileManager;
 import object.SuperObject;
 
@@ -45,6 +46,8 @@ public class GamePanel extends JPanel implements Runnable {
     public final int titleState = 0;
 
     public EventHandler eHandler;
+
+    public boolean showCollisionDebug = true;
 
     //Map indicator which map to load
     public int mapIndicator = 0;
@@ -143,6 +146,12 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
 
+
+
+
+
+
+
     @Override //Die paintComponent() Methode wird ueberschrieben, um die Grafiken des Spiels zu zeichnen.
     protected void paintComponent(Graphics g) {
 
@@ -163,6 +172,11 @@ public class GamePanel extends JPanel implements Runnable {
                 }
             }
             player.draw(g2);
+
+            if (showCollisionDebug) {
+                collisionsystem.drawDebugBoxes(g2, player);
+            }
+
             if(player.projectile != null) {
                 player.projectile.draw(g2);
             }

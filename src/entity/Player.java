@@ -41,7 +41,16 @@ public class Player extends Entity {
         direction = 'D';
         this.gp = gp;
         this.keyH = keyH;
-        solidArea = new Rectangle(4, 4, 40, 40);
+
+        int hitboxWidth = 48;
+        int hitboxHeight = 48;
+        solidArea = new Rectangle(
+                (width - hitboxWidth) / 2,  //inkrement um das die x position verschoben wird, damit die box mittig ist
+                (height - hitboxHeight) / 2,  //inkrement um das die y position verschoben wird, damit die box mittig ist
+                hitboxWidth,
+                hitboxHeight
+        );
+
         projectile = new PT_Fireball(gp);
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;//declaring the solid parts of the player
