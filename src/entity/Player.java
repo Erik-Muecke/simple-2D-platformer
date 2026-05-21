@@ -145,6 +145,11 @@ public class Player extends Entity {
                         System.out.println("You need a key!");
                     }
                     break;
+
+                case "Flag":
+                    gp.mapIndicator++;
+                    System.out.println("You win!");
+                    break;
             }
         }//function, which is enabling the collision and interaction with the different objects
     }

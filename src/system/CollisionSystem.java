@@ -69,21 +69,6 @@ public class CollisionSystem {
         }
     }
 
-//    public void collidesWithEntity(Entity a, Entity b) {
-//        if (a == b) return;
-//
-//        int[] boxA = getProjectedAABB(a);
-//        int bLeft   = b.x + b.solidArea.x;
-//        int bRight  = bLeft + b.solidArea.width;
-//        int bTop    = b.y  + b.solidArea.y;
-//        int bBottom = bTop + b.solidArea.height;
-//
-//        if (overlaps(boxA[0], boxA[1], boxA[2], boxA[3],
-//                bLeft,   bRight,  bTop,    bBottom)) {
-//            a.collisionOn = true;
-//        }
-//    }
-
     public boolean collidesWithPlayer(Entity entity) {
         int entityLeft = entity.x + entity.solidArea.x;
         int entityRight = entityLeft + entity.solidArea.width;
@@ -105,6 +90,21 @@ public class CollisionSystem {
         }
 
         return contactPlayer;
+    }
+
+    public void collidesWithEntity(Entity a, Entity b) {
+        if (a == b) return;
+
+        int[] boxA = getProjectedAABB(a);
+        int bLeft   = b.x + b.solidArea.x;
+        int bRight  = bLeft + b.solidArea.width;
+        int bTop    = b.y  + b.solidArea.y;
+        int bBottom = bTop + b.solidArea.height;
+
+        if (overlaps(boxA[0], boxA[1], boxA[2], boxA[3],
+                bLeft,   bRight,  bTop,    bBottom)) {
+            a.collisionOn = true;
+        }
     }
 
     public void collidesWithObject(Entity entity) {
