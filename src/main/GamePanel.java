@@ -36,11 +36,9 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread; //erstellt den Thread für die Spielschleife zum Bestimmen der FPS
     public CollisionSystem collisionsystem = new CollisionSystem(this);
     public Camera camera;
-    public SuperObject obj[] = new SuperObject[10];
-    AssetSetter aSetter = new AssetSetter(this);
-    public Entity monster[] = new Entity[20];
     public SuperObject[] obj = new SuperObject[10];
     public AssetSetter aSetter = new AssetSetter(this);
+    public Entity[] monster = new Entity[20];
     public Player player; //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
 
     // Game States
@@ -67,7 +65,7 @@ public class GamePanel extends JPanel implements Runnable {
         camera = new Camera(screenWidth, screenHeight, worldWidth, worldHeight);
         keyHandler = new KeyHandler(this);
         player = new Player(this, keyHandler);
-        aSetter.setObject();
+        aSetter.setObjectScene0();
         aSetter.setMonster();
         player.x = tileM.playerSpawnX;
         player.y = tileM.playerSpawnY;
@@ -162,14 +160,14 @@ public class GamePanel extends JPanel implements Runnable {
         } else {
             bg.draw(g2);
             tileM.draw(g2);//zeichnet die Spielkacheln mit der draw() Methode im TileManager
-            for (int i = 0; i < obj.length; i++) {
-                if (obj[i] != null) {
-                    obj[i].draw(g2, this);
+            for (SuperObject superObject : obj) {
+                if (superObject != null) {
+                    superObject.draw(g2, this);
                 }
             }
-            for(int i = 0; i < monster.length; i++) {
-                if(monster[i] != null) {
-                    monster[i].draw(g2);
+            for (Entity entity : monster) {
+                if (entity != null) {
+                    entity.draw(g2);
                 }
             }
             player.draw(g2);
