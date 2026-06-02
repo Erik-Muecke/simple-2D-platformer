@@ -59,8 +59,10 @@ Nach Commit-Historie wurde das Projekt durch einen Autor umgesetzt:
 ### Zeitplan (aus Commits rekonstruiert)
 | Datum | Commit | Inhalt |
 |---|---|---|
-| 2026-05-20 | `0a8f6d5` | Initialer großer Projektstand mit Spielsystemen, Assets und Leveln |
-| 2026-05-23 | `613dd5e` | Refactoring in `GamePanel`, Entfernen ungenutzter Klasse `Block` |
+| 2026-05-23 | `613dd5e` | Refactoring im Projektstand und Entfernen ungenutzter Codeblöcke |
+| 2026-06-02 | `2530991` | Erstellung der vollständigen Projektdokumentation |
+
+Hinweis: Im aktuellen Repository-Stand ist die Commit-Historie nur teilweise sichtbar (grafted/shallow), daher basiert der Zeitverlauf auf den lokal verfügbaren Commits und den Entwicklungs-Kommentaren im Code.
 
 ### Klassendiagramm / UML (textuell)
 - `Main` → startet `Game`
@@ -144,7 +146,7 @@ src/
 ### Entwicklungsumgebung
 - Java-Quellcodeprojekt ohne Build-Tooling (kein Maven/Gradle)
 - Kompilierung per `javac`
-- Versionsverwaltung über Git (2 dokumentierte Commits auf aktuellem Branch)
+- Versionsverwaltung über Git (sichtbare Commits im aktuellen Branch-Stand)
 
 ---
 
@@ -187,8 +189,8 @@ Die zentrale Steuerung liegt in `GamePanel`:
 
 ### Entwicklungsprozess aus Commits und Code-Kommentaren
 **Commit-basierte Entwicklung**
-- Der erste Commit bildet einen umfangreichen Grundstand mit vollständiger Spielbasis.
-- Der zweite Commit fokussiert auf Aufräumen/Refactoring (`GamePanel`) und Entfernen toter Strukturteile (`Block`).
+- Ein sichtbarer Entwicklungs-Commit dokumentiert Refactoring und das Entfernen ungenutzter Codeblöcke.
+- Der nachfolgende Commit ergänzt die vollständige Projektdokumentation nach der geforderten Struktur.
 
 **Kommentarbasierte Entwicklungsspuren**
 - Deutsch- und englischsprachige Inline-Kommentare dokumentieren Lern- und Iterationsschritte.
@@ -223,6 +225,8 @@ Die zentrale Steuerung liegt in `GamePanel`:
 - Trennung von Bewegung und Kollision in eigene Systeme verbessert Wartbarkeit.
 - Frühe Kollisionsprojektion reduziert Interaktionsfehler an Türen/Objekten.
 - Iteratives Refactoring nach erstem funktionalen Stand ist sinnvoll und sichtbar im Verlauf.
+- Beim nächsten Projekt sollte ein **Kanban-Board** als Projektmanagementsystem eingesetzt werden.
+- Ein **fester Aufgabenzeitplan** wurde nicht konsequent geführt; künftig sollte ein verbindlicher Zeitplan mit Meilensteinen eingeplant werden.
 
 ### Ausblick
 - Erweiterung auf mehrere vollständige Level mit eigener Objekt-/Gegnerlogik
