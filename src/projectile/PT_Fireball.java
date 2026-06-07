@@ -4,7 +4,10 @@ package projectile;
 
 import main.GamePanel;
 
+
 public class PT_Fireball extends Projectile {
+
+
 
     public PT_Fireball(GamePanel gp) {
 
@@ -31,7 +34,7 @@ public class PT_Fireball extends Projectile {
     }
 
     public void getImage() {
-        img1 = setup("/projectile/fireball_right");
-        img2 = setup("/projectile/fireball_left");
+        img1 = imgLoader.scaleImage("/projectile/fireball_right.png", gp.tileSize, gp.tileSize);
+        img2 = imgLoader.scaleImage("/projectile/fireball_left.png", gp.tileSize, gp.tileSize);
     }
 }

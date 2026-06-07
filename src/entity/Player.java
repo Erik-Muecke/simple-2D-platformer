@@ -12,6 +12,7 @@ import tile.TileManager;
 
 import main.GamePanel;
 import main.KeyHandler;
+import main.ImageLoader;
 import system.MovementSystem;
 
 public class Player extends Entity {
@@ -20,10 +21,10 @@ public class Player extends Entity {
     private final KeyHandler keyH;
     private TileManager tileManager;
     private int jumpStrength = 30;
-//    private int gravity = 2;
-//    private int maxFallSpeed = 12;
     private MovementSystem movementSystem;
     public int hasKey = 0;
+
+    ImageLoader imgLoader = new ImageLoader();
 
     public int maxLife;
     public int life;
@@ -63,16 +64,14 @@ public class Player extends Entity {
     }
 
     public void loadPlayerImage() {
-        try {
-            img1 = loadImage("/player/kartoni1.png");
-            img2 = loadImage("/player/kartoni2.png");
-            img3 = loadImage("/player/kartoni3.png");
-            img4 = loadImage("/player/kartoni4.png");
-            img5 = loadImage("/player/kartoni5.png");
-            img6 = loadImage("/player/kartoni6.png");
-        } catch (IOException e) {
-            System.err.println("Fehler beim Laden der Player-Sprites: " + e.getMessage());
-        }//laden der verschiedenen Player Bilder
+            img1 = imgLoader.loadImage("/player/kartoni1.png");
+            img2 = imgLoader.loadImage("/player/kartoni2.png");
+            img3 = imgLoader.loadImage("/player/kartoni3.png");
+            img4 = imgLoader.loadImage("/player/kartoni4.png");
+            img5 = imgLoader.loadImage("/player/kartoni5.png");
+            img6 = imgLoader.loadImage("/player/kartoni6.png");
+
+        //laden der verschiedenen Player Bilder
     }
 
     private BufferedImage loadImage(String path) throws IOException {
@@ -106,7 +105,7 @@ public class Player extends Entity {
             keyH.enterPressed = false;
         }
 
-        if (invincible == true) {
+        if (invincible) {
             invincibleCounter++;
             if (invincibleCounter > 60) {
                 invincible = false;
@@ -115,7 +114,7 @@ public class Player extends Entity {
 
         }
 
-        if(keyH.shotKeyPressed && projectile.alive == false) {
+        if(keyH.shotKeyPressed && !projectile.alive) {
             int projectileX = x + (width - projectile.width) / 2;
             int projectileY = y + (height - projectile.height) / 2;
             char projectileDirection = direction;
@@ -252,7 +251,7 @@ public class Player extends Entity {
 
     public void damagePlayer() {
 
-        if (invincible == false) {
+        if (!invincible) {
             life -= 1;
             invincible = true;
         }
@@ -261,7 +260,7 @@ public class Player extends Entity {
     @Override
     public void draw(Graphics2D g2) {
 
-        if (invincible == true) {
+        if (invincible) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         }
 

@@ -1,18 +1,14 @@
 package object;
 
-import javax.imageio.ImageIO;
-import java.io.IOException;
+import main.GamePanel;
 
 public class OBJ_Flag extends SuperObject {
 
-    public OBJ_Flag() {
+    public OBJ_Flag(GamePanel gp) {
         name = "Flag";
         collision = false;
 
-        try {
-            image = ImageIO.read(getClass().getResourceAsStream("/objects/flag.png"));
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
+        image = imgLoader.scaleImage("/objects/flag.png", gp.tileSize, gp.tileSize);
+
     }
 }

@@ -19,23 +19,23 @@ public class AssetSetter {
 
     public void setObjectScene0() {
 
-        gp.obj[0] = new OBJ_Key();
+        gp.obj[0] = new OBJ_Key(gp);
         gp.obj[0].x = 10 * gp.tileSize;
         gp.obj[0].y = 4 * gp.tileSize;
 
-        gp.obj[1] = new OBJ_Key();
+        gp.obj[1] = new OBJ_Key(gp);
         gp.obj[1].x = 0 * gp.tileSize;
         gp.obj[1].y = 0 * gp.tileSize;
 
-        gp.obj[2] = new OBJ_Door();
+        gp.obj[2] = new OBJ_Door(gp);
         gp.obj[2].x = 15 * gp.tileSize;
         gp.obj[2].y = 10 * gp.tileSize;
 
-        gp.obj[3] = new OBJ_Chest();
+        gp.obj[3] = new OBJ_Chest(gp);
         gp.obj[3].x = 20 * gp.tileSize;
         gp.obj[3].y = 10 * gp.tileSize;
 
-        gp.obj[4] = new OBJ_Flag();
+        gp.obj[4] = new OBJ_Flag(gp);
         gp.obj[4].x = 25 * gp.tileSize;
         gp.obj[4].y = 10 * gp.tileSize;
     }//just actually placing all the objects
@@ -52,31 +52,31 @@ public class AssetSetter {
     }
 
     public void setObjectScene1() {
-        gp.obj[4] = new OBJ_Flag();
+        gp.obj[4] = new OBJ_Flag(gp);
         gp.obj[4].x = 25 * gp.tileSize;
         gp.obj[4].y = 10 * gp.tileSize;
     }
 
     public void setObjectScene2() {
-        gp.obj[4] = new OBJ_Flag();
+        gp.obj[4] = new OBJ_Flag(gp);
         gp.obj[4].x = 25 * gp.tileSize;
         gp.obj[4].y = 10 * gp.tileSize;
     }
 
     public void setObjectScene3() {
-        gp.obj[4] = new OBJ_Flag();
+        gp.obj[4] = new OBJ_Flag(gp);
         gp.obj[4].x = 25 * gp.tileSize;
         gp.obj[4].y = 10 * gp.tileSize;
     }
 
     public void setObjectScene4() {
-        gp.obj[4] = new OBJ_Flag();
+        gp.obj[4] = new OBJ_Flag(gp);
         gp.obj[4].x = 25 * gp.tileSize;
         gp.obj[4].y = 10 * gp.tileSize;
     }
 
     public void setObjectScene5() {
-        gp.obj[4] = new OBJ_Flag();
+        gp.obj[4] = new OBJ_Flag(gp);
         gp.obj[4].x = 25 * gp.tileSize;
         gp.obj[4].y = 10 * gp.tileSize;
     }

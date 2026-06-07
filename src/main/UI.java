@@ -2,8 +2,7 @@ package main;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-import java.io.IOException;
+
 
 public class UI {
 
@@ -12,6 +11,7 @@ public class UI {
     BufferedImage titleImage;
     BufferedImage heart_full, heart_half, heart_blank;
 
+    ImageLoader imgLoader = new  ImageLoader();
     // Fonts
     Font arial_40, arial_80B;
 
@@ -21,16 +21,12 @@ public class UI {
         arial_40 = new Font("Arial", Font.PLAIN, 40);
         arial_80B = new Font("Arial", Font.BOLD, 80);
 
-        try {
-            titleImage = ImageIO.read(getClass().getResourceAsStream("/player/kartoni.png"));
+            titleImage = imgLoader.scaleImage("/player/kartoni.png", gp.tileSize * 2, gp.tileSize * 2);
 
-            heart_full = ImageIO.read(getClass().getResourceAsStream("/objects/heart_full.png"));
-            heart_half = ImageIO.read(getClass().getResourceAsStream("/objects/heart_half.png"));
-            heart_blank = ImageIO.read(getClass().getResourceAsStream("/objects/heart_blank.png"));
+            heart_full = imgLoader.scaleImage("/objects/heart_full.png", gp.tileSize, gp.tileSize);
+            heart_half = imgLoader.scaleImage("/objects/heart_half.png", gp.tileSize, gp.tileSize);
+            heart_blank = imgLoader.scaleImage(("/objects/heart_blank.png"), gp.tileSize, gp.tileSize);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }//the constructor
 
     public void draw(Graphics2D g2) {
@@ -40,6 +36,7 @@ public class UI {
             drawTitleScreen();
         }
         if(gp.gameState == gp.pauseState) {
+            drawPlayerLife();
             drawPauseScreen();
         }
 
@@ -58,7 +55,7 @@ public class UI {
         int imgX = gp.screenWidth / 2 - (gp.tileSize * 2) / 2;
         int imgY =gp.tileSize * 5;
 
-        g2.drawImage(titleImage, imgX, imgY, gp.tileSize * 2, gp.tileSize * 2, null);
+        g2.drawImage(titleImage, imgX, imgY, null);
 
         //title
         g2.setFont(arial_80B);
@@ -131,7 +128,7 @@ public class UI {
 
         // max life
         while (i < gp.player.maxLife / 2) {
-            g2.drawImage(heart_blank, x, y, gp.tileSize, gp.tileSize, null);
+            g2.drawImage(heart_blank, x, y, null);
             i++;
             x += gp.tileSize;
         }
@@ -146,12 +143,12 @@ public class UI {
 
         while (i < life) {
 
-            g2.drawImage(heart_half, x, y, gp.tileSize, gp.tileSize, null);
+            g2.drawImage(heart_half, x, y, null);
 
             i++;
 
             if (i < life) {
-                g2.drawImage(heart_full, x, y, gp.tileSize, gp.tileSize, null);
+                g2.drawImage(heart_full, x, y, null);
             }
 
             i++;

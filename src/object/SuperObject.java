@@ -6,8 +6,11 @@ import java.awt.image.BufferedImage;
 
 import main.GamePanel;
 
+import main.ImageLoader;
+
 public class SuperObject {
 
+    ImageLoader imgLoader = new ImageLoader();
     public BufferedImage image;
     public String name;
     public boolean collision = false;
@@ -26,7 +29,7 @@ public class SuperObject {
                 y + gp.tileSize > gp.camera.y &&
                 y - gp.tileSize < gp.camera.y + gp.screenHeight) {
 
-            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+            g2.drawImage(image, screenX, screenY, null);
         }
     }
 }

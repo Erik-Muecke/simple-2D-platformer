@@ -1,16 +1,13 @@
 package object;
 
-import javax.imageio.ImageIO;
-import java.io.IOException;
+import main.GamePanel;
+
 
 public class OBJ_Key extends SuperObject {
 
-    public OBJ_Key() {
+    public OBJ_Key(GamePanel gp) {
         name = "Key";
-        try {
-            image = ImageIO.read(getClass().getResourceAsStream("/objects/key.png"));
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
+
+        image = imgLoader.scaleImage("/objects/key.png", gp.tileSize, gp.tileSize);
     }
 }

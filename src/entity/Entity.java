@@ -2,9 +2,6 @@ package entity;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import javax.imageio.ImageIO;
 
 public class Entity {
     public static final int TYPE_PLAYER = 0;
@@ -59,32 +56,6 @@ public class Entity {
             g2.fillRect(x, y, width, height);  //zeichnet ein gefülltes Rechteck an der Position (100, 100) mit der Breite und Höhe von tileSize (48x48 Pixel)
             // Kein dispose(): Swing verwaltet den Graphics-Kontext selbst.
         }
-    }
-    public BufferedImage setup(String imagePath) {
-        String path = imagePath.endsWith(".png") ? imagePath : imagePath + ".png";
-
-        try (InputStream stream = getClass().getResourceAsStream(path)) {
-            if (stream != null) {
-                return ImageIO.read(stream);
-            }
-        } catch (IOException e) {
-            System.err.println("Fehler beim Laden des Bildes: " + path);
-        }
-
-        try (InputStream stream = getClass().getResourceAsStream("/res/missing/image_not_found.png")) {
-            if (stream != null) {
-                return ImageIO.read(stream);
-            }
-        } catch (IOException e) {
-            System.err.println("Fehler beim Laden des Ersatzbildes: " + e.getMessage());
-        }
-
-        BufferedImage fallback = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = fallback.createGraphics();
-        g2.setColor(Color.MAGENTA);
-        g2.fillRect(0, 0, fallback.getWidth(), fallback.getHeight());
-        g2.dispose();
-        return fallback;
     }
 
     void reset() {

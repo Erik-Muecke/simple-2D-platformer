@@ -1,17 +1,22 @@
 package tile;
 
 import main.GamePanel;
+import main.ImageLoader;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
 
 public class TileManager {
 
     GamePanel gp;
     public Tile[] tile; //Array um die verschiedenen Kacheln zu speichern
-    public int mapTileNum[][]; //2D Array um die Nummer der Kachel zu speichern, die an jeder Position gezeichnet werden soll
+    public int[][] mapTileNum; //2D Array um die Nummer der Kachel zu speichern, die an jeder Position gezeichnet werden soll
+
+    ImageLoader imgLoader = new ImageLoader();
 
     public TileManager(GamePanel gp) {
 
@@ -31,24 +36,24 @@ public class TileManager {
     try {
 
         tile[0] = new Tile();  //erstellt ein neues Tile Objekt an der Stelle 0 im Array
-        tile[0].image = loadTileImage("/tiles/transparent.png");  //laedt das Bild aus dem res Ordner
+        tile[0].image = imgLoader.scaleImage("/tiles/transparent.png", gp.tileSize, gp.tileSize); //Funktion aus ImageLoader wird aufgerufen um das Bild automatisch zu skalieren.
 
         tile[1] = new Tile();
-        tile[1].image = loadTileImage("/tiles/wall.png");
+        tile[1].image = imgLoader.scaleImage("/tiles/wall.png", gp.tileSize, gp.tileSize);
         tile[1].collision = true;
 
         tile[2] = new Tile();
-        tile[2].image = loadTileImage("/tiles/earth.png");
+        tile[2].image = imgLoader.scaleImage("/tiles/earth.png", gp.tileSize, gp.tileSize);
 
         tile[3] = new Tile();
-        tile[3].image = loadTileImage("/tiles/water.png");
+        tile[3].image = imgLoader.scaleImage("/tiles/water.png", gp.tileSize, gp.tileSize);
 
         tile[9] = new Tile();
-        tile[9].image = loadTileImage("/tiles/earth.png");
+        tile[9].image = imgLoader.scaleImage("/tiles/transparent.png", gp.tileSize, gp.tileSize);
         tile[9].collision = false;
 
         tile[10] = new Tile();
-        tile[10].image = loadTileImage("/tiles/sand.png");
+        tile[10].image = imgLoader.scaleImage("/tiles/sand.png", gp.tileSize, gp.tileSize);
 
 
 
@@ -70,7 +75,7 @@ public class TileManager {
             int screenX = x - gp.camera.x;
             int screenY = y - gp.camera.y;//getting Screen X and Y
 
-            g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null); //zeichnet die Kachel an der Position (x, y) mit der Größe von tileSize
+            g2.drawImage(tile[tileNum].image, screenX, screenY, null); //zeichnet die Kachel an der Position (x, y) mit der Größe von tileSize
 
             col++; //erhöht den Spaltenzähler um 1
 
@@ -115,7 +120,7 @@ public class TileManager {
     public void loadMap() {
         //Hier wird die Karte geladen, indem die Nummer der Kachel für jede Position im mapTileNum Array festgelegt wird
         try {
-            InputStream is = getClass().getResourceAsStream("/tiles/tilemap"+ gp.mapIndicator + ".txt"); //öffnet die Textdatei
+            InputStream is = getClass().getResourceAsStream("/tiles/tilemap" + gp.mapIndicator + ".txt"); //öffnet die Textdatei
 
             if (is == null) {
                 throw new Exception("Ressource nicht gefunden: /tiles/tilemap" + gp.mapIndicator + ".txt"); //erstellt neue Exception, wenn der wert null ist
@@ -159,7 +164,7 @@ public class TileManager {
         }
     }
 
-    public java.awt.image.BufferedImage loadTileImage(String imagePath) {
+    public BufferedImage loadTileImage(String imagePath) {
         try (InputStream is = getClass().getResourceAsStream(imagePath)) {
             if  (is == null) {
                 throw new Exception("Ressource nicht gefunden: " + imagePath);

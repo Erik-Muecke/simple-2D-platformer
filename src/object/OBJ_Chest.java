@@ -1,18 +1,13 @@
 package object;
 
-import javax.imageio.ImageIO;
-import java.io.IOException;
+import main.GamePanel;
 
 public class OBJ_Chest extends SuperObject {
 
-    public OBJ_Chest() {
+    public OBJ_Chest(GamePanel gp) {
         name = "Chest";
         collision = true;
 
-        try {
-            image = ImageIO.read(getClass().getResourceAsStream("/objects/chest.png"));
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
+        image = imgLoader.scaleImage("/objects/chest.png", gp.tileSize, gp.tileSize);
     }
 }

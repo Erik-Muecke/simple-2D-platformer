@@ -5,12 +5,16 @@ package projectile;
 import entity.Entity;
 import main.GamePanel;
 
+import main.ImageLoader;
+
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 public class Projectile extends Entity {
 
     GamePanel gp;
+
+    ImageLoader imgLoader = new ImageLoader();
 
     public boolean alive = false;
     public int damage;
