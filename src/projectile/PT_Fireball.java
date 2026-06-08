@@ -13,6 +13,7 @@ public class PT_Fireball extends Projectile {
         speed = 5;
         maxLife = 80;
         damage = 2;
+        useCost = 1;
 
         width = gp.tileSize * 2 / 3;
         height = gp.tileSize * 2 / 3;
@@ -33,5 +34,6 @@ public class PT_Fireball extends Projectile {
     public void getImage() {
         img1 = setup("/projectile/fireball_right");
         img2 = setup("/projectile/fireball_left");
+        img3 = setup("/projectile/fireball_down");
     }
 }

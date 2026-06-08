@@ -1,5 +1,3 @@
-// Projectile.java
-
 package projectile;
 
 import entity.Entity;
@@ -16,6 +14,7 @@ public class Projectile extends Entity {
     public int damage;
     public int maxLife;
     public int life;
+    public int useCost;
 
     public Projectile(GamePanel gp) {
         this.gp = gp;
@@ -32,28 +31,16 @@ public class Projectile extends Entity {
     }
 
     public void update() {
-        collisionOn = false;
+        gp.movementSystem.updateProjectile(this);
+    }
 
-        if(direction == 'L') {
-            x -= speed;
-        }
-        if(direction == 'R') {
-            x += speed;
-        }
-
-        gp.collisionsystem.collidesT(this);
-        gp.collisionsystem.collidesWithObject(this);
-
-        if(collisionOn) {
-            alive = false;
-            return;
-        }
-
-        life--;
-
-        if(life <= 0) {
-            alive = false;
-        }
+    public Rectangle getCollisionBox() {
+        return new Rectangle(
+                x + solidArea.x,
+                y + solidArea.y,
+                solidArea.width,
+                solidArea.height
+        );
     }
 
     public void draw(Graphics2D g2) {
@@ -66,6 +53,10 @@ public class Projectile extends Entity {
 
                 case 'R':
                     image = img2;
+                    break;
+
+                case 'D':
+                    image = img3;
                     break;
             }
 

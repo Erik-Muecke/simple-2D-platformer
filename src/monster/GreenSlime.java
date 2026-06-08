@@ -1,12 +1,16 @@
 package monster;
 
+import entity.Entity;
+import main.GamePanel;
+import object.OBJ_Coin;
+import object.OBJ_HealingPotion;
+import object.OBJ_Heart;
+import object.OBJ_ManaPotion;
+
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
-
-import entity.Entity;
-import main.GamePanel;
 
 public class GreenSlime extends Entity {
 
@@ -14,7 +18,7 @@ public class GreenSlime extends Entity {
     private final Random random = new Random();
 
     public GreenSlime(GamePanel gp) {
-        super();
+        super(gp);
         this.gp = gp;
 
         type = TYPE_MONSTER;
@@ -22,11 +26,9 @@ public class GreenSlime extends Entity {
         speed = 2;
         width = gp.tileSize;
         height = gp.tileSize;
+        setImageAndSolidAreaFromBlackPixels("/monsters/greenslime1");
         direction = 'L';
-
-        solidArea = new java.awt.Rectangle(8, 16, gp.tileSize - 16, gp.tileSize - 16);
-        solidAreaDefaultX = solidArea.x;
-        solidAreaDefaultY = solidArea.y;
+        directionBeforeKnockBack = 'L';
 
         maxLife = 3;
         life = maxLife;
@@ -36,12 +38,20 @@ public class GreenSlime extends Entity {
         actionLockCounter++;
 
         if (actionLockCounter >= 120) {
-            if (random.nextBoolean()) {
-                direction = 'L';
-            } else {
-                direction = 'R';
-            }
+            direction = random.nextBoolean() ? 'L' : 'R';
             actionLockCounter = 0;
+        }
+    }
+
+    public void setWalking() {
+        walkingCounter++;
+
+        if (walkingCounter >= 20) {
+            image = setup("/monsters/greenslime");
+            if (walkingCounter >= 40) {
+                image = setup("/monsters/greenslime1");
+                walkingCounter = 0;
+            }
         }
     }
 
@@ -56,60 +66,35 @@ public class GreenSlime extends Entity {
             }
         }
 
+        if (knockBack) {
+            gp.movementSystem.updateMonsterKnockBack(this);
+            return;
+        }
+
         if (freezeFrames > 0) {
             freezeFrames--;
             return;
         }
 
         setAction();
+        setWalking();
+        gp.movementSystem.updateWalkingMonster(this);
+    }
 
-        char horizontalDirection = direction;
-        if (horizontalDirection == 'L') {
-            velocityX = -speed;
-        } else {
-            velocityX = speed;
+    @Override
+    public void checkDrop() {
+        int random = new Random().nextInt(100);
+        if(random < 50) {
+            dropItem(new OBJ_Coin());
         }
-
-        x += velocityX;
-        direction = horizontalDirection;
-        collisionOn = false;
-        gp.collisionsystem.collidesT(this);
-        gp.collisionsystem.collidesWithObject(this);
-
-        if (collisionOn || x <= 0 || x + width >= gp.worldWidth) {
-            x -= velocityX;
-            if (horizontalDirection == 'L') {
-                direction = 'R';
-            } else {
-                direction = 'L';
-            }
-            velocityX = 0;
-            freezeFrames = 15;
+        else if(random >= 50 && random < 75) {
+            dropItem(new OBJ_Heart());
         }
-
-        velocityY += 2;
-        if (velocityY > 31) {
-            velocityY = 31;
+        else if(random >= 75 && random < 90) {
+            dropItem(new OBJ_ManaPotion());
         }
-
-        y += velocityY;
-        char savedDirection = direction;
-        direction = 'D';
-        collisionOn = false;
-        gp.collisionsystem.collidesT(this);
-        gp.collisionsystem.collidesWithObject(this);
-        direction = savedDirection;
-
-        if (collisionOn) {
-            y -= velocityY;
-            velocityY = 0;
-            onGround = true;
-        } else {
-            onGround = false;
-        }
-
-        if (gp.collisionsystem.collidesWithPlayer(this)) {
-            gp.player.damagePlayer();
+        else{
+            dropItem(new OBJ_HealingPotion());
         }
     }
 
@@ -129,12 +114,7 @@ public class GreenSlime extends Entity {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         }
 
-        g2.setColor(new Color(58, 176, 84));
-        g2.fillOval(screenX + 6, screenY + 18, width - 12, height - 22);
-
-        g2.setColor(new Color(25, 92, 45));
-        g2.fillOval(screenX + 20, screenY + 30, 7, 7);
-        g2.fillOval(screenX + width - 27, screenY + 30, 7, 7);
+        g2.drawImage(image, screenX, screenY, width, height, null);
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
         if (life < maxLife) {
