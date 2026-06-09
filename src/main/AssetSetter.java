@@ -4,7 +4,6 @@ import object.OBJ_Flag;
 import object.OBJ_Key;
 import object.OBJ_Door;
 import object.OBJ_Chest;
-import object.OBJ_Flag;
 import monster.GreenSlime;
 
 import java.util.Arrays;

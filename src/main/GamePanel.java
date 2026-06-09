@@ -2,10 +2,12 @@ package main;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+
+
 import entity.Entity;
 import entity.Player;
 import system.CollisionSystem;
-import main.Camera;
 import tile.TileManager;
 import object.SuperObject;
 
@@ -27,6 +29,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     //FPS
     int fps = 60; //Frames per second, die Anzahl der Bilder, die pro Sekunde gezeichnet werden sollen
+
+    public SaveHandler saveHndlr = new SaveHandler(this);
 
     public TileManager tileM = new TileManager(this);
     public KeyHandler keyHandler;
@@ -56,6 +60,8 @@ public class GamePanel extends JPanel implements Runnable {
     public int mapIndicator = 0;
     public int previousmapIndicator = 0;
 
+
+
     public GamePanel() {
 
         this.setPreferredSize(new Dimension(screenWidth, screenHeight)); // Set the size of the panel to the calculated screen width and height
@@ -72,6 +78,9 @@ public class GamePanel extends JPanel implements Runnable {
         eHandler = new EventHandler(this);
         gameState = titleState;
         ui = new UI(this);
+
+
+
     }
 
     public void startGameThread() {

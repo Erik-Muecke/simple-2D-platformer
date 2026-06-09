@@ -2,7 +2,6 @@ package main;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import main.GamePanel;
 
 public class KeyHandler implements KeyListener {
 
@@ -47,6 +46,10 @@ public class KeyHandler implements KeyListener {
 
                 if(commandNum == 1) {
                     // optional: load game
+                    gp.mapIndicator = gp.saveHndlr.loadLevel();
+                    gp.gameState = gp.playState;
+                    commandNum = 0;
+
                 }
 
                 if(commandNum == 2) {
@@ -87,7 +90,33 @@ public class KeyHandler implements KeyListener {
         else if (gp.gameState == gp.pauseState) {
             if (key == KeyEvent.VK_P) {
                 gp.gameState = gp.playState;
+
             }//if paused, no movement possible
+
+            if(key == KeyEvent.VK_W) {
+                commandNum--;
+                if(commandNum < 0) {
+                    commandNum = 0;
+                }
+            }
+
+            if(key == KeyEvent.VK_S) {
+                commandNum++;
+                if(commandNum > 1) {
+                    commandNum = 1;
+                }
+            }
+
+            if(key == KeyEvent.VK_ENTER) {
+                if(commandNum == 0) {
+                    gp.gameState = gp.playState;
+                }
+
+                if(commandNum == 1) {
+                    System.exit(0);
+                }
+            }
+
         }
     }
 

@@ -109,14 +109,49 @@ public class UI {
 
     public void drawPauseScreen() {
 
-        g2.setFont(arial_40);
-        g2.setColor(Color.white);
+// draw character image
+        int imgX = gp.screenWidth / 2 - (gp.tileSize * 2) / 2;
+        int imgY =gp.tileSize * 5;
+
+        g2.drawImage(titleImage, imgX, imgY, null);
+
+        //title
+        g2.setFont(arial_80B);
 
         String text = "PAUSED";
         int x = getXforCenteredText(text);
-        int y = gp.screenHeight / 2;
+        int y = gp.tileSize * 3;
 
+        // shadow
+        g2.setColor(Color.gray);
+        g2.drawString(text, x + 5, y + 5);
+
+        // main text
+        g2.setColor(Color.white);
         g2.drawString(text, x, y);
+
+        //menu
+        g2.setFont(arial_40);
+
+        //new game
+        text = "CONTINUE";
+        x = getXforCenteredText(text);
+        y += gp.tileSize * 5;
+        g2.drawString(text, x, y);
+
+        if(gp.keyHandler.commandNum == 0) {
+            g2.drawString(">", x - 40, y);
+        }
+
+        //load game
+        text = "QUIT";
+        x = getXforCenteredText(text);
+        y += gp.tileSize;
+        g2.drawString(text, x, y);
+
+        if(gp.keyHandler.commandNum == 1) {
+            g2.drawString(">", x - 40, y);
+        }
 
     }//pause the game
 
