@@ -136,6 +136,38 @@ public class CollisionSystem {
         }
     }
 
+    public int collidesWithNPC(Entity entity) {
+        int entityLeft   = entity.x + entity.solidArea.x;
+        int entityRight  = entityLeft + entity.solidArea.width;
+        int entityTop    = entity.y + entity.solidArea.y;
+        int entityBottom = entityTop + entity.solidArea.height;
+
+        // Project one step ahead so the check fires before movement is blocked
+        switch (entity.direction) {
+            case 'L': entityLeft   -= entity.speed; break;
+            case 'R': entityRight  += entity.speed; break;
+            case 'U': entityTop    -= entity.speed; break;
+            case 'D': entityBottom += entity.speed; break;
+        }
+
+        for (int i = 0; i < gp.npc.length; i++) {
+            Entity npc = gp.npc[i];
+            if (npc == null) continue;
+
+            int npcLeft   = npc.x + npc.solidArea.x;
+            int npcRight  = npcLeft  + npc.solidArea.width;
+            int npcTop    = npc.y + npc.solidArea.y;
+            int npcBottom = npcTop + npc.solidArea.height;
+
+            if (overlaps(entityLeft, entityRight, entityTop, entityBottom,
+                    npcLeft, npcRight, npcTop, npcBottom)) {
+                entity.collisionOn = true;
+                return i;
+            }
+        }
+        return 999;
+    }
+
     public void checkSpikeDamage(Entity entity) {
         int[] box = getCurrentAABB(entity);
         int left = box[0], right = box[1], top = box[2], bottom = box[3];

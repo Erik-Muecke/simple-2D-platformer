@@ -7,5 +7,7 @@ public class OBJ_ManaPotion extends SuperObject {
         collision = false;
         image = loadImage("/objects/manapotion.png");
         stackable = true;
+        amount = 3;
+        price = 3;
     }
 }

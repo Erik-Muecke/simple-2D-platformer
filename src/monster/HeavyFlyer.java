@@ -29,7 +29,7 @@ public class HeavyFlyer extends Entity {
         direction = 'L';
         directionBeforeKnockBack = 'L';
 
-        maxLife = 10;
+        maxLife = 15;
         life = maxLife;
     }
 

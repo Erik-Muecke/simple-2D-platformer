@@ -224,16 +224,20 @@ public class Player extends Entity {
         }
 
         setWalking();
+        int npcIndex = gp.collisionsystem.collidesWithNPC(this);
+        if (keyH.enterPressed && !gp.eHandler.isPlayerOnHealingPool()) {
+            if (npcIndex != 999) {
+                interactWithNPC(npcIndex);
+            } else {
+                attack();
+                keyH.enterPressed = false;
+            }
+        }
 
         // Jump starts only from the ground to prevent infinite air jumps.
         if (keyH.jumpPressed && onGround) {
             velocityY = -jumpStrength;
             onGround = false;
-        }
-
-        if (keyH.enterPressed && !gp.eHandler.isPlayerOnHealingPool()) {
-            attack();
-            keyH.enterPressed = false;
         }
 
         if (invincible == true) {
@@ -284,6 +288,15 @@ public class Player extends Entity {
             }
             manaCounter = 0;
         }
+    }
+
+    public void resetBoosts() {
+        speed = normalSpeed;
+        jumpStrength = normalJumpStrength;
+        speedBoostActive = false;
+        jumpStrengthBoostActive = false;
+        speedBoostCounter = 0;
+        jumpStrengthBoostCounter = 0;
     }
 
     public void pickUpObject(int i) {
@@ -380,13 +393,13 @@ public class Player extends Entity {
                     break;
 
                 case "Healing Potion":
-                    addItemToInventory(gp.obj[i]);
+                    addItemToInventory(gp.obj[i].copy());
                     gp.ui.addMessage("You got a healing potion");
                     gp.obj[i] = null;
                     break;
 
                 case "Mana Potion":
-                    addItemToInventory(gp.obj[i]);
+                    addItemToInventory(gp.obj[i].copy());
                     gp.ui.addMessage("You got a mana potion");
                     gp.obj[i] = null;
                     break;
@@ -448,6 +461,32 @@ public class Player extends Entity {
             }
         }
         return itemIndex;
+    }
+
+    public void interactWithNPC(int npcIndex) {
+        if (npcIndex == 999) return;
+        if (!keyH.enterPressed) return;
+        if (gp.npc[npcIndex] == null) return;
+
+        Entity npc = gp.npc[npcIndex];
+        keyH.enterPressed = false;
+
+        if (gp.gameState != gp.dialogueState) {
+            gp.gameState = gp.dialogueState;
+            gp.ui.activeNPCIndex = npcIndex;
+            npc.dialogueIndex = 0;
+        }
+
+        String line = npc.dialogues[npc.dialogueIndex];
+        if (line != null && !line.isEmpty()) {
+            gp.ui.currentDialogue = line;
+            npc.dialogueIndex++;
+            if (npc.dialogueIndex >= npc.dialogues.length
+                    || npc.dialogues[npc.dialogueIndex] == null
+                    || npc.dialogues[npc.dialogueIndex].isEmpty()) {
+                npc.dialogueIndex = 0;
+            }
+        }
     }
 
     public void activateSpeedBoost() {

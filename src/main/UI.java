@@ -24,6 +24,12 @@ public class UI {
 
     public int commandNum = 0;
 
+    public String currentDialogue = "";
+    public int transitionCounter = 0;
+    public int shopSlotRow = 0;
+    public int activeNPCIndex = 999;
+    public int tradeMenuState = 0; // 0=main, 1=buy, 2=sell
+
     // Fonts
     Font arial_40, arial_80B;
 
@@ -68,6 +74,18 @@ public class UI {
         }
         if(gp.gameState == gp.optionsState) {
             drawOptionsScreen();
+        }
+
+        if(gp.gameState == gp.dialogueState) {
+            drawDialogueScreen();
+        }
+
+        if(gp.gameState == gp.transitionState) {
+            drawTransition();
+        }
+
+        if(gp.gameState == gp.tradeState) {
+            drawTradeScreen();
         }
     }//the UI draw function
 
@@ -322,6 +340,134 @@ public class UI {
         return null;
     }
 
+    public void drawTradeScreen() {
+        switch (tradeMenuState) {
+            case 0: drawTradeMainMenu(); break;
+            case 1: drawBuyScreen();     break;
+            case 2: drawSellScreen();    break;
+        }
+    }
+
+    private void drawTradeMainMenu() {
+        int panelX = gp.screenWidth  / 2 - 150;
+        int panelY = gp.screenHeight / 2 - 120;
+        int panelW = 300, panelH = 240;
+
+        g2.setColor(new Color(0, 0, 0, 200));
+        g2.fillRoundRect(panelX, panelY, panelW, panelH, 20, 20);
+        g2.setColor(Color.WHITE);
+        g2.setStroke(new BasicStroke(3));
+        g2.drawRoundRect(panelX, panelY, panelW, panelH, 20, 20);
+
+        g2.setFont(new Font("Arial", Font.BOLD, 24));
+        String title = "Merchant";
+        int titleX = panelX + (panelW - g2.getFontMetrics().stringWidth(title)) / 2;
+        g2.drawString(title, titleX, panelY + 45);
+
+        g2.setFont(new Font("Arial", Font.PLAIN, 16));
+        g2.setColor(new Color(255, 215, 0));
+        g2.drawString("Coins: " + gp.player.hasCoin, panelX + 15, panelY + 75);
+
+        String[] options = {"Buy", "Sell", "Back"};
+        g2.setFont(new Font("Arial", Font.PLAIN, 20));
+        for (int i = 0; i < options.length; i++) {
+            int optY = panelY + 115 + i * 45;
+            if (i == commandNum) {
+                g2.setColor(new Color(255, 200, 0, 180));
+                g2.fillRoundRect(panelX + 20, optY - 22, panelW - 40, 32, 8, 8);
+                g2.setColor(Color.BLACK);
+            } else {
+                g2.setColor(Color.WHITE);
+            }
+            int textX = panelX + (panelW - g2.getFontMetrics().stringWidth(options[i])) / 2;
+            g2.drawString(options[i], textX, optY);
+        }
+    }
+
+    private void drawBuyScreen() {
+        if (activeNPCIndex == 999 || gp.npc[activeNPCIndex] == null) return;
+        SuperObject[] shop = gp.npc[activeNPCIndex].shopInventory;
+
+        int panelX = gp.screenWidth  / 2 - 180;
+        int panelY = gp.screenHeight / 2 - 150;
+        int panelW = 360, panelH = 300;
+
+        g2.setColor(new Color(0, 0, 0, 200));
+        g2.fillRoundRect(panelX, panelY, panelW, panelH, 20, 20);
+        g2.setColor(Color.WHITE);
+        g2.setStroke(new BasicStroke(3));
+        g2.drawRoundRect(panelX, panelY, panelW, panelH, 20, 20);
+
+        g2.setFont(new Font("Arial", Font.BOLD, 22));
+        g2.drawString("Buy", panelX + panelW / 2 - 20, panelY + 40);
+
+        g2.setFont(new Font("Arial", Font.PLAIN, 16));
+        g2.setColor(new Color(255, 215, 0));
+        g2.drawString("Your coins: " + gp.player.hasCoin, panelX + 15, panelY + 70);
+
+        for (int i = 0; i < shop.length; i++) {
+            if (shop[i] == null) continue;
+            int rowY = panelY + 105 + i * 55;
+            if (i == shopSlotRow) {
+                g2.setColor(new Color(255, 200, 0, 150));
+                g2.fillRoundRect(panelX + 10, rowY - 20, panelW - 20, 40, 6, 6);
+            }
+            if (shop[i].image != null)
+                g2.drawImage(shop[i].image, panelX + 15, rowY - 18, 32, 32, null);
+            g2.setColor(Color.WHITE);
+            g2.drawString(shop[i].name + " x" + shop[i].amount, panelX + 55, rowY);
+            g2.setColor(new Color(255, 215, 0));
+            g2.drawString(shop[i].price + " coins", panelX + panelW - 100, rowY);
+        }
+
+        g2.setFont(new Font("Arial", Font.PLAIN, 11));
+        g2.setColor(Color.GRAY);
+        g2.drawString("W/S select   ENTER buy   ESC back", panelX + 10, panelY + panelH - 10);
+    }
+
+    private void drawSellScreen() {
+        int panelX = gp.screenWidth  / 2 - 180;
+        int panelY = gp.screenHeight / 2 - 150;
+        int panelW = 360, panelH = 300;
+
+        g2.setColor(new Color(0, 0, 0, 200));
+        g2.fillRoundRect(panelX, panelY, panelW, panelH, 20, 20);
+        g2.setColor(Color.WHITE);
+        g2.setStroke(new BasicStroke(3));
+        g2.drawRoundRect(panelX, panelY, panelW, panelH, 20, 20);
+
+        g2.setFont(new Font("Arial", Font.BOLD, 22));
+        g2.drawString("Sell", panelX + panelW / 2 - 22, panelY + 40);
+
+        g2.setFont(new Font("Arial", Font.PLAIN, 16));
+        g2.setColor(new Color(255, 215, 0));
+        g2.drawString("Your coins: " + gp.player.hasCoin, panelX + 15, panelY + 70);
+
+        if (gp.player.inventory.isEmpty()) {
+            g2.setColor(Color.GRAY);
+            g2.drawString("Inventory is empty.", panelX + 60, panelY + 150);
+        } else {
+            for (int i = 0; i < gp.player.inventory.size(); i++) {
+                SuperObject item = gp.player.inventory.get(i);
+                int rowY = panelY + 105 + i * 55;
+                if (i == shopSlotRow) {
+                    g2.setColor(new Color(255, 200, 0, 150));
+                    g2.fillRoundRect(panelX + 10, rowY - 20, panelW - 20, 40, 6, 6);
+                }
+                if (item.image != null)
+                    g2.drawImage(item.image, panelX + 15, rowY - 18, 32, 32, null);
+                g2.setColor(Color.WHITE);
+                g2.drawString(item.name + (item.amount > 1 ? " x" + item.amount : ""), panelX + 55, rowY);
+                g2.setColor(new Color(255, 215, 0));
+                g2.drawString(Math.max(1, item.price / 2) + " coins", panelX + panelW - 100, rowY);
+            }
+        }
+
+        g2.setFont(new Font("Arial", Font.PLAIN, 11));
+        g2.setColor(Color.GRAY);
+        g2.drawString("W/S select   ENTER sell   ESC back", panelX + 10, panelY + panelH - 10);
+    }
+
     public void drawOptionsScreen() {
 
         // panel on the right half of the screen
@@ -393,6 +539,57 @@ public class UI {
         g2.drawString("Back", x, y);
         if (commandNum == 5) {
             g2.drawString(">", x - 25, y);
+        }
+    }
+
+    public void drawDialogueScreen() {
+
+        int x = gp.tileSize * 2;
+        int y = gp.tileSize / 2;
+        int width = gp.screenWidth - (gp.tileSize * 4);
+        int height = gp.tileSize * 4;
+
+        g2.setColor(new Color(0,0,0,220));
+        g2.fillRoundRect(x,y,width,height,35,35);
+
+        g2.setColor(Color.WHITE);
+        g2.drawRoundRect(x,y,width,height,35,35);
+
+        g2.setFont(g2.getFont().deriveFont(28F));
+
+        x += gp.tileSize;
+        y += gp.tileSize;
+
+        for(String line : currentDialogue.split("\n")) {
+
+            g2.drawString(line, x, y);
+
+            y += 40;
+        }
+    }
+
+    public void drawTransition() {
+
+        transitionCounter++;
+
+        g2.setColor(
+                new Color(
+                        0,
+                        0,
+                        0,
+                        transitionCounter * 5));
+
+        g2.fillRect(
+                0,
+                0,
+                gp.screenWidth,
+                gp.screenHeight);
+
+        if(transitionCounter == 50) {
+
+            transitionCounter = 0;
+
+            gp.gameState = gp.playState;
         }
     }
 

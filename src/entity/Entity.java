@@ -51,6 +51,10 @@ public class Entity {
     public boolean knockBack = false;
     public int knockBackCounter = 0;
 
+    public String[] dialogues = new String[20];
+    public int dialogueIndex = 0;
+    public SuperObject[] shopInventory = new SuperObject[20];
+
     public BufferedImage img1, img2, img3, img4, img5, img6;
     public Entity(GamePanel gp) {
         this.gp = gp;

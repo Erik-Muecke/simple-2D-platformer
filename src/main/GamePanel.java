@@ -44,6 +44,7 @@ public class GamePanel extends JPanel implements Runnable {
     public BackgroundManager backgroundManager;
     public SuperObject obj[] = new SuperObject[30];
     public Entity monster[] = new Entity[20];
+    public Entity[] npc = new Entity[20];
     public Player player; //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können
 
     // Game States
@@ -54,6 +55,9 @@ public class GamePanel extends JPanel implements Runnable {
     public final int inventoryState = 3;
     public final int optionsState = 4;
     public final int titleState = 0;
+    public final int dialogueState = 5;
+    public final int transitionState = 6;
+    public final int tradeState = 7;
     public boolean gameOver = false;
 
     public EventHandler eHandler;
@@ -120,8 +124,8 @@ public class GamePanel extends JPanel implements Runnable {
                 MaxWorldRow = 16;
                 break;
             case 4:
-                MaxWorldCol = 46;
-                MaxWorldRow = 24;
+                MaxWorldCol = 48;
+                MaxWorldRow = 22;
                 break;
             default:
                 MaxWorldCol = 32;
@@ -301,8 +305,7 @@ public class GamePanel extends JPanel implements Runnable {
         player.invincibleCounter = 0;
         player.projectile.alive = false;
         player.mana = 5;
-        player.jumpStrengthBoostActive = false;
-        player.speedBoostActive = false;
+        player.resetBoosts();
 
         obj = new SuperObject[30];
         monster = new Entity[20];
@@ -334,6 +337,11 @@ public class GamePanel extends JPanel implements Runnable {
             for (int i = 0; i < monster.length; i++) {
                 if (monster[i] != null) {
                     monster[i].draw(g2);
+                }
+            }
+            for(int i = 0; i < npc.length; i++) {
+                if(npc[i] != null) {
+                    npc[i].draw(g2);
                 }
             }
             player.draw(g2);

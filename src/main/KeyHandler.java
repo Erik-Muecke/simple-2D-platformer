@@ -3,6 +3,7 @@ package main;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import entity.Entity;
 import object.SuperObject;
 
 public class KeyHandler implements KeyListener {
@@ -29,13 +30,24 @@ public class KeyHandler implements KeyListener {
         // ESCAPE öffnet/schließt das Options Menü - wird zuerst geprüft
         if (key == KeyEvent.VK_ESCAPE) {
             if (gp.gameState == gp.optionsState) {
-                gp.gameState = gp.playState;    // options schließen
+                gp.gameState = gp.playState;
                 gp.ui.commandNum = 0;
             } else if (gp.gameState == gp.playState) {
-                gp.gameState = gp.optionsState; // options öffnen
+                gp.gameState = gp.optionsState;
                 gp.ui.commandNum = 0;
             } else if (gp.gameState == gp.inventoryState) {
-                gp.gameState = gp.playState;    // inventory schließen
+                gp.gameState = gp.playState;
+            } else if (gp.gameState == gp.dialogueState) {
+                gp.gameState = gp.playState;
+                gp.ui.activeNPCIndex = 999;
+            } else if (gp.gameState == gp.tradeState) {
+                if (gp.ui.tradeMenuState == 0) {
+                    gp.gameState = gp.playState;
+                    gp.ui.activeNPCIndex = 999;
+                } else {
+                    gp.ui.tradeMenuState = 0;
+                    gp.ui.commandNum = 0;
+                }
             }
             return;
         }
@@ -219,8 +231,79 @@ public class KeyHandler implements KeyListener {
             if (key == KeyEvent.VK_P) {
                 gp.gameState = gp.playState;
             }//if paused, no movement possible
+        } else if(gp.gameState == gp.dialogueState) {
+            if (key == KeyEvent.VK_ENTER) {
+                Entity npc = (gp.ui.activeNPCIndex != 999) ? gp.npc[gp.ui.activeNPCIndex] : null;
+                boolean morelines = npc != null
+                        && npc.dialogueIndex < npc.dialogues.length
+                        && npc.dialogues[npc.dialogueIndex] != null
+                        && !npc.dialogues[npc.dialogueIndex].isEmpty();
+                if (morelines) {
+                    gp.ui.currentDialogue = npc.dialogues[npc.dialogueIndex];
+                    npc.dialogueIndex++;
+                } else {
+                    gp.ui.tradeMenuState = 0;
+                    gp.ui.commandNum = 0;
+                    gp.gameState = gp.tradeState;
+                }
+            }
+            if (key == KeyEvent.VK_ESCAPE) {
+                gp.gameState = gp.playState;
+            }
         }
+        else if(gp.gameState == gp.tradeState) {
+            if (gp.ui.tradeMenuState == 0) {
+                if (key == KeyEvent.VK_W) { gp.ui.commandNum--; if (gp.ui.commandNum < 0) gp.ui.commandNum = 2; }
+                if (key == KeyEvent.VK_S) { gp.ui.commandNum++; if (gp.ui.commandNum > 2) gp.ui.commandNum = 0; }
+                if (key == KeyEvent.VK_ENTER) {
+                    if (gp.ui.commandNum == 0) { gp.ui.tradeMenuState = 1; gp.ui.shopSlotRow = 0; }
+                    if (gp.ui.commandNum == 1) { gp.ui.tradeMenuState = 2; gp.ui.shopSlotRow = 0; }
+                    if (gp.ui.commandNum == 2) { gp.gameState = gp.playState; }
+                }
+                if (key == KeyEvent.VK_ESCAPE) { gp.gameState = gp.playState; }
+            } else if (gp.ui.tradeMenuState == 1) {
+                if (key == KeyEvent.VK_W) { gp.ui.shopSlotRow--; if (gp.ui.shopSlotRow < 0) gp.ui.shopSlotRow = 1; }
+                if (key == KeyEvent.VK_S) { gp.ui.shopSlotRow++; if (gp.ui.shopSlotRow > 1) gp.ui.shopSlotRow = 0; }
+                if (key == KeyEvent.VK_ENTER) { buyItem(); }
+                if (key == KeyEvent.VK_ESCAPE) { gp.ui.tradeMenuState = 0; gp.ui.commandNum = 0; }
+            } else if (gp.ui.tradeMenuState == 2) {
+                int maxSlot = Math.max(0, gp.player.inventory.size() - 1);
+                if (key == KeyEvent.VK_W) { gp.ui.shopSlotRow--; if (gp.ui.shopSlotRow < 0) gp.ui.shopSlotRow = maxSlot; }
+                if (key == KeyEvent.VK_S) { gp.ui.shopSlotRow++; if (gp.ui.shopSlotRow > maxSlot) gp.ui.shopSlotRow = 0; }
+                if (key == KeyEvent.VK_ENTER) { sellItem(); }
+                if (key == KeyEvent.VK_ESCAPE) { gp.ui.tradeMenuState = 0; gp.ui.commandNum = 0; }
+            }
+        }
+    }
 
+    public void buyItem() {
+        if (gp.ui.activeNPCIndex == 999) return;
+        SuperObject item = gp.npc[gp.ui.activeNPCIndex].shopInventory[gp.ui.shopSlotRow];
+        if (item == null) return;
+        if (gp.player.hasCoin >= item.price) {
+            gp.player.hasCoin -= item.price;
+            item.amount--;
+            gp.player.addItemToInventory(item.copy());
+            gp.ui.addMessage("Bought: " + item.name);
+            if (item.amount <= 0) {
+                gp.npc[gp.ui.activeNPCIndex].shopInventory[gp.ui.shopSlotRow] = null;
+            }
+        } else {
+            gp.ui.addMessage("Not enough coins!");
+        }
+    }
+
+    public void sellItem() {
+        if (gp.player.inventory.isEmpty()) { gp.ui.addMessage("Nothing to sell!"); return; }
+        int idx = gp.ui.shopSlotRow;
+        if (idx >= gp.player.inventory.size()) return;
+        SuperObject item = gp.player.inventory.get(idx);
+        int sellPrice = Math.max(1, item.price / 2);
+        gp.player.hasCoin += sellPrice;
+        gp.player.removeItemFromInventory(item.name);
+        gp.ui.addMessage("Sold " + item.name + " for " + sellPrice + " coins");
+        if (gp.ui.shopSlotRow >= gp.player.inventory.size())
+            gp.ui.shopSlotRow = Math.max(0, gp.player.inventory.size() - 1);
     }
 
     private void useSelectedInventoryItem() {

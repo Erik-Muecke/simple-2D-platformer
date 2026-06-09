@@ -19,6 +19,18 @@ public class SuperObject {
     public int solidAreaDefaultY = 0;
     public int amount = 1;
     public boolean stackable = false;
+    public int price;
+
+    public SuperObject copy() {
+        SuperObject copy = new SuperObject();
+        copy.name = this.name;
+        copy.image = this.image;
+        copy.price = this.price;
+        copy.amount = 1;
+        copy.stackable = this.stackable;
+        copy.collision = this.collision;
+        return copy;
+    }
 
     protected BufferedImage loadImage(String path) {
         try (InputStream stream = getClass().getResourceAsStream(path)) {

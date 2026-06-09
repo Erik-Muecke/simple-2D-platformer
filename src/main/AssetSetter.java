@@ -1,5 +1,6 @@
 package main;
 
+import entity.NPC_Merchant;
 import monster.*;
 import object.*;
 
@@ -104,6 +105,10 @@ public class AssetSetter {
         gp.monster[3].x = gp.tileSize * 11;
         gp.monster[3].y = gp.tileSize * 5;
 
+        gp.npc[0] = new NPC_Merchant(gp);
+        gp.npc[0].x = gp.tileSize * 15;
+        gp.npc[0].y = gp.tileSize * 1;
+
     }
 
     public void setScene2() {
@@ -175,11 +180,11 @@ public class AssetSetter {
     public void setScene4() {
         gp.obj[1] = new OBJ_SpeedBooster();
         gp.obj[1].x = 18 * gp.tileSize;
-        gp.obj[1].y = 18 * gp.tileSize;
+        gp.obj[1].y = 16 * gp.tileSize;
 
         gp.obj[2] = new OBJ_JumpBooster();
         gp.obj[2].x = 46 * gp.tileSize;
-        gp.obj[2].y = 18 * gp.tileSize;
+        gp.obj[2].y = 16 * gp.tileSize;
 
         gp.obj[4] = new OBJ_Flag();
         gp.obj[4].x = 25 * gp.tileSize;
@@ -187,23 +192,31 @@ public class AssetSetter {
 
         gp.monster[1] = new FireShooter(gp);
         gp.monster[1].x = gp.tileSize * 47;
-        gp.monster[1].y = gp.tileSize * 27;
+        gp.monster[1].y = gp.tileSize * 15;
 
         gp.monster[2] = new HeavyFlyer(gp);
         gp.monster[2].x = gp.tileSize * 9;
-        gp.monster[2].y = gp.tileSize * 12;
+        gp.monster[2].y = gp.tileSize * 10;
 
         gp.monster[3] = new HeavyFlyer(gp);
         gp.monster[3].x = gp.tileSize * 21;
-        gp.monster[3].y = gp.tileSize * 12;
+        gp.monster[3].y = gp.tileSize * 10;
 
         gp.monster[4] = new HeavyFlyer(gp);
         gp.monster[4].x = gp.tileSize * 33;
-        gp.monster[4].y = gp.tileSize * 12;
+        gp.monster[4].y = gp.tileSize * 10;
 
         gp.monster[5] = new HeavyFlyer(gp);
         gp.monster[5].x = gp.tileSize * 45;
-        gp.monster[5].y = gp.tileSize * 12;
+        gp.monster[5].y = gp.tileSize * 10;
+
+        gp.monster[6] = new FireShooter(gp);
+        gp.monster[6].x = gp.tileSize * 0;
+        gp.monster[6].y = gp.tileSize * 10;
+
+        gp.monster[7] = new FireShooter(gp);
+        gp.monster[7].x = gp.tileSize * 0;
+        gp.monster[7].y = gp.tileSize * 8;
     }
 
     public void setScene5() {
@@ -216,6 +229,7 @@ public class AssetSetter {
     public void updateScene() {
         Arrays.fill(gp.obj, null);
         Arrays.fill(gp.monster, null);
+        Arrays.fill(gp.npc, null);
         switch(gp.mapIndicator){
             case 0:
                 setScene0();
