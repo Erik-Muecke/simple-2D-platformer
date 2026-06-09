@@ -47,12 +47,16 @@ public class KeyHandler implements KeyListener {
 
                 if(commandNum == 1) {
                     // optional: load game
+                    gp.mapIndicator = gp.saveHndlr.loadLevel();
+                    gp.gameState = gp.playState;
+
                 }
 
                 if(commandNum == 2) {
                     System.exit(0);
                 }
             }
+            commandNum = 0;
         }
 
         else if (gp.gameState == gp.playState) {
@@ -88,6 +92,34 @@ public class KeyHandler implements KeyListener {
             if (key == KeyEvent.VK_P) {
                 gp.gameState = gp.playState;
             }//if paused, no movement possible
+
+            if(key == KeyEvent.VK_W) {
+                commandNum--;
+                if(commandNum < 1) {
+                    commandNum = 0;
+                }
+            }
+
+            if(key == KeyEvent.VK_S) {
+                commandNum++;
+                if(commandNum > 1) {
+                    commandNum = 0;
+                }
+            }
+
+            if(key == KeyEvent.VK_ENTER) {
+                if(commandNum == 0) {
+                    gp.gameState = gp.playState;
+                }
+
+                if(commandNum == 1) {
+
+                    System.exit(0);
+
+                }
+            }
+
+            commandNum = 0;
         }
     }
 

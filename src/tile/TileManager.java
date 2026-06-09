@@ -110,6 +110,9 @@ public class TileManager {
                         break;
                 }
                 gp.previousmapIndicator = gp.mapIndicator;
+                System.out.println(gp.mapIndicator);
+                gp.saveHndlr.saveLevel(gp.mapIndicator);
+                System.out.println(gp.saveHndlr.loadLevel());
             }
 
     }
