@@ -43,6 +43,10 @@ public class UI {
         if(gp.gameState == gp.playState) {
             drawPlayerLife();
         }
+        if(gp.gameState == gp.gameOver) {
+            drawPlayerLife();
+            drawGameOver();
+        }
     }//the UI draw function
 
     public void drawTitleScreen() {
@@ -148,6 +152,60 @@ public class UI {
         }
 
     }//pause the game
+
+    public void drawGameOver() {
+
+        g2.setColor(new Color(0,0,0,150));
+        g2.fillRect(0,0,gp.screenWidth,gp.screenHeight);
+
+        int x;
+        int y;
+
+        String text = "GAME OVER";
+        g2.setFont(arial_80B);
+        x = getXforCenteredText(text);
+        y = gp.tileSize * 3;
+
+        // shadow
+        g2.setColor(Color.gray);
+        g2.drawString(text, x + 5, y + 5);
+
+        // main text
+        g2.setColor(Color.WHITE);
+        g2.drawString(text, x, y);
+
+        // menu
+        g2.setFont(arial_40);
+
+        text = "RETRY";
+        x = getXforCenteredText(text);
+        y += gp.tileSize * 5;
+        g2.drawString(text, x, y);
+
+        if(gp.keyHandler.commandNum == 0) {
+            g2.drawString(">", x - 40, y);
+        }
+
+        text = "LOAD SAVE";
+        x = getXforCenteredText(text);
+        y += gp.tileSize;
+        g2.drawString(text, x, y);
+
+        if(gp.keyHandler.commandNum == 1) {
+            g2.drawString(">", x - 40, y);
+        }
+
+        text = "QUIT";
+        x = getXforCenteredText(text);
+        y += gp.tileSize;
+        g2.drawString(text, x, y);
+
+        if(gp.keyHandler.commandNum == 2) {
+            g2.drawString(">", x - 40, y);
+        }
+    }
+
+
 
     public void drawPlayerLife() {
 

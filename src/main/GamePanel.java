@@ -51,6 +51,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int playState = 1;
     public final int pauseState = 2;
     public final int titleState = 0;
+    public final int gameOver = 3;
 
     public EventHandler eHandler;
 
@@ -153,6 +154,10 @@ public class GamePanel extends JPanel implements Runnable {
                 }
             }
         } //aktualisiert die Informationen des Spielers, indem die update() Methode des Player-Objekts aufgerufen wird
+
+        if (player.life <= 0) {
+            gameState = gameOver;
+        }
         if(gameState == pauseState) {
             // do nothing (game is frozen)
         } //aktualisiert die Informationen des Spielers, indem die update() Methode des Player-Objekts aufgerufen wird
@@ -166,6 +171,9 @@ public class GamePanel extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D) g;
         if (gameState == titleState) {
             ui.draw(g2);
+        }
+        if (gameState == gameOver) {
+                    ui.draw(g2);
         } else {
             bg.draw(g2);
             tileM.draw(g2);//zeichnet die Spielkacheln mit der draw() Methode im TileManager
@@ -193,5 +201,27 @@ public class GamePanel extends JPanel implements Runnable {
         }
         g2.dispose();
 
+    }
+
+    public void resetGame() {
+        // Reset player state and rebuild scene arrays so collected objects/dead monsters return
+        keyHandler.commandNum = 0;
+        mapIndicator = 0;
+
+        player.life = player.maxLife;
+        player.hasKey = 0;
+        player.x = tileM.playerSpawnX;
+        player.y = tileM.playerSpawnY;
+        player.velocityX = 0;
+        player.velocityY = 0;
+        player.invincible = false;
+        player.invincibleCounter = 0;
+        player.projectile.alive = false;
+
+        aSetter.setObjectScene0();
+        aSetter.setMonster();
+
+        camera.update(player);
+        gameState = playState;
     }
 }
