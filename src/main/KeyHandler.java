@@ -82,13 +82,13 @@ public class KeyHandler implements KeyListener {
                 shotKeyPressed = true;
             }
 
-            if (key == KeyEvent.VK_P) {
+            if (key == KeyEvent.VK_ESCAPE) {
                 gp.gameState = gp.pauseState;
             }
         }//moving possible, during playstate only
 
         else if (gp.gameState == gp.pauseState) {
-            if (key == KeyEvent.VK_P) {
+            if (key == KeyEvent.VK_ESCAPE) {
                 gp.gameState = gp.playState;
 
             }//if paused, no movement possible
@@ -96,14 +96,14 @@ public class KeyHandler implements KeyListener {
             if(key == KeyEvent.VK_W) {
                 commandNum--;
                 if(commandNum < 0) {
-                    commandNum = 0;
+                    commandNum = 1;
                 }
             }
 
             if(key == KeyEvent.VK_S) {
                 commandNum++;
                 if(commandNum > 1) {
-                    commandNum = 1;
+                    commandNum = 0;
                 }
             }
 

@@ -109,12 +109,6 @@ public class UI {
 
     public void drawPauseScreen() {
 
-// draw character image
-        int imgX = gp.screenWidth / 2 - (gp.tileSize * 2) / 2;
-        int imgY =gp.tileSize * 5;
-
-        g2.drawImage(titleImage, imgX, imgY, null);
-
         //title
         g2.setFont(arial_80B);
 
