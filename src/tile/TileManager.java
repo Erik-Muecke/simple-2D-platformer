@@ -37,23 +37,29 @@ public class TileManager {
 
         tile[0] = new Tile();  //erstellt ein neues Tile Objekt an der Stelle 0 im Array
         tile[0].image = imgLoader.scaleImage("/tiles/transparent.png", gp.tileSize, gp.tileSize); //Funktion aus ImageLoader wird aufgerufen um das Bild automatisch zu skalieren.
+        tile[0].name = "transparent";
 
         tile[1] = new Tile();
         tile[1].image = imgLoader.scaleImage("/tiles/wall.png", gp.tileSize, gp.tileSize);
         tile[1].collision = true;
+        tile[0].name = "wall";
 
         tile[2] = new Tile();
         tile[2].image = imgLoader.scaleImage("/tiles/earth.png", gp.tileSize, gp.tileSize);
+        tile[0].name = "earth";
 
         tile[3] = new Tile();
         tile[3].image = imgLoader.scaleImage("/tiles/water.png", gp.tileSize, gp.tileSize);
+        tile[0].name = "water";
 
         tile[9] = new Tile();
         tile[9].image = imgLoader.scaleImage("/tiles/transparent.png", gp.tileSize, gp.tileSize);
         tile[9].collision = false;
+        tile[0].name = "transparent";
 
         tile[10] = new Tile();
         tile[10].image = imgLoader.scaleImage("/tiles/sand.png", gp.tileSize, gp.tileSize);
+        tile[0].name = "sand";
 
 
 

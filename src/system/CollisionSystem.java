@@ -26,6 +26,15 @@ public class CollisionSystem {
             case 'L': left   -= entity.speed; break;
             case 'R': right  += entity.speed; break;
         }
+        return new int[]{ left, right, top, bottom };
+    }
+
+    public int[] getCurrentAABB(Entity entity) {
+        // Convert an entity's local solidArea into world-space collision bounds.
+        int left   = entity.x + entity.solidArea.x;
+        int right  = left + entity.solidArea.width;
+        int top    = entity.y + entity.solidArea.y;
+        int bottom = top + entity.solidArea.height;
 
         return new int[]{ left, right, top, bottom };
     }
@@ -65,6 +74,14 @@ public class CollisionSystem {
                 aTop  < bBottom && aBottom > bTop;
     }
 
+    private boolean isValidCollisionTile(int tileNum) {
+        return tileNum >= 0
+                && tileNum < gp.tileM.tile.length
+                && gp.tileM.tile[tileNum] != null
+                && gp.tileM.tile[tileNum].name != null;
+    }
+
+
     public void collidesT(Entity entity) {
         int[] box = getProjectedAABB(entity);
         int left = box[0], right = box[1], top = box[2], bottom = box[3];
@@ -96,6 +113,59 @@ public class CollisionSystem {
                     entity.collisionOn = true;
                     return;
                 }
+            }
+        }
+    }
+
+    public void checkSpikeDamage(Entity entity) {
+        int[] box = getCurrentAABB(entity);
+        int left = box[0], right = box[1], top = box[2], bottom = box[3];
+
+        int colLeft   = Math.floorDiv(left, gp.tileSize);
+        int colRight  = Math.floorDiv(right - 1, gp.tileSize);
+        int rowTop    = Math.floorDiv(top, gp.tileSize);
+        int rowBottom = Math.floorDiv(bottom - 1, gp.tileSize);
+
+        for (int col = colLeft; col <= colRight; col++) {
+            for (int row = rowTop; row <= rowBottom; row++) {
+                if (col < 0 || row < 0 ||
+                        col >= gp.tileM.mapTileNum.length ||
+                        row >= gp.tileM.mapTileNum[0].length) {
+                    continue;
+                }
+
+                int tileNum = gp.tileM.mapTileNum[col][row];
+                if (!isValidCollisionTile(tileNum) || !gp.tileM.tile[tileNum].name.equals("spike")) {
+                    continue;
+                }
+
+                int spikeBorder = gp.tileSize / 3;
+                int tLeft   = col * gp.tileSize + spikeBorder;
+                int tRight  = (col + 1) * gp.tileSize - spikeBorder;
+                int tTop    = row * gp.tileSize + 5;
+                int tBottom = tTop + gp.tileSize;
+
+                if (overlaps(left, right, top, bottom, tLeft, tRight, tTop, tBottom)) {
+                    damageSpikeTarget(entity);
+                    return;
+                }
+            }
+        }
+    }
+
+    private void damageSpikeTarget(Entity entity) {
+        if (entity == gp.player) {
+            gp.player.damagePlayer();
+            return;
+        }
+
+        // Monster invincibility prevents one spike contact from draining all life in one frame.
+        if (entity.type == Entity.TYPE_MONSTER && !entity.invincible) {
+            entity.life--;
+            entity.invincible = true;
+
+            if (entity.life <= 0) {
+                entity.isDead = true;
             }
         }
     }

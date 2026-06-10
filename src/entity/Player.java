@@ -59,7 +59,7 @@ public class Player extends Entity {
         life = maxLife;
         attackWidth = gp.tileSize;
         attackHeight = gp.tileSize;
-        this.movementSystem = new MovementSystem(gp.worldWidth, gp.worldHeight, gp.tileSize, gp.collisionsystem);
+        this.movementSystem = new MovementSystem(gp);
         loadPlayerImage();
     }
 

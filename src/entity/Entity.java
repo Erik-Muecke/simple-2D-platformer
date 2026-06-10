@@ -19,6 +19,7 @@ public class Entity {
     int startX;
     int startY;// Die Startpositionen
     public char direction = 'U'; //Richtung, in welche der Spieler schaut
+    public char directionBeforeKnockBack;
     public boolean onGround = true;// schaut ob der spieler sich auf dem Boden befindet
     public int velocityX = 0;
     public int velocityY = 0;// Bewegungsrichtungen
@@ -38,6 +39,9 @@ public class Entity {
     public boolean invincible = false;
     public int invincibleCounter = 0;
     public int actionLockCounter;
+
+    public boolean knockBack = false;
+    public int knockBackCounter = 0;
 
     public BufferedImage img1, img2, img3, img4, img5, img6;
     public Entity() {
