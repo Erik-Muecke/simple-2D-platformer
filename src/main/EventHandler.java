@@ -24,17 +24,7 @@ public class EventHandler {
 
     public void checkEvent() {
         boolean damage = hit(9, 11);
-        boolean healing = isHealingPoolHit();
-        boolean teleport = hit(12, 10);
 
-        if (healing) {
-            healingPool();
-        }
-
-        if (!damage && !teleport) {
-            eventReady = true;
-            return;
-        }
 
         if (!eventReady) {
             return;
@@ -44,11 +34,6 @@ public class EventHandler {
             gp.player.damagePlayer();
             eventReady = false;
             return;
-        }
-
-        if (teleport) {
-            teleport(19, 10);
-            eventReady = false;
         }
     }
 
