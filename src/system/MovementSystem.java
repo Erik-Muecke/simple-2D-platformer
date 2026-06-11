@@ -49,7 +49,6 @@ public class MovementSystem {
         if (player.y >= floorY) {
             player.y = floorY;
             player.velocityY = 0;
-            player.onGround = true;
         }
 
         collisionSystem.checkSpikeDamage(player);

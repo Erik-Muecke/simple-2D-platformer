@@ -20,7 +20,7 @@ public class Player extends Entity {
     private final GamePanel gp;
     private final KeyHandler keyH;
     private TileManager tileManager;
-    private int jumpStrength = 30;
+    private int jumpStrength = 34;
     private MovementSystem movementSystem;
     public int hasKey = 0;
 
@@ -33,13 +33,17 @@ public class Player extends Entity {
     // Player additions
     public Projectile projectile;
 
+    public int lastgroundposX;
+    public int lastgroundposY;
 
+    public int floorY;
     public Player(GamePanel gp, KeyHandler keyH) {
         super();
-        speed = 4; //Geschwindigkeit des Spielers, wie viele Pixel er sich pro Update bewegen soll
+        speed = 6; //Geschwindigkeit des Spielers, wie viele Pixel er sich pro Update bewegen soll
         width = 32 * GamePanel.scale; //Breite des Spielers in Pixeln
         height = 32 * GamePanel.scale; //Höhe des Spielers in Pixeln
         direction = 'D';
+        floorY = gp.worldHeight - height; // Setzt die Bodenhöhe basierend auf der Weltgröße und der Spielerhöhe
         this.gp = gp;
         this.keyH = keyH;
 
@@ -95,9 +99,10 @@ public class Player extends Entity {
         }
 
         // Handle jump
-        if (keyH.jumpPressed && onGround) {
+        if (keyH.jumpPressed && onGround && y < floorY - 20) {
             velocityY = -jumpStrength;
             onGround = false;
+            System.out.println("Sprung");
         }
 
         if (keyH.enterPressed && !gp.eHandler.isHealingPoolHit()) {
@@ -111,7 +116,6 @@ public class Player extends Entity {
                 invincible = false;
                 invincibleCounter = 0;
             }
-
         }
 
         if(keyH.shotKeyPressed && !projectile.alive) {
@@ -127,8 +131,18 @@ public class Player extends Entity {
             keyH.shotKeyPressed = false;
         }
 
+        if (onGround && y < floorY - 20) {
+            lastgroundposX = x;
+            lastgroundposY = y;
+            System.out.println("On ground. Last ground position updated: (" + lastgroundposX + ", " + lastgroundposY + ")");
+        }
+
+        checkOutOfBounds();
+
         int objectIndex = gp.collisionsystem.collisionObject(this, true);
         InteractObject(objectIndex);
+
+
 
         // Delegate all physics + collision to MovementSystem
         movementSystem.updatePlayer(this);
@@ -257,9 +271,18 @@ public class Player extends Entity {
         }
     }
 
+    public void checkOutOfBounds() {
+        if (y >= floorY) {
+            System.out.println("OutofBounds.");
+            y = floorY;
+            velocityY = 0;
+            x = lastgroundposX;
+            y = lastgroundposY;
+        }
+    }
+
     @Override
     public void draw(Graphics2D g2) {
-
         if (invincible) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         }

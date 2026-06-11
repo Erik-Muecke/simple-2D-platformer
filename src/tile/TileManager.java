@@ -52,6 +52,10 @@ public class TileManager {
         tile[3].image = imgLoader.scaleImage("/tiles/water.png", gp.tileSize, gp.tileSize);
         tile[0].name = "water";
 
+        tile[4] = new Tile();
+        tile[4].image = imgLoader.scaleImage("/tiles/spike.png", gp.tileSize, gp.tileSize);
+        tile[4].name = "spike";
+
         tile[9] = new Tile();
         tile[9].image = imgLoader.scaleImage("/tiles/transparent.png", gp.tileSize, gp.tileSize);
         tile[9].collision = false;
