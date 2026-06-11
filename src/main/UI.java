@@ -47,6 +47,10 @@ public class UI {
             drawPlayerLife();
             drawGameOver();
         }
+
+        if(gp.gameState == gp.winState) {
+            drawWinScreen();
+        }
     }//the UI draw function
 
     public void drawTitleScreen() {
@@ -205,6 +209,61 @@ public class UI {
         }
     }
 
+    public void drawWinScreen() {
+
+        // background
+        g2.setColor(Color.black);
+        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+
+        // draw character image
+        int imgX = gp.screenWidth / 2 - (gp.tileSize * 2) / 2;
+        int imgY = gp.tileSize * 5;
+
+        g2.drawImage(titleImage, imgX, imgY, null);
+
+        //title
+        g2.setFont(arial_80B);
+
+        String text = "YOU WON!";
+        int x = getXforCenteredText(text);
+        int y = gp.tileSize * 3;
+
+        // shadow
+        g2.setColor(Color.gray);
+        g2.drawString(text, x + 5, y + 5);
+
+        // main text
+        g2.setColor(Color.white);
+        g2.drawString(text, x, y);
+
+        //menu
+        g2.setFont(arial_40);
+
+        text = "This is everything. You now can quit. Or you play it again.";
+        x = getXforCenteredText(text);
+        y += gp.tileSize * 5;
+        g2.drawString(text, x, y);
+
+        //new game
+        text = "NEW GAME";
+        x = getXforCenteredText(text);
+        y += gp.tileSize * 2;
+        g2.drawString(text, x, y);
+
+        if (gp.keyHandler.commandNum == 0) {
+            g2.drawString(">", x - 40, y);
+        }
+
+        //quit
+        text = "QUIT";
+        x = getXforCenteredText(text);
+        y += gp.tileSize;
+        g2.drawString(text, x, y);
+
+        if (gp.keyHandler.commandNum == 1) {
+            g2.drawString(">", x - 40, y);
+        }
+    }
 
 
     public void drawPlayerLife() {

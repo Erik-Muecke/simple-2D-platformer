@@ -150,6 +150,32 @@ public class KeyHandler implements KeyListener {
                     System.exit(0);
                 }
             }
+        }
+
+        else if (gp.gameState == gp.winState) {
+
+            if(key == KeyEvent.VK_W) {
+                commandNum--;
+                if(commandNum < 0) {
+                    commandNum = 1;
+                }
+            }
+
+            if(key == KeyEvent.VK_S) {
+                commandNum++;
+                if(commandNum > 1) {
+                    commandNum = 0;
+                }
+            }
+
+            if(key == KeyEvent.VK_ENTER) {
+                if(commandNum == 0) {
+                    gp.resetGame();
+                }
+                if (commandNum == 1) {
+                    System.exit(0);
+                }
+            }
 
         }
     }

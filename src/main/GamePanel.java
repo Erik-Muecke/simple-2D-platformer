@@ -52,6 +52,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int pauseState = 2;
     public final int titleState = 0;
     public final int gameOver = 3;
+    public final int winState = 4;
 
     public EventHandler eHandler;
 
@@ -60,6 +61,7 @@ public class GamePanel extends JPanel implements Runnable {
     //Map indicator which map to load
     public int mapIndicator = 0;
     public int previousmapIndicator = 0;
+    public int numberOfMaps = 5;
 
 
 
@@ -135,6 +137,9 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
+        if (mapIndicator > numberOfMaps) {
+            gameState = winState;
+        }
         if(gameState == playState) {
             tileM.update();
             player.update();

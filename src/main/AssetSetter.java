@@ -96,6 +96,12 @@ public class AssetSetter {
             case 3:
                 setObjectScene3();
                 break;
+            case 4:
+                setObjectScene4();
+                break;
+            case 5:
+                setObjectScene5();
+                break;
 
         }
     }
