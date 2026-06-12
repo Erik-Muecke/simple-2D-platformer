@@ -113,10 +113,24 @@ public class TileManager {
                     case 0:
                         //TODO: hier die jeweiligen platzierungen der objekte, Gegner, Backgrounds für die Karte festlegen.
                         //Startpositionen ebenso
+                        gp.player.x = playerSpawnX;
+                        gp.player.y = playerSpawnY;
                         break;
                     case 1:
+                        gp.player.x = playerSpawnX;
+                        gp.player.y = playerSpawnY;
                         break;
                     case 2:
+                        gp.player.x = playerSpawnX;
+                        gp.player.y = playerSpawnY;
+                        break;
+                    case 3:
+                        gp.player.x = playerSpawnX;
+                        gp.player.y = playerSpawnY;
+                        break;
+                    case 4:
+                        gp.player.x = playerSpawnX;
+                        gp.player.y = playerSpawnY;
                         break;
                 }
                 gp.previousmapIndicator = gp.mapIndicator;
@@ -149,7 +163,7 @@ public class TileManager {
                 if(line == null) {
                     throw new IllegalStateException("Tilemap hat weniger als " + gp.MaxWorldRow + " Zeilen."); //erstellt neue Exception, wenn die Zeile null ist, also das Ende der Datei erreicht ist, bevor alle Zeilen gelesen wurden
                 }
-                String numbers[] = line.trim().split("\\s+"); //teilt die zeile in einzelne Strings ein, wenn sie durch Leerzeichen getrennt sind.
+                String []numbers = line.trim().split("\\s+"); //teilt die zeile in einzelne Strings ein, wenn sie durch Leerzeichen getrennt sind.
 
                 while(col < gp.MaxWorldCol) {
 
@@ -158,9 +172,10 @@ public class TileManager {
                     mapTileNum[col][row] = num;
 
                     if (num == 9) {
+                        System.out.println(col + " " + row);
                         playerSpawnX = col * gp.tileSize;
                         playerSpawnY = row * gp.tileSize;
-                        mapTileNum[col][row] = 0; // replace with earth so it doesn't render as spawn tile
+                        System.out.println(playerSpawnX + " " + playerSpawnY + " " + mapTileNum[col][row]);
                     }
 
                     col ++; //nächste Spalte
