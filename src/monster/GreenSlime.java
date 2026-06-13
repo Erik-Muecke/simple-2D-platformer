@@ -1,20 +1,26 @@
 package monster;
 
+import entity.Entity;
+import main.GamePanel;
+import object.OBJ_Coin;
+import object.OBJ_HealingPotion;
+import object.OBJ_Heart;
+import object.OBJ_ManaPotion;
+
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
 
-import entity.Entity;
-import main.GamePanel;
-
+// The most basic enemy — a slow ground slime that walks left/right randomly
+// and deals contact damage. Has no ranged attack.
 public class GreenSlime extends Entity {
 
     private final GamePanel gp;
     private final Random random = new Random();
 
     public GreenSlime(GamePanel gp) {
-        super();
+        super(gp);
         this.gp = gp;
 
         type = TYPE_MONSTER;
@@ -22,31 +28,40 @@ public class GreenSlime extends Entity {
         speed = 2;
         width = gp.tileSize;
         height = gp.tileSize;
+        setImageAndSolidAreaFromBlackPixels("/monsters/greenslime1");
         direction = 'L';
-
-        solidArea = new java.awt.Rectangle(8, 16, gp.tileSize - 16, gp.tileSize - 16);
-        solidAreaDefaultX = solidArea.x;
-        solidAreaDefaultY = solidArea.y;
+        directionBeforeKnockBack = 'L';
 
         maxLife = 3;
         life = maxLife;
     }
 
+    // Randomly reverses direction every 120 frames
     public void setAction() {
         actionLockCounter++;
 
         if (actionLockCounter >= 120) {
-            if (random.nextBoolean()) {
-                direction = 'L';
-            } else {
-                direction = 'R';
-            }
+            direction = random.nextBoolean() ? 'L' : 'R';
             actionLockCounter = 0;
+        }
+    }
+
+    // Alternates between two sprite frames to create a walking animation
+    public void setWalking() {
+        walkingCounter++;
+
+        if (walkingCounter >= 20) {
+            image = setup("/monsters/greenslime");
+            if (walkingCounter >= 40) {
+                image = setup("/monsters/greenslime1");
+                walkingCounter = 0;
+            }
         }
     }
 
     @Override
     public void update() {
+        // Count down invincibility frames after being hit
         if (invincible) {
             invincibleCounter++;
 
@@ -56,60 +71,38 @@ public class GreenSlime extends Entity {
             }
         }
 
+        // During knockback, move in the hit direction and skip normal AI
+        if (knockBack) {
+            gp.movementSystem.updateMonsterKnockBack(this);
+            return;
+        }
+
+        // Freeze frames pause movement briefly after being hit
         if (freezeFrames > 0) {
             freezeFrames--;
             return;
         }
 
         setAction();
+        setWalking();
+        gp.movementSystem.updateWalkingMonster(this);
+    }
 
-        char horizontalDirection = direction;
-        if (horizontalDirection == 'L') {
-            velocityX = -speed;
-        } else {
-            velocityX = speed;
+    // Random loot drop weighted toward coins
+    @Override
+    public void checkDrop() {
+        int random = new Random().nextInt(100);
+        if(random < 50) {
+            dropItem(new OBJ_Coin());
         }
-
-        x += velocityX;
-        direction = horizontalDirection;
-        collisionOn = false;
-        gp.collisionsystem.collidesT(this);
-        gp.collisionsystem.collidesWithObject(this);
-
-        if (collisionOn || x <= 0 || x + width >= gp.worldWidth) {
-            x -= velocityX;
-            if (horizontalDirection == 'L') {
-                direction = 'R';
-            } else {
-                direction = 'L';
-            }
-            velocityX = 0;
-            freezeFrames = 15;
+        else if(random >= 50 && random < 75) {
+            dropItem(new OBJ_Heart());
         }
-
-        velocityY += 2;
-        if (velocityY > 31) {
-            velocityY = 31;
+        else if(random >= 75 && random < 90) {
+            dropItem(new OBJ_ManaPotion());
         }
-
-        y += velocityY;
-        char savedDirection = direction;
-        direction = 'D';
-        collisionOn = false;
-        gp.collisionsystem.collidesT(this);
-        gp.collisionsystem.collidesWithObject(this);
-        direction = savedDirection;
-
-        if (collisionOn) {
-            y -= velocityY;
-            velocityY = 0;
-            onGround = true;
-        } else {
-            onGround = false;
-        }
-
-        if (gp.collisionsystem.collidesWithPlayer(this)) {
-            gp.player.damagePlayer();
+        else{
+            dropItem(new OBJ_HealingPotion());
         }
     }
 
@@ -118,6 +111,7 @@ public class GreenSlime extends Entity {
         int screenX = x - gp.camera.x;
         int screenY = y - gp.camera.y;
 
+        // Skip drawing entirely when off-screen — no projectile to draw for this enemy
         if (x + width < gp.camera.x ||
                 x > gp.camera.x + gp.screenWidth ||
                 y + height < gp.camera.y ||
@@ -125,18 +119,15 @@ public class GreenSlime extends Entity {
             return;
         }
 
+        // Flash semi-transparent while invincible
         if (invincible) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         }
 
-        g2.setColor(new Color(58, 176, 84));
-        g2.fillOval(screenX + 6, screenY + 18, width - 12, height - 22);
-
-        g2.setColor(new Color(25, 92, 45));
-        g2.fillOval(screenX + 20, screenY + 30, 7, 7);
-        g2.fillOval(screenX + width - 27, screenY + 30, 7, 7);
+        g2.drawImage(image, screenX, screenY, width, height, null);
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
+        // Health bar shown once the enemy has taken damage
         if (life < maxLife) {
             int barWidth = width - 12;
             int currentLifeWidth = barWidth * life / maxLife;

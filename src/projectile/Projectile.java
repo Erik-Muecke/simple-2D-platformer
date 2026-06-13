@@ -1,69 +1,53 @@
-// Projectile.java
-
 package projectile;
 
 import entity.Entity;
 import main.GamePanel;
-
-import main.ImageLoader;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 public class Projectile extends Entity {
 
-    GamePanel gp;
+    GamePanel gp;//needed to access the game systems
 
-    ImageLoader imgLoader = new ImageLoader();
+    public boolean alive = false;//checks if the projectile is active
+    public int damage;//damage of the projectile
+    public int maxLife;//maximum lifetime
+    public int life;//current lifetime
+    public int useCost;//mana cost
 
-    public boolean alive = false;
-    public int damage;
-    public int maxLife;
-    public int life;
-
-    public Projectile(GamePanel gp) {
+    public Projectile(GamePanel gp) {//constructor
         this.gp = gp;
-        solidArea = new Rectangle(0, 0, 0, 0);
+        solidArea = new Rectangle(0, 0, 0, 0);//hitbox of the projectile
     }
 
-    public void set(int x, int y, char direction, boolean alive) {
+    public void set(int x, int y, char direction, boolean alive) {//sets projectile values
         this.x = x;
         this.y = y;
         this.direction = direction;
         this.alive = alive;
 
-        this.life = maxLife;
+        this.life = maxLife;//reset lifetime
     }
 
-    public void update() {
-        collisionOn = false;
-
-        if(direction == 'L') {
-            x -= speed;
-        }
-        if(direction == 'R') {
-            x += speed;
-        }
-
-        gp.collisionsystem.collidesT(this);
-        gp.collisionsystem.collidesWithObject(this);
-
-        if(collisionOn) {
-            alive = false;
-            return;
-        }
-
-        life--;
-
-        if(life <= 0) {
-            alive = false;
-        }
+    public void update() {//updates movement
+        gp.movementSystem.updateProjectile(this);
     }
 
-    public void draw(Graphics2D g2) {
+    public Rectangle getCollisionBox() {//collision area of the projectile
+        return new Rectangle(
+                x + solidArea.x,//real x-position of the hitbox
+                y + solidArea.y,//real y-position of the hitbox
+                solidArea.width,
+                solidArea.height
+        );
+    }
+
+    public void draw(Graphics2D g2) {//draw function
 
         if(alive) {
-            switch(direction) {
+
+            switch(direction) {//different sprite depending on direction
                 case 'L':
                     image = img1;
                     break;
@@ -71,10 +55,18 @@ public class Projectile extends Entity {
                 case 'R':
                     image = img2;
                     break;
+
+                case 'D':
+                    image = img3;
+                    break;
             }
 
             int screenX = x - gp.camera.x;
+            //math:
+            //world position - camera position = screen position
+
             int screenY = y - gp.camera.y;
+
             g2.drawImage(image, screenX, screenY, width, height, null);
         }
     }

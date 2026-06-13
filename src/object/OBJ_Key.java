@@ -1,13 +1,10 @@
 package object;
 
-import main.GamePanel;
-
-
 public class OBJ_Key extends SuperObject {
 
-    public OBJ_Key(GamePanel gp) {
+    public OBJ_Key() {
         name = "Key";
-
-        image = imgLoader.scaleImage("/objects/key.png", gp.tileSize, gp.tileSize);
+        image = loadImage("/objects/key.png");
+        stackable = true;
     }
 }

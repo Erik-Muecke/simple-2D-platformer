@@ -1,13 +1,10 @@
 package object;
 
-import main.GamePanel;
-
 public class OBJ_Chest extends SuperObject {
 
-    public OBJ_Chest(GamePanel gp) {
+    public OBJ_Chest() {
         name = "Chest";
         collision = true;
-
-        image = imgLoader.scaleImage("/objects/chest.png", gp.tileSize, gp.tileSize);
+        image = loadImage("/objects/chest.png");
     }
 }
