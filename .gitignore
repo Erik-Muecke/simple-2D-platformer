@@ -24,6 +24,10 @@ hs_err_pid*
 replay_pid*
 
 # IntelliJ
+*/META-INF/*
 .idea/
 *.iml
 out/
+
+#Java
+*.properties

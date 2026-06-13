@@ -15,8 +15,8 @@ public class BackgroundManager {
         this.gp = gp;
 
         // add layered backgrounds with different parallax speeds (far = slower, near = faster)
-        addBackgroundLayer("Backgroundlayers/sky_layer_1.png", 0.2);
-        addBackgroundLayer("Backgroundlayers/sky_layer_2.png", 0.4);
+        addBackgroundLayer("backgrounds/sky_layer_1.png", 0.2);
+        addBackgroundLayer("backgrounds/sky_layer_2.png", 0.4);
     }
 
     public void addBackgroundLayer(String LayerressourcePath, double parralaxe) {

@@ -106,7 +106,7 @@ public class Entity {
             if (stream != null) return ImageIO.read(stream); // load image if found
         } catch (IOException e) { System.err.println("Fehler beim Laden: " + path); }
 
-        try (InputStream stream = getClass().getResourceAsStream("/res/missing/image_not_found.png")) {
+        try (InputStream stream = getClass().getResourceAsStream("/missing/image_not_found.png")) {
             if (stream != null) return ImageIO.read(stream); // fallback image
         } catch (IOException e) { System.err.println("Fallback Fehler: " + e.getMessage()); }
 
