@@ -142,6 +142,7 @@ public class KeyHandler implements KeyListener {
                 if (commandNum == 1) {
                     gp.resetGame();
                     gp.mapIndicator = gp.saveHndlr.loadLevel();
+                    gp.aSetter.updateObject();
                     gp.gameState = gp.playState;
                     commandNum = 0;
 
