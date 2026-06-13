@@ -4,12 +4,12 @@ import entity.Player;
 
 public class Camera {
 
-    public int x, y;
+    public int x, y; // camera offset in world space (top-left of screen)
 
-    public int screenWidth;
-    public int screenHeight;
-    public int worldWidth;
-    public int worldHeight;
+    public int screenWidth; // visible screen width in pixels
+    public int screenHeight; // visible screen height in pixels
+    public int worldWidth; // total world width in pixels
+    public int worldHeight; // total world height in pixels
 
     public Camera(int screenWidth, int screenHeight, int worldWidth, int worldHeight) {
         this.screenWidth = screenWidth;
@@ -19,11 +19,12 @@ public class Camera {
     }
 
     public void update(Player player) {
-        // center on player
+
+        // camera follows player by centering them on screen
         x = player.x - screenWidth / 2;
         y = player.y - screenHeight / 2;
 
-        // clamp to world bounds
+        // prevent camera from going outside world boundaries
         x = Math.max(0, Math.min(x, worldWidth - screenWidth));
         y = Math.max(0, Math.min(y, worldHeight - screenHeight));
     }

@@ -56,7 +56,15 @@ public class UI {
 
         if(gp.gameState == gp.titleState) {
             drawTitleScreen();
+            return;
         }
+
+        if(gp.gameOver) {
+            drawPlayerLife();
+            drawGameOver();
+            return;
+        }
+
         if(gp.gameState == gp.pauseState) {
             drawPauseScreen();
         }
@@ -529,15 +537,26 @@ public class UI {
 
         // Quit
         y += gp.tileSize;
-        g2.drawString("Quit", x, y);
-        if (commandNum == 4) {
+        g2.drawString("Save Game", x, y);
+        if(commandNum == 4) {
             g2.drawString(">", x - 25, y);
         }
 
-        // Back
+        y += gp.tileSize;
+        g2.drawString("Load Game", x, y);
+        if(commandNum == 5) {
+            g2.drawString(">", x - 25, y);
+        }
+
+        y += gp.tileSize;
+        g2.drawString("Quit", x, y);
+        if(commandNum == 6) {
+            g2.drawString(">", x - 25, y);
+        }
+
         y += gp.tileSize;
         g2.drawString("Back", x, y);
-        if (commandNum == 5) {
+        if(commandNum == 7) {
             g2.drawString(">", x - 25, y);
         }
     }
@@ -557,14 +576,28 @@ public class UI {
 
         g2.setFont(g2.getFont().deriveFont(28F));
 
-        x += gp.tileSize;
-        y += gp.tileSize;
+        int textX = x + gp.tileSize;
+        int textY = y + gp.tileSize;
+        int maxWidth = width - gp.tileSize * 2;
+        FontMetrics fm = g2.getFontMetrics();
 
-        for(String line : currentDialogue.split("\n")) {
-
-            g2.drawString(line, x, y);
-
-            y += 40;
+        for (String line : currentDialogue.split("\n")) {
+            String[] words = line.split(" ");
+            StringBuilder currentLine = new StringBuilder();
+            for (String word : words) {
+                String test = currentLine.length() > 0 ? currentLine + " " + word : word;
+                if (fm.stringWidth(test) > maxWidth) {
+                    g2.drawString(currentLine.toString(), textX, textY);
+                    textY += 40;
+                    currentLine = new StringBuilder(word);
+                } else {
+                    currentLine = new StringBuilder(test);
+                }
+            }
+            if (currentLine.length() > 0) {
+                g2.drawString(currentLine.toString(), textX, textY);
+                textY += 40;
+            }
         }
     }
 
@@ -626,12 +659,21 @@ public class UI {
             g2.drawString(">", x - 40, y);
         }
 
-        text = "QUIT";
+        text = "LOAD GAME";
         x = getXforCenteredText(text);
         y += gp.tileSize;
         g2.drawString(text, x, y);
 
         if(gp.keyHandler.commandNum == 1) {
+            g2.drawString(">", x - 40, y);
+        }
+
+        text = "QUIT";
+        x = getXforCenteredText(text);
+        y += gp.tileSize;
+        g2.drawString(text, x, y);
+
+        if(gp.keyHandler.commandNum == 2) {
             g2.drawString(">", x - 40, y);
         }
     }

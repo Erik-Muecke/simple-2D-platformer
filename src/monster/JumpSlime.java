@@ -12,12 +12,14 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
 
+// A ground slime that periodically jumps. It also syncs with the player's jump key —
+// if the player jumps while this slime is ready, it jumps at the same time.
 public class JumpSlime extends Entity {
 
     private final GamePanel gp;
     private final Random random = new Random();
-    private final int jumpStrength = 20;
-    private int jumpPower;
+    private final int jumpStrength = 20; // upward velocity applied when this slime jumps
+    private int jumpPower;               // accumulates each frame; triggers a jump at 300 or when the player jumps at 60
 
     public JumpSlime(GamePanel gp) {
         super(gp);
@@ -36,6 +38,7 @@ public class JumpSlime extends Entity {
         life = maxLife;
     }
 
+    // Randomly reverses direction every 120 frames
     public void setAction() {
         actionLockCounter++;
 
@@ -45,6 +48,7 @@ public class JumpSlime extends Entity {
         }
     }
 
+    // Alternates between two sprite frames to create a walking animation
     public void setWalking() {
         walkingCounter++;
 
@@ -59,8 +63,9 @@ public class JumpSlime extends Entity {
 
     @Override
     public void update() {
-        jumpPower++;
+        jumpPower++; // build up jump charge every frame
 
+        // Count down invincibility frames after being hit
         if (invincible) {
             invincibleCounter++;
 
@@ -70,16 +75,20 @@ public class JumpSlime extends Entity {
             }
         }
 
+        // Jump if the player presses jump while this slime has enough charge (60),
+        // OR automatically after charge reaches 300 — keeps the player on their toes
         if ((gp.keyHandler.jumpPressed && onGround && jumpPower >= 60) || (jumpPower >= 300 && onGround)) {
             gp.movementSystem.startJump(this, jumpStrength);
             jumpPower = 0;
         }
 
+        // During knockback, move in the hit direction and skip normal AI
         if (knockBack) {
             gp.movementSystem.updateMonsterKnockBack(this);
             return;
         }
 
+        // Freeze frames pause movement briefly after being hit
         if (freezeFrames > 0) {
             freezeFrames--;
             return;
@@ -90,6 +99,7 @@ public class JumpSlime extends Entity {
         gp.movementSystem.updateWalkingMonster(this);
     }
 
+    // Random loot drop weighted toward coins and hearts
     @Override
     public void checkDrop() {
         int random = new Random().nextInt(100);
@@ -112,6 +122,7 @@ public class JumpSlime extends Entity {
         int screenX = x - gp.camera.x;
         int screenY = y - gp.camera.y;
 
+        // Skip drawing entirely when off-screen
         if (x + width < gp.camera.x ||
                 x > gp.camera.x + gp.screenWidth ||
                 y + height < gp.camera.y ||
@@ -119,6 +130,7 @@ public class JumpSlime extends Entity {
             return;
         }
 
+        // Flash semi-transparent while invincible
         if (invincible) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         }
@@ -126,6 +138,7 @@ public class JumpSlime extends Entity {
         g2.drawImage(image, screenX, screenY, width, height, null);
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
+        // Health bar shown once the enemy has taken damage
         if (life < maxLife) {
             int barWidth = width - 12;
             int currentLifeWidth = barWidth * life / maxLife;

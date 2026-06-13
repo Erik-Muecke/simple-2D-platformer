@@ -12,6 +12,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
 
+// The most basic enemy — a slow ground slime that walks left/right randomly
+// and deals contact damage. Has no ranged attack.
 public class GreenSlime extends Entity {
 
     private final GamePanel gp;
@@ -34,6 +36,7 @@ public class GreenSlime extends Entity {
         life = maxLife;
     }
 
+    // Randomly reverses direction every 120 frames
     public void setAction() {
         actionLockCounter++;
 
@@ -43,6 +46,7 @@ public class GreenSlime extends Entity {
         }
     }
 
+    // Alternates between two sprite frames to create a walking animation
     public void setWalking() {
         walkingCounter++;
 
@@ -57,6 +61,7 @@ public class GreenSlime extends Entity {
 
     @Override
     public void update() {
+        // Count down invincibility frames after being hit
         if (invincible) {
             invincibleCounter++;
 
@@ -66,11 +71,13 @@ public class GreenSlime extends Entity {
             }
         }
 
+        // During knockback, move in the hit direction and skip normal AI
         if (knockBack) {
             gp.movementSystem.updateMonsterKnockBack(this);
             return;
         }
 
+        // Freeze frames pause movement briefly after being hit
         if (freezeFrames > 0) {
             freezeFrames--;
             return;
@@ -81,6 +88,7 @@ public class GreenSlime extends Entity {
         gp.movementSystem.updateWalkingMonster(this);
     }
 
+    // Random loot drop weighted toward coins
     @Override
     public void checkDrop() {
         int random = new Random().nextInt(100);
@@ -103,6 +111,7 @@ public class GreenSlime extends Entity {
         int screenX = x - gp.camera.x;
         int screenY = y - gp.camera.y;
 
+        // Skip drawing entirely when off-screen — no projectile to draw for this enemy
         if (x + width < gp.camera.x ||
                 x > gp.camera.x + gp.screenWidth ||
                 y + height < gp.camera.y ||
@@ -110,6 +119,7 @@ public class GreenSlime extends Entity {
             return;
         }
 
+        // Flash semi-transparent while invincible
         if (invincible) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         }
@@ -117,6 +127,7 @@ public class GreenSlime extends Entity {
         g2.drawImage(image, screenX, screenY, width, height, null);
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
+        // Health bar shown once the enemy has taken damage
         if (life < maxLife) {
             int barWidth = width - 12;
             int currentLifeWidth = barWidth * life / maxLife;

@@ -1,5 +1,3 @@
-// OBJ_Fireball.java
-
 package projectile;
 
 import main.GamePanel;
@@ -17,21 +15,31 @@ public class PT_Fireball extends Projectile {
 
         width = gp.tileSize * 2 / 3;
         height = gp.tileSize * 2 / 3;
+        //projectile size
+
         int hitboxWidth = width / 2;
         int hitboxHeight = height / 2;
+        //smaller hitbox for better collision feeling
+
         solidArea.setBounds(
                 (width - hitboxWidth) / 2,
+                //centers hitbox horizontally
+
                 (height - hitboxHeight) / 2,
+                //centers hitbox vertically
+
                 hitboxWidth,
                 hitboxHeight
         );
+
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
 
         getImage();
     }
 
-    public void getImage() {
+    public void getImage() {//loads fireball sprites
+
         img1 = setup("/projectile/fireball_right");
         img2 = setup("/projectile/fireball_left");
         img3 = setup("/projectile/fireball_down");

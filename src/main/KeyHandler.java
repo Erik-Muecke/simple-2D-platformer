@@ -26,6 +26,44 @@ public class KeyHandler implements KeyListener {
 
         int key = e.getKeyCode(); //Gibt den Code der gedrückten Taste zurück
 
+        if (gp.gameOver) {
+            upPressed = false;
+            downPressed = false;
+            leftPressed = false;
+            rightPressed = false;
+            jumpPressed = false;
+            enterPressed = false;
+            shotKeyPressed = false;
+
+            if (key == KeyEvent.VK_W) {
+                commandNum--;
+                if (commandNum < 0) {
+                    commandNum = 2;
+                }
+            }
+
+            if (key == KeyEvent.VK_S) {
+                commandNum++;
+                if (commandNum > 2) {
+                    commandNum = 0;
+                }
+            }
+
+            if (key == KeyEvent.VK_ENTER) {
+                if (commandNum == 0) {
+                    gp.resetGame();
+                } else if (commandNum == 1) {
+                    gp.saveLoad.load();
+                    gp.gameOver = false;
+                    gp.gameState = gp.playState;
+                    commandNum = 0;
+                } else if (commandNum == 2) {
+                    System.exit(0);
+                }
+            }
+
+            return;
+        }
 
         // ESCAPE öffnet/schließt das Options Menü - wird zuerst geprüft
         if (key == KeyEvent.VK_ESCAPE) {
@@ -74,43 +112,13 @@ public class KeyHandler implements KeyListener {
                 }
 
                 if(commandNum == 1) {
-                    // optional: load game
+                    gp.saveLoad.load();
+                    gp.gameState = gp.playState;
                 }
 
                 if(commandNum == 2) {
                     System.exit(0);
                 }
-            }
-        }
-
-        else if (gp.gameState == gp.playState) {
-
-            // When game over is visible, movement is disabled and ENTER controls the menu.
-            if (gp.gameOver) {
-                if (key == KeyEvent.VK_W) {
-                    commandNum--;
-                    if (commandNum < 0) {
-                        commandNum = 1;
-                    }
-                }
-
-                if (key == KeyEvent.VK_S) {
-                    commandNum++;
-                    if (commandNum > 1) {
-                        commandNum = 0;
-                    }
-                }
-
-                if (key == KeyEvent.VK_ENTER) {
-                    if (commandNum == 0) {
-                        gp.resetGame();
-                    }
-                    if (commandNum == 1) {
-                        System.exit(0);
-                    }
-                }
-
-                return;
             }
         }
 
@@ -186,16 +194,19 @@ public class KeyHandler implements KeyListener {
 
             if (key == KeyEvent.VK_W) {
                 gp.ui.commandNum--;
-                if (gp.ui.commandNum < 0) {
-                    gp.ui.commandNum = 5;
-                }
+                if (gp.ui.commandNum < 0) gp.ui.commandNum = 7;
             }
-
             if (key == KeyEvent.VK_S) {
                 gp.ui.commandNum++;
-                if (gp.ui.commandNum > 5) {
-                    gp.ui.commandNum = 0;
-                }
+                if (gp.ui.commandNum > 7) gp.ui.commandNum = 0;
+            }
+
+            if (gp.ui.commandNum < 0) {
+                gp.ui.commandNum = 7;
+            }
+
+            if (gp.ui.commandNum > 7) {
+                gp.ui.commandNum = 0;
             }
             if (key == KeyEvent.VK_ENTER) {
                 if (gp.ui.commandNum == 0) {
@@ -216,9 +227,13 @@ public class KeyHandler implements KeyListener {
                 } else if (gp.ui.commandNum == 3) {
                     gp.resetGame();
                 } else if (gp.ui.commandNum == 4) {
-                    System.exit(0);
+                        gp.saveLoad.save();
                 } else if (gp.ui.commandNum == 5) {
-                    gp.gameState = gp.playState;
+                        gp.saveLoad.load();
+                } else if (gp.ui.commandNum == 6) {
+                        System.exit(0);
+                } else if (gp.ui.commandNum == 7){
+                        gp.gameState = gp.playState;
                 }
             }
 
@@ -242,9 +257,14 @@ public class KeyHandler implements KeyListener {
                     gp.ui.currentDialogue = npc.dialogues[npc.dialogueIndex];
                     npc.dialogueIndex++;
                 } else {
-                    gp.ui.tradeMenuState = 0;
-                    gp.ui.commandNum = 0;
-                    gp.gameState = gp.tradeState;
+                    if (gp.npc[gp.ui.activeNPCIndex] instanceof entity.NPC_Merchant) {
+                        gp.ui.tradeMenuState = 0;
+                        gp.ui.commandNum = 0;
+                        gp.gameState = gp.tradeState;
+                    } else {
+                        gp.gameState = gp.playState;
+                        gp.ui.activeNPCIndex = 999;
+                    }
                 }
             }
             if (key == KeyEvent.VK_ESCAPE) {

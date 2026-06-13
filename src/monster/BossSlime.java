@@ -13,13 +13,15 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.Random;
 
+// The final boss enemy — a large slime that chases the player, periodically jumps,
+// and fires fireballs. Only becomes active after the player opens the boss door (boss1 == true).
 public class BossSlime extends Entity {
 
     private final GamePanel gp;
-    private final Projectile projectile;
-    private int shotCounter = 0;
-    private final int jumpStrength = 25;
-    private int jumpPower;
+    private final Projectile projectile; // the fireball the boss shoots at the player
+    private int shotCounter = 0;         // counts frames between each shot
+    private final int jumpStrength = 25; // upward velocity applied when the boss jumps
+    private int jumpPower;               // accumulates each frame; triggers a jump when it reaches 300
 
     public BossSlime(GamePanel gp) {
         super(gp);
@@ -28,9 +30,9 @@ public class BossSlime extends Entity {
         type = TYPE_MONSTER;
         name = "Boss Slime";
         speed = 2;
-        width = (int)(gp.tileSize * 1.5);
+        width = (int)(gp.tileSize * 1.5);  // slightly larger than a normal tile
         height = (int)(gp.tileSize * 1.5);
-        setImageAndSolidAreaFromBlackPixels("/monsters/bossslime1");
+        setImageAndSolidAreaFromBlackPixels("/monsters/bossslime1"); // derives hitbox from sprite black pixels
         direction = 'L';
         directionBeforeKnockBack = 'L';
 
@@ -39,10 +41,12 @@ public class BossSlime extends Entity {
         projectile = new PT_Fireball(gp);
     }
 
+    // Allows GamePanel to check if the boss projectile clashes with the player's projectile
     public Projectile getProjectile() {
         return projectile;
     }
 
+    // Turns the boss to face the player each frame
     public void setAction() {
         if(gp.player.x < this.x){
             this.direction = 'L';
@@ -51,6 +55,7 @@ public class BossSlime extends Entity {
         }
     }
 
+    // Alternates between two sprite frames to create a simple walking animation
     public void setWalking() {
         walkingCounter++;
 
@@ -65,8 +70,12 @@ public class BossSlime extends Entity {
 
     @Override
     public void update() {
+        // Boss logic is completely disabled until the player triggers the boss fight
         if (gp.player.boss1) {
+            // Accumulate jump power every frame; used to trigger periodic jumps
             jumpPower++;
+
+            // Count down invincibility frames after being hit
             if (invincible) {
                 invincibleCounter++;
                 if (invincibleCounter > 20) {
@@ -75,21 +84,26 @@ public class BossSlime extends Entity {
                 }
             }
 
+            // Trigger a jump when enough power has built up and the boss is on the ground
             if (jumpPower >= 300 && onGround) {
                 gp.movementSystem.startJump(this, jumpStrength);
                 jumpPower = 0;
             }
 
+            // Handle projectile movement and collision with player / player's projectile
             updateProjectileInteractions();
 
+            // During knockback the boss moves in the hit direction; skip normal AI
             if (knockBack) {
                 boolean stillKnockedBack = gp.movementSystem.updateMonsterKnockBack(this);
                 if (!stillKnockedBack) {
+                    // Reduce shot counter so the boss doesn't immediately fire after recovering
                     shotCounter = shotCounter - 5;
                 }
                 return;
             }
 
+            // Fire a projectile toward the player every 150 frames
             shotCounter++;
             if (shotCounter > 150 && !projectile.alive) {
                 int projectileX = x + (width - projectile.width) / 2;
@@ -98,6 +112,7 @@ public class BossSlime extends Entity {
                 shotCounter = 0;
             }
 
+            // Freeze frames pause all movement briefly after being hit
             if (freezeFrames > 0) {
                 freezeFrames--;
                 return;
@@ -109,6 +124,7 @@ public class BossSlime extends Entity {
         }
     }
 
+    // Moves the active projectile and checks whether it hits the player or is cancelled by the player's fireball
     private void updateProjectileInteractions() {
             if (!projectile.alive) {
                 return;
@@ -117,6 +133,8 @@ public class BossSlime extends Entity {
             projectile.update();
 
             Rectangle projectileBox = projectile.getCollisionBox();
+
+            // Cancel both projectiles if they collide mid-air
             if (gp.player.projectile != null
                     && gp.player.projectile.alive
                     && projectileBox.intersects(gp.player.projectile.getCollisionBox())) {
@@ -132,6 +150,7 @@ public class BossSlime extends Entity {
                     gp.player.solidArea.height
             );
 
+            // Deal damage to the player if the projectile reaches them
             if (projectileBox.intersects(playerBox)) {
                 if (!gp.player.invincible) {
                     gp.player.life -= projectile.damage;
@@ -141,6 +160,7 @@ public class BossSlime extends Entity {
             }
         }
 
+    // Drops both a healing potion and a mana potion when the boss is defeated
     @Override
     public void checkDrop(){
         dropItem(new OBJ_HealingPotion());
@@ -152,6 +172,7 @@ public class BossSlime extends Entity {
         int screenX = x - gp.camera.x;
         int screenY = y - gp.camera.y;
 
+        // Still draw the projectile even when the boss itself is off-screen
         if (x + width < gp.camera.x ||
                 x > gp.camera.x + gp.screenWidth ||
                 y + height < gp.camera.y ||
@@ -160,6 +181,7 @@ public class BossSlime extends Entity {
             return;
         }
 
+        // Flash semi-transparent while invincible to give hit feedback
         if (invincible) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         }
@@ -167,6 +189,7 @@ public class BossSlime extends Entity {
         g2.drawImage(image, screenX, screenY, width, height, null);
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
+        // Draw a health bar above the boss once it has taken any damage
         if (life < maxLife) {
             int barWidth = width - 12;
             int currentLifeWidth = barWidth * life / maxLife;

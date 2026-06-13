@@ -12,6 +12,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
 
+// A basic flying enemy that drifts left/right randomly and responds to knockback.
+// Has no projectile and deals no contact damage — purely a flying obstacle.
 public class NormalFlyer extends Entity {
 
     private final GamePanel gp;
@@ -22,7 +24,7 @@ public class NormalFlyer extends Entity {
         this.gp = gp;
 
         type = TYPE_MONSTER;
-        name = "Green Slime";
+        name = "Normal Flyer";
         speed = 3;
         width = gp.tileSize;
         height = gp.tileSize;
@@ -34,6 +36,7 @@ public class NormalFlyer extends Entity {
         life = maxLife;
     }
 
+    // Randomly reverses direction every 240 frames — slower change than ground slimes
     public void setAction() {
         actionLockCounter++;
 
@@ -45,6 +48,7 @@ public class NormalFlyer extends Entity {
 
     @Override
     public void update() {
+        // Count down invincibility frames after being hit
         if (invincible) {
             invincibleCounter++;
 
@@ -54,11 +58,13 @@ public class NormalFlyer extends Entity {
             }
         }
 
+        // During knockback, move in the hit direction and skip normal AI
         if (knockBack) {
             gp.movementSystem.updateMonsterKnockBack(this);
             return;
         }
 
+        // Freeze frames pause movement briefly after being hit
         if (freezeFrames > 0) {
             freezeFrames--;
             return;
@@ -68,6 +74,7 @@ public class NormalFlyer extends Entity {
         gp.movementSystem.updateFlyingMonster(this);
     }
 
+    // Random loot drop weighted toward coins
     @Override
     public void checkDrop() {
         int random = new Random().nextInt(100);
@@ -90,6 +97,7 @@ public class NormalFlyer extends Entity {
         int screenX = x - gp.camera.x;
         int screenY = y - gp.camera.y;
 
+        // Skip drawing entirely when off-screen
         if (x + width < gp.camera.x ||
                 x > gp.camera.x + gp.screenWidth ||
                 y + height < gp.camera.y ||
@@ -97,6 +105,7 @@ public class NormalFlyer extends Entity {
             return;
         }
 
+        // Flash semi-transparent while invincible
         if (invincible) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         }
@@ -104,6 +113,7 @@ public class NormalFlyer extends Entity {
         g2.drawImage(image, screenX, screenY, width, height, null);
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
+        // Health bar shown once the enemy has taken damage
         if (life < maxLife) {
             int barWidth = width - 12;
             int currentLifeWidth = barWidth * life / maxLife;

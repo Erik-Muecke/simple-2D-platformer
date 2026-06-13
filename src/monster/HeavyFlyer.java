@@ -12,6 +12,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
 
+// A tanky flying enemy with high health. Flies toward the player and deals contact damage.
+// Ignores knockback — it simply resumes its path after being hit.
 public class HeavyFlyer extends Entity {
 
     private final GamePanel gp;
@@ -21,7 +23,7 @@ public class HeavyFlyer extends Entity {
         this.gp = gp;
 
         type = TYPE_MONSTER;
-        name = "Fire Flyer";
+        name = "Heavy Flyer";
         speed = 2;
         width = gp.tileSize;
         height = gp.tileSize;
@@ -29,12 +31,13 @@ public class HeavyFlyer extends Entity {
         direction = 'L';
         directionBeforeKnockBack = 'L';
 
-        maxLife = 15;
+        maxLife = 15; // significantly more health than standard flyers
         life = maxLife;
     }
 
     @Override
     public void update() {
+        // Count down invincibility frames after being hit
         if (invincible) {
             invincibleCounter++;
             if (invincibleCounter > 40) {
@@ -43,26 +46,29 @@ public class HeavyFlyer extends Entity {
             }
         }
 
-        // HeavyFlyer ignores knockback movement, but keeps its pre-hit facing direction.
+        // HeavyFlyer ignores knockback movement; just restore the pre-hit facing direction
         if (knockBack) {
             direction = directionBeforeKnockBack;
             knockBackCounter = 0;
             knockBack = false;
         }
 
+        // Freeze frames pause movement briefly after being hit
         if (freezeFrames > 0) {
             freezeFrames--;
             return;
         }
 
-        // Contact damage using the existing CollisionSystem + Player method
+        // Deal contact damage if the player walks into this enemy
         if (gp.collisionsystem.collidesWithPlayer(this)) {
             gp.player.damagePlayer();
         }
-        collisionOn = false; // reset the side-effect from collidesWithPlayer
+        collisionOn = false; // reset the flag set as a side-effect by collidesWithPlayer
+
         gp.movementSystem.updateFlyingMonster(this);
     }
 
+    // Random loot drop weighted toward coins and hearts
     @Override
     public void checkDrop() {
         int random = new Random().nextInt(100);
@@ -82,6 +88,7 @@ public class HeavyFlyer extends Entity {
         int screenX = x - gp.camera.x;
         int screenY = y - gp.camera.y;
 
+        // Skip drawing entirely when off-screen — no projectile to draw for this enemy
         if (x + width < gp.camera.x ||
                 x > gp.camera.x + gp.screenWidth ||
                 y + height < gp.camera.y ||
@@ -89,6 +96,7 @@ public class HeavyFlyer extends Entity {
             return;
         }
 
+        // Flash semi-transparent while invincible
         if (invincible) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         }
@@ -96,6 +104,7 @@ public class HeavyFlyer extends Entity {
         g2.drawImage(image, screenX, screenY, width, height, null);
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
+        // Health bar shown once the enemy has taken damage
         if (life < maxLife) {
             int barWidth = width - 12;
             int currentLifeWidth = barWidth * life / maxLife;

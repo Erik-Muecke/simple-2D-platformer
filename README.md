@@ -765,3 +765,286 @@ Possible future improvements:
 The project demonstrates how a small 2D platformer can be created in Java using Swing and AWT. It includes the most important systems of a basic game: a game loop, rendering, input, movement, collision, maps, camera, objects, enemies, projectiles, events, UI screens, and game states.
 
 The final result is a playable school project that shows both technical understanding and object-oriented design. Although some features could still be improved, the project provides a strong foundation for extending the game further.
+
+## 7. Method Flowcharts
+
+The following flowcharts describe five of the most important methods and method groups in the project. They use Mermaid syntax, so the README can show them as rendered graphics in Markdown viewers that support Mermaid diagrams.
+
+These diagrams focus on the main gameplay flow: the game loop, player logic, movement and collision, map loading, and object interaction.
+
+### `GamePanel.run()` - Main Game Loop
+
+This method is the heart of the game. It keeps the game running on its own thread, measures time with nanoseconds, updates the game when enough time has passed, and asks Swing to redraw the screen.
+
+Important points:
+
+- The target frame rate is controlled by `fps`.
+- `delta` collects elapsed time until one update step is ready.
+- `update()` changes the game state.
+- `repaint()` causes `paintComponent()` to draw the next frame.
+- If not enough time has passed, the thread sleeps shortly to avoid wasting CPU.
+
+```mermaid
+flowchart TD
+    A([Game thread starts]) --> B[Calculate fixed frame interval from fps]
+    B --> C[Set delta, timer, drawCount, and lastTime]
+    C --> D{gameThread is still running?}
+    D -- No --> Z([Game loop stops])
+    D -- Yes --> E[Read current time]
+    E --> F[Calculate elapsed time since last loop]
+    F --> G[Add elapsed time to delta and FPS timer]
+    G --> H[Store current time as lastTime]
+    H --> I{delta is at least 1 update step?}
+    I -- Yes --> J[Call update to process game logic]
+    J --> K[Call repaint to request drawing]
+    K --> L[Reduce delta and increase drawCount]
+    L --> M{One second passed?}
+    I -- No --> N[Sleep for 1 millisecond]
+    N --> M
+    M -- Yes --> O[Print FPS and reset timer and drawCount]
+    M -- No --> D
+    O --> D
+```
+
+### `Player.update()` - Input, Combat, Pickups, and Resources
+
+This method connects keyboard input with the player's actions. It reads movement keys, handles jumping, attacks, shooting, NPC interaction, object pickup, health, mana, invincibility, and temporary boosts.
+
+Important points:
+
+- Horizontal input changes `velocityX`.
+- Jumping only works if `onGround` is true.
+- Enter either talks to an NPC or starts a melee attack.
+- Shooting checks projectile state and mana before firing.
+- Physical movement is delegated to `MovementSystem.updatePlayer()`.
+- Mana slowly regenerates when it is not full.
+
+```mermaid
+flowchart TD
+    A([Player update starts]) --> B[Advance active boost timers]
+    B --> C{Speed boost expired?}
+    C -- Yes --> D[Reset speed to normal]
+    C -- No --> E{Jump boost expired?}
+    D --> E
+    E -- Yes --> F[Reset jump strength to normal]
+    E -- No --> G[Decrease door and boost message cooldowns]
+    F --> G
+    G --> H{Left or right key pressed?}
+    H -- Left --> I[Set direction left and velocityX negative]
+    H -- Right --> J[Set direction right and velocityX positive]
+    H -- Neither --> K[Set velocityX to zero]
+    I --> L[Update walking or idle animation]
+    J --> L
+    K --> L
+    L --> M[Check if player touches an NPC]
+    M --> N{Enter pressed and not on healing pool?}
+    N -- NPC touched --> O[Start or continue NPC dialogue]
+    N -- No NPC --> P[Create melee attack area]
+    N -- No --> Q{Jump pressed and player on ground?}
+    O --> Q
+    P --> R[Check melee hit against monsters]
+    R --> Q
+    Q -- Yes --> S[Set upward velocity and leave ground]
+    Q -- No --> T[Update invincibility frames]
+    S --> T
+    T --> U{Shoot pressed, fireball inactive, enough mana?}
+    U -- Yes --> V[Spend mana and activate projectile]
+    U -- No --> W[Check object collision]
+    V --> W
+    W --> X[Call pickUpObject for object result]
+    X --> Y[Call MovementSystem.updatePlayer]
+    Y --> AA{Player life is zero or lower?}
+    AA -- Yes --> AB[Set life to zero and gameOver true]
+    AA -- No --> AC{Mana is already full?}
+    AB --> AC
+    AC -- Yes --> Z([Player update ends])
+    AC -- No --> AD[Increase mana timer]
+    AD --> AE{Mana timer reached limit?}
+    AE -- Yes --> AF[Restore one mana and reset timer]
+    AE -- No --> Z
+    AF --> Z
+```
+
+### `MovementSystem.updatePlayer()` and `CollisionSystem.collidesT()` - Physics and Tile Collision
+
+These methods work together to make movement feel solid. The movement system applies gravity and moves the player one axis at a time. The collision system checks the player's hitbox against the tile grid and blocks movement if a solid tile is touched.
+
+Important points:
+
+- Gravity increases `velocityY` every frame.
+- Horizontal movement is resolved before vertical movement.
+- If collision happens, the movement is undone.
+- Landing is detected when vertical collision happens while falling.
+- Coins in the tilemap are collected during tile collision checks.
+- Spikes are handled separately as damage tiles.
+
+```mermaid
+flowchart TD
+    A([Movement update starts]) --> B[Apply gravity to velocityY]
+    B --> C{velocityY above max fall speed?}
+    C -- Yes --> D[Clamp velocityY]
+    C -- No --> E[Assume player is not on ground]
+    D --> E
+    E --> F[Add velocityX to player x position]
+    F --> G[Reset collision flag]
+    G --> H[Check tile collision]
+    H --> I[Check blocking object collision]
+    I --> J{Horizontal collision found?}
+    J -- Yes --> K[Undo x movement and set velocityX to zero]
+    J -- No --> L[Add velocityY to player y position]
+    K --> L
+    L --> M[Reset collision flag]
+    M --> N[Check tile collision again]
+    N --> O[Check blocking object collision again]
+    O --> P{Vertical collision found?}
+    P -- Yes --> Q[Undo y movement]
+    Q --> R{Was player falling down?}
+    R -- Yes --> S[Set onGround to true]
+    R -- No --> T[Set velocityY to zero]
+    S --> T
+    P -- No --> U[Check world floor limit]
+    T --> U
+    U --> V{Player below world floor?}
+    V -- Yes --> W[Clamp to floor and set onGround true]
+    V -- No --> X[Check spike damage]
+    W --> X
+    X --> Z([Movement update ends])
+
+    H -. inside collidesT .-> C1[Convert entity hitbox to tile columns and rows]
+    C1 --> C2[Loop through every touched tile]
+    C2 --> C3{Tile outside map or invalid?}
+    C3 -- Yes --> C4[Mark collision as true]
+    C3 -- No --> C5{Tile is spike?}
+    C5 -- Yes --> C6[Skip blocking; spike damage is separate]
+    C5 -- No --> C7{Tile is coin and entity is player?}
+    C7 -- Yes --> C8[Increase coin count and replace tile]
+    C7 -- No --> C9{Tile has solid collision?}
+    C9 -- Yes --> C10{Hitbox overlaps tile rectangle?}
+    C10 -- Yes --> C4
+    C10 -- No --> C11[Continue loop]
+    C9 -- No --> C11
+    C8 --> C11
+    C6 --> C11
+    C4 --> C11
+```
+
+### `TileManager.loadMap()` and `AssetSetter.updateScene()` - Map and Scene Loading
+
+These methods build the current level. `loadMap()` reads the tilemap text file and fills the `mapTileNum` grid. `updateScene()` then places the correct objects, monsters, and NPCs for the selected map.
+
+Important points:
+
+- The map file is selected with `mapIndicator`.
+- Every number in the text file becomes one tile in the world.
+- `99` is a special marker for the player spawn point.
+- Invalid tile IDs are treated as loading errors.
+- After a map is loaded, the scene arrays are cleared and rebuilt.
+
+```mermaid
+flowchart TD
+    A([Map loading starts]) --> B[Build map path from mapIndicator]
+    B --> C{Map resource exists?}
+    C -- No --> D[Print map loading error]
+    D --> Z([Map loading ends])
+    C -- Yes --> E[Open tilemap text file]
+    E --> F[Set col and row to zero]
+    F --> G[Reset playerSpawnX and playerSpawnY]
+    G --> H{Still inside world rows?}
+    H -- No --> I[Close reader]
+    I --> J[Scene loading starts]
+    J --> K[Clear object, monster, and NPC arrays]
+    K --> L{Current mapIndicator}
+    L -- 0 --> M[Place scene 0 objects and monsters]
+    L -- 1 --> N[Place scene 1 objects, monsters, and NPCs]
+    L -- 2 --> O[Place dungeon keys, doors, boss, and flag]
+    L -- 3 --> P[Place scene 3 flag]
+    L -- 4 --> Q[Place boosters, monsters, and flag]
+    M --> Z
+    N --> Z
+    O --> Z
+    P --> Z
+    Q --> Z
+    H -- Yes --> R[Read next line from map file]
+    R --> S{Line exists?}
+    S -- No --> D
+    S -- Yes --> T[Split line into tile numbers]
+    T --> U{Still inside world columns?}
+    U -- No --> V[Reset col to zero and move to next row]
+    V --> H
+    U -- Yes --> W[Parse current number]
+    W --> X{Valid tile ID or spawn marker 99?}
+    X -- No --> D
+    X -- Yes --> Y[Store number in mapTileNum]
+    Y --> AA{Number is 99?}
+    AA -- Yes --> AB[Save player spawn coordinates]
+    AB --> AC[Replace spawn marker with map-specific floor tile]
+    AA -- No --> AD[Move to next column]
+    AC --> AD
+    AD --> U
+```
+
+### `Player.pickUpObject()` - Object Interaction Rules
+
+This method decides what happens when the player touches or activates an object. It is important because many gameplay rules are handled here: keys, doors, boss doors, boosts, potions, coins, hearts, and flags.
+
+Important points:
+
+- `999` means no object was found.
+- Keys and special keys are stored in counters and inventory.
+- Doors only open if the player owns the matching key.
+- Boosts temporarily change player speed or jump strength.
+- The flag increases `mapIndicator`, which causes the next map to load.
+- Cooldowns prevent messages from appearing every frame.
+
+```mermaid
+flowchart TD
+    A([Object interaction starts]) --> B{Object index is 999?}
+    B -- Yes --> Z([No object interaction])
+    B -- No --> C[Read touched object name]
+    C --> D{Object category}
+    D -- Key item --> E[Increase matching key counter]
+    E --> F[Add key to inventory]
+    F --> G[Remove key object from world]
+    D -- Normal door --> H{Player has normal key?}
+    H -- Yes --> I[Consume key and remove door]
+    H -- No --> J{Door message cooldown ready?}
+    J -- Yes --> K[Show need key message and start cooldown]
+    J -- No --> Z
+    D -- Special door --> L{Player has special key?}
+    L -- Yes --> M[Consume special key and remove special door]
+    L -- No --> N{Door message cooldown ready?}
+    N -- Yes --> O[Show need special key message and start cooldown]
+    N -- No --> Z
+    D -- Boss door --> P{Boss already started?}
+    P -- No --> Q[Set boss flag true]
+    Q --> R[Remove opened boss door]
+    R --> S[Spawn closing boss door behind player]
+    S --> T[Move player into boss area]
+    P -- Yes --> Z
+    D -- Temporary boost --> U[Activate speed or jump boost]
+    U --> V{Boost pickup is consumable?}
+    V -- Yes --> W[Remove boost object]
+    V -- No --> X[Keep booster and use message cooldown]
+    D -- Potion --> Y[Add potion copy to inventory]
+    Y --> AA[Remove potion object]
+    D -- Heart --> AB[Restore health up to maxLife]
+    AB --> AC[Remove heart object]
+    D -- Coin --> AD[Increase coin count]
+    AD --> AE[Remove coin object]
+    D -- Flag --> AF{Next tilemap exists?}
+    AF -- Yes --> AG[Increase mapIndicator]
+    AF -- No --> AH[Show win message]
+    G --> Z
+    I --> Z
+    K --> Z
+    M --> Z
+    O --> Z
+    T --> Z
+    W --> Z
+    X --> Z
+    AA --> Z
+    AC --> Z
+    AE --> Z
+    AG --> Z
+    AH --> Z
+```

@@ -4,10 +4,10 @@ import java.awt.Rectangle;
 
 public class EventHandler {
 
-    GamePanel gp;
-    Rectangle eventRect;
-    int eventRectDefaultX, eventRectDefaultY;
-    boolean eventReady = true;
+    GamePanel gp; // reference to main game state
+    Rectangle eventRect; // reusable hitbox for event tiles
+    int eventRectDefaultX, eventRectDefaultY; // original offset of event box inside tile
+    boolean eventReady = true; // prevents repeated triggering of same event every frame
 
     public EventHandler(GamePanel gp) {
         this.gp = gp;
@@ -15,7 +15,7 @@ public class EventHandler {
         eventRect = new Rectangle();
         eventRect.x = 0;
         eventRect.y = 0;
-        eventRect.width = gp.tileSize;
+        eventRect.width = gp.tileSize; // event area is one tile by default
         eventRect.height = gp.tileSize;
 
         eventRectDefaultX = eventRect.x;
@@ -23,23 +23,23 @@ public class EventHandler {
     }
 
     public void checkEvent0() {
-        // Map 0 has one damage event, one healing pool, and one teleport trigger.
+        // Map 0: pit damage, healing pool, teleport zone
         boolean damage = hit(9, 10);
         boolean healing = hit(4, 10);
         boolean teleport = hit(0, 4);
 
         if (healing) {
-            healingPool();
+            healingPool(); // optional interaction (press ENTER to heal)
         }
 
         if (!damage && !teleport) {
-            // Reset the one-shot event latch only after the player fully leaves the trigger.
+            // reset trigger lock if player leaves event area completely
             eventReady = true;
             return;
         }
 
         if (!eventReady) {
-            return;
+            return; // prevents spam triggering while standing inside tile
         }
 
         if (damage) {
@@ -51,13 +51,13 @@ public class EventHandler {
 
         if (teleport) {
             gp.ui.addMessage("You were teleported to another place");
-            teleport(19, 10);
+            teleport(19, 10); // move player to target tile
             eventReady = false;
         }
     }
 
     public void checkEvent1() {
-        // Map 1 currently only has a pit damage event.
+        // Map 1: only a single pit damage event
         boolean damage1 = hit(8, 4);
 
         if (!damage1) {
@@ -78,7 +78,7 @@ public class EventHandler {
     }
 
     public void checkEvent2() {
-        // Map 2 uses a healing pool near the boss area.
+        // Map 2: healing pool near boss area
         boolean healing = hit(15, 28);
 
         if (healing) {
@@ -87,6 +87,7 @@ public class EventHandler {
     }
 
     public void checkEvent3() {
+        // Map 3: multiple teleport points (warp system)
         boolean teleport = hit(38, 0);
         boolean teleport2 = hit(24, 9);
         boolean teleport3 = hit(45, 12);
@@ -94,7 +95,7 @@ public class EventHandler {
         boolean teleport5 = hit(0, 7);
 
         if (!teleport && !teleport2 && !teleport3 && !teleport4 && !teleport5) {
-            // Reset the one-shot event latch only after the player fully leaves the trigger.
+            // reset only when player fully leaves all triggers
             eventReady = true;
             return;
         }
@@ -131,7 +132,7 @@ public class EventHandler {
     }
 
     public boolean isPlayerOnHealingPool() {
-        // Prevents ENTER from attacking while the player is standing on a healing pool.
+        // used to disable attack / allow healing interaction
         return switch (gp.mapIndicator) {
             case 0 -> hit(4, 10);
             case 2 -> hit(15, 28);
@@ -141,13 +142,14 @@ public class EventHandler {
 
     public boolean hit(int eventCol, int eventRow) {
 
-        // Convert event tile coordinates into a world-space rectangle and compare with player hitbox.
+        // converts tile coordinates into world position and checks collision with player
         int eventWorldX = eventCol * gp.tileSize;
         int eventWorldY = eventRow * gp.tileSize;
 
         eventRect.x = eventWorldX + eventRectDefaultX;
         eventRect.y = eventWorldY + eventRectDefaultY;
 
+        // player hitbox in world coordinates
         Rectangle playerWorldRect = new Rectangle(
                 gp.player.x + gp.player.solidAreaDefaultX,
                 gp.player.y + gp.player.solidAreaDefaultY,
@@ -157,6 +159,7 @@ public class EventHandler {
 
         boolean result = playerWorldRect.intersects(eventRect);
 
+        // reset event rectangle back to default position
         eventRect.x = eventRectDefaultX;
         eventRect.y = eventRectDefaultY;
 
@@ -164,16 +167,16 @@ public class EventHandler {
     }
 
     public void healingPool() {
-        // Healing requires ENTER so the player can choose when to spend the action.
+        // healing only happens on key press (player chooses timing)
         if (gp.keyHandler.enterPressed) {
             gp.ui.addMessage("You healed yourself");
             gp.player.life = gp.player.maxLife;
-            gp.keyHandler.enterPressed = false;
+            gp.keyHandler.enterPressed = false; // consume input so it doesn't repeat
         }
     }
 
     public void teleport(int col, int row) {
-        // Teleport destinations are expressed in tile coordinates for easier map editing.
+        // moves player to a new tile position (tile-based world system)
         gp.player.x = col * gp.tileSize;
         gp.player.y = row * gp.tileSize;
     }

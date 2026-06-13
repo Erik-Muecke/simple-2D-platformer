@@ -15,13 +15,15 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.Random;
 
+// A flying enemy that hovers and fires two simultaneous downward fireballs toward the ground.
+// Tracks the player horizontally and shoots in bursts.
 public class FireFlyer extends Entity {
 
     private final GamePanel gp;
     private final Random random = new Random();
-    private final Projectile projectile;
-    private final Projectile projectile2;
-    private int shotCounter = 0;
+    private final Projectile projectile;  // left fireball
+    private final Projectile projectile2; // right fireball, fired alongside the first
+    private int shotCounter = 0;          // counts frames between shots
 
     public FireFlyer(GamePanel gp) {
         super(gp);
@@ -38,14 +40,16 @@ public class FireFlyer extends Entity {
 
         maxLife = 5;
         life = maxLife;
-        projectile = new PT_Fireball(gp);
-        projectile2 = new PT_Fireball((gp));
+        projectile  = new PT_Fireball(gp);
+        projectile2 = new PT_Fireball(gp);
     }
 
+    // Exposes the primary projectile so GamePanel can check for mid-air clashes
     public Projectile getProjectile() {
         return projectile;
     }
 
+    // Turns to face the player each frame
     public void setAction() {
         if(gp.player.x < this.x){
             this.direction = 'L';
@@ -56,6 +60,7 @@ public class FireFlyer extends Entity {
 
     @Override
     public void update() {
+        // Count down invincibility frames after being hit
         if (invincible) {
             invincibleCounter++;
             if (invincibleCounter > 40) {
@@ -64,16 +69,20 @@ public class FireFlyer extends Entity {
             }
         }
 
+        // Move and check collisions for both projectiles
         updateProjectileInteractions();
 
+        // During knockback move in the hit direction and skip normal AI
         if (knockBack) {
             boolean stillKnockedBack = gp.movementSystem.updateMonsterKnockBack(this);
             if (!stillKnockedBack) {
+                // Pull back shot counter so recovery doesn't immediately trigger another shot
                 shotCounter = shotCounter-10;
             }
             return;
         }
 
+        // Fire two projectiles side-by-side every 180 frames when both are inactive
         shotCounter++;
         if (shotCounter > 180 && !projectile.alive) {
             shotCounter++;
@@ -81,12 +90,13 @@ public class FireFlyer extends Entity {
                 int centerX = x + (width - projectile.width) / 2;
                 int centerY = y + (height - projectile.height) / 2;
 
-                projectile.set(centerX - 18, centerY, 'D', true);  // left fireball
-                projectile2.set(centerX + 18, centerY, 'D', true); // right fireball
+                projectile.set(centerX - 18, centerY, 'D', true);  // left fireball offset
+                projectile2.set(centerX + 18, centerY, 'D', true); // right fireball offset
                 shotCounter = 0;
             }
         }
 
+        // Freeze frames pause movement briefly after being hit
         if (freezeFrames > 0) {
             freezeFrames--;
             return;
@@ -96,11 +106,13 @@ public class FireFlyer extends Entity {
         gp.movementSystem.updateFlyingMonster(this);
     }
 
+    // Delegates projectile update and hit detection to a shared helper
     private void updateProjectileInteractions() {
         handleProjectile(projectile);
         handleProjectile(projectile2);
     }
 
+    // Moves the given projectile and checks if it hits the player or the player's fireball
     private void handleProjectile(Projectile p) {
         if (!p.alive) return;
 
@@ -108,6 +120,7 @@ public class FireFlyer extends Entity {
 
         Rectangle projectileBox = p.getCollisionBox();
 
+        // Cancel both projectiles if they collide mid-air
         if (gp.player.projectile != null
                 && gp.player.projectile.alive
                 && projectileBox.intersects(gp.player.projectile.getCollisionBox())) {
@@ -123,6 +136,7 @@ public class FireFlyer extends Entity {
                 gp.player.solidArea.height
         );
 
+        // Deal damage if the projectile reaches the player
         if (projectileBox.intersects(playerBox)) {
             if (!gp.player.invincible) {
                 gp.player.life -= p.damage;
@@ -132,6 +146,7 @@ public class FireFlyer extends Entity {
         }
     }
 
+    // Random loot drop weighted toward coins and hearts
     @Override
     public void checkDrop() {
         int random = new Random().nextInt(100);
@@ -154,6 +169,7 @@ public class FireFlyer extends Entity {
         int screenX = x - gp.camera.x;
         int screenY = y - gp.camera.y;
 
+        // Still draw projectiles even when the enemy is off-screen
         if (x + width < gp.camera.x ||
                 x > gp.camera.x + gp.screenWidth ||
                 y + height < gp.camera.y ||
@@ -163,6 +179,7 @@ public class FireFlyer extends Entity {
             return;
         }
 
+        // Flash semi-transparent while invincible
         if (invincible) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         }
@@ -170,6 +187,7 @@ public class FireFlyer extends Entity {
         g2.drawImage(image, screenX, screenY, width, height, null);
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
+        // Health bar shown once the enemy has taken damage
         if (life < maxLife) {
             int barWidth = width - 12;
             int currentLifeWidth = barWidth * life / maxLife;

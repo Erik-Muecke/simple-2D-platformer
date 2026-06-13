@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import data.SaveLoad;
 import entity.Entity;
 import entity.Player;
 import monster.FireSlime;
@@ -71,6 +72,9 @@ public class GamePanel extends JPanel implements Runnable {
     BufferedImage tempScreen;
     Graphics2D g2;
 
+    public SaveLoad saveLoad;
+    public EntityHandler entityHandler;
+
     public GamePanel() {
         // World dimensions must be known before camera, tile manager, and entities are created.
         this.setMapDimensions(mapIndicator);
@@ -88,6 +92,8 @@ public class GamePanel extends JPanel implements Runnable {
         player.x = tileM.playerSpawnX;
         player.y = tileM.playerSpawnY;
         eHandler = new EventHandler(this);
+        saveLoad = new SaveLoad(this);
+        entityHandler = new EntityHandler(this);
         gameState = titleState;
         ui = new UI(this);
         tempScreen = new BufferedImage(
@@ -134,6 +140,16 @@ public class GamePanel extends JPanel implements Runnable {
         }
         worldWidth  = tileSize * MaxWorldCol;
         worldHeight = tileSize * MaxWorldRow;
+    }
+
+    public void loadMapForSave() {
+        setMapDimensions(mapIndicator);
+        tileM.mapTileNum = new int[MaxWorldCol][MaxWorldRow];
+        tileM.loadMap();
+        previousmapIndicator = mapIndicator;
+        camera.worldWidth = worldWidth;
+        camera.worldHeight = worldHeight;
+        aSetter.updateScene();
     }
 
 
@@ -289,30 +305,35 @@ public class GamePanel extends JPanel implements Runnable {
         // Reset player state and rebuild scene arrays so collected objects/dead monsters return.
         gameOver = false;
         keyHandler.commandNum = 0;
-        mapIndicator = 0;
-
-        player.life = player.maxLife;
-        player.hasKey = 0;
-        player.hasSpKey = 0;
-        player.hasCoin = 0;
-        player.inventory.clear();
-        player.boss1 = false;
-        player.x = tileM.playerSpawnX;
-        player.y = tileM.playerSpawnY;
-        player.velocityX = 0;
-        player.velocityY = 0;
-        player.invincible = false;
-        player.invincibleCounter = 0;
-        player.projectile.alive = false;
-        player.mana = 5;
-        player.resetBoosts();
-
-        obj = new SuperObject[30];
-        monster = new Entity[20];
-        aSetter.updateScene();
-        camera.update(player);
-        ui.clearMessages();
-        gameState = playState;
+        // check if a save exists
+        if (new java.io.File("save.dat").exists()) {
+            saveLoad.load();          // restores exact world state including dead monsters
+            gameState = playState;
+        } else {
+            // no save — true fresh start
+            mapIndicator = 0;
+            player.life = player.maxLife;
+            player.hasKey = 0;
+            player.hasSpKey = 0;
+            player.hasCoin = 0;
+            player.inventory.clear();
+            player.boss1 = false;
+            player.x = tileM.playerSpawnX;
+            player.y = tileM.playerSpawnY;
+            player.velocityX = 0;
+            player.velocityY = 0;
+            player.invincible = false;
+            player.invincibleCounter = 0;
+            player.projectile.alive = false;
+            player.mana = 5;
+            player.resetBoosts();
+            obj     = new SuperObject[30];
+            monster = new Entity[20];
+            aSetter.updateScene();
+            camera.update(player);
+            ui.clearMessages();
+            gameState = playState;
+        }
     }
 
     @Override //Die paintComponent() Methode wird ueberschrieben, um die Grafiken des Spiels zu zeichnen.

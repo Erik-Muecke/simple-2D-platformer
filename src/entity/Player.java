@@ -20,7 +20,7 @@ public class Player extends Entity {
     private final GamePanel gp;
     private final KeyHandler keyH;
     private TileManager tileManager;
-    private int jumpStrength;
+    public int jumpStrength;
 //  private int gravity = 2;
 //  private int maxFallSpeed = 12;
     public int hasKey = 0;
@@ -41,6 +41,8 @@ public class Player extends Entity {
     private BufferedImage leftStepImage;
     private BufferedImage rightImage;
     private BufferedImage rightStepImage;
+    private BufferedImage attackLeftImage;
+    private BufferedImage attackRightImage;
 
 
     public int mana;
@@ -48,13 +50,17 @@ public class Player extends Entity {
     public int manaCounter = 0;
 
     public int normalSpeed = 4;
-    private int speedBoostCounter = 0;
+    public int speedBoostCounter = 0;
     public boolean speedBoostActive = false;
 
     public int normalJumpStrength = 30;
-    private int jumpStrengthBoostCounter = 0;
+    public int jumpStrengthBoostCounter = 0;
     public boolean jumpStrengthBoostActive = false;
     public boolean attacking = false;
+    private int attackCounter = 0;
+    private static final int ATTACK_DURATION = 12;
+    private static final Rectangle ATTACK_LEFT_SWORD_BOUNDS = new Rectangle(4, 18, 18, 6);
+    private static final Rectangle ATTACK_RIGHT_SWORD_BOUNDS = new Rectangle(28, 18, 18, 6);
     public boolean boss1 = false;
 
     public ArrayList<SuperObject> inventory = new ArrayList<>();
@@ -86,8 +92,6 @@ public class Player extends Entity {
         life = maxLife;
         maxMana = 5;
         mana = maxMana;
-        attackWidth = gp.tileSize-16;
-        attackHeight = gp.tileSize-16;
         loadPlayerImage();
     }
 
@@ -99,6 +103,8 @@ public class Player extends Entity {
             leftStepImage = loadImage("/player/playerleft1.png");
             rightImage = loadImage("/player/playerright.png");
             rightStepImage = loadImage("/player/playerright1.png");
+            attackLeftImage = loadImage("/player/playerattackleft.png");
+            attackRightImage = loadImage("/player/playerattackright.png");
             image = frontImage;
         } catch (IOException e) {
             System.err.println("Fehler beim Laden der Player-Sprites: " + e.getMessage());
@@ -188,6 +194,14 @@ public class Player extends Entity {
     }
 
     public void update() {
+        if (attacking) {
+            attackCounter++;
+            if (attackCounter >= ATTACK_DURATION) {
+                attacking = false;
+                attackCounter = 0;
+            }
+        }
+
         // Temporary boosts count down in frames because the game loop runs at a fixed FPS.
         if(speedBoostActive) {
             speedBoostCounter++;
@@ -502,26 +516,58 @@ public class Player extends Entity {
     }
 
     public void attack() {
-        Rectangle attackBox = new Rectangle();
-        attacking = true;
-        walkingCounter = 0;
-
-        // Melee attacks only extend horizontally because the player faces left/right in combat.
-        switch (direction) {
-            case 'L':
-                attackBox.x = x + solidArea.x - attackWidth;
-                attackBox.y = y + solidArea.y;
-                break;
-            case 'R':
-                attackBox.x = x + solidArea.x + solidArea.width;
-                attackBox.y = y + solidArea.y;
-                break;
+        if (direction != 'L' && direction != 'R') {
+            direction = 'R';
         }
 
-        attackBox.width = attackWidth;
-        attackBox.height = attackHeight;
+        attacking = true;
+        attackCounter = 0;
+        walkingCounter = 0;
 
-        checkMonsterHit(attackBox);
+        checkMonsterHit(getSwordHitBox());
+    }
+
+    private Rectangle getSwordHitBox() {
+        BufferedImage attackImage = direction == 'L' ? attackLeftImage : attackRightImage;
+        Rectangle sourceSwordBounds = direction == 'L'
+                ? ATTACK_LEFT_SWORD_BOUNDS
+                : ATTACK_RIGHT_SWORD_BOUNDS;
+
+        if (attackImage == null) {
+            return new Rectangle(
+                    direction == 'L' ? x + solidArea.x - gp.tileSize / 2 : x + solidArea.x + solidArea.width,
+                    y + solidArea.y,
+                    gp.tileSize / 2,
+                    solidArea.height
+            );
+        }
+
+        int drawHeight = height;
+        int drawWidth = getAttackDrawWidth(attackImage);
+        int drawX = getAttackDrawX(attackImage);
+        int drawY = y;
+
+        double scaleX = (double) drawWidth / attackImage.getWidth();
+        double scaleY = (double) drawHeight / attackImage.getHeight();
+
+        int swordX = drawX + (int) Math.round(sourceSwordBounds.x * scaleX);
+        int swordY = drawY + (int) Math.round(sourceSwordBounds.y * scaleY);
+        int swordWidth = Math.max(1, (int) Math.round(sourceSwordBounds.width * scaleX));
+        int swordHeight = Math.max(1, (int) Math.round(sourceSwordBounds.height * scaleY));
+
+        attackWidth = swordWidth;
+        attackHeight = swordHeight;
+
+        return new Rectangle(swordX, swordY, swordWidth, swordHeight);
+    }
+
+    private int getAttackDrawWidth(BufferedImage attackImage) {
+        return (int) Math.round((double) attackImage.getWidth() * height / attackImage.getHeight());
+    }
+
+    private int getAttackDrawX(BufferedImage attackImage) {
+        int drawWidth = getAttackDrawWidth(attackImage);
+        return direction == 'L' ? x - (drawWidth - width) : x;
     }
 
     public void checkMonsterHit(Rectangle attackBox) {
@@ -614,20 +660,20 @@ public class Player extends Entity {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         }
 
-        if (image != null) {
+        BufferedImage attackImage = direction == 'L' ? attackLeftImage : attackRightImage;
+
+        if (attacking && attackImage != null) {
+            int screenX = getAttackDrawX(attackImage) - gp.camera.x;
+            int screenY = y - gp.camera.y;
+            int drawWidth = getAttackDrawWidth(attackImage);
+
+            g2.drawImage(attackImage, screenX, screenY, drawWidth, height, null);
+        } else if (image != null) {
             int screenX = x - gp.camera.x;
             int screenY = y - gp.camera.y;
 
             g2.drawImage(image, screenX, screenY, width, height, null);
         }//using the camera for the player
-        if (attacking) {
-            g2.setColor(Color.YELLOW);
-            int swordX = (direction == 'R')
-                    ? x - gp.camera.x + solidArea.x + solidArea.width
-                    : x - gp.camera.x + solidArea.x - attackWidth;
-            int swordY = y - gp.camera.y + solidArea.y;
-            g2.fillRect(swordX, swordY, attackWidth, attackHeight);
-        }
 
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
