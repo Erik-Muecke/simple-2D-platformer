@@ -157,7 +157,7 @@ public class CollisionSystem {
         return 999; // no NPC collision
     }
 
-    public void checkSpikeDamage(Entity entity) {
+    public boolean isTouchingSpike(Entity entity) {
 
         int[] box = getCurrentAABB(entity); // entity hitbox
         int left = box[0], right = box[1], top = box[2], bottom = box[3];
@@ -187,10 +187,17 @@ public class CollisionSystem {
                 int tBottom = tTop + gp.tileSize;
 
                 if (overlaps(left, right, top, bottom, tLeft, tRight, tTop, tBottom)) {
-                    damageSpikeTarget(entity); // apply damage
-                    return;
+                    return true;
                 }
             }
+        }
+
+        return false;
+    }
+
+    public void checkSpikeDamage(Entity entity) {
+        if (isTouchingSpike(entity)) {
+            damageSpikeTarget(entity); // apply damage
         }
     }
 
@@ -198,6 +205,7 @@ public class CollisionSystem {
 
         if (entity == gp.player) {
             gp.player.damagePlayer(); // player damage system
+            gp.player.returnToPreviousPosition();
             return;
         }
 

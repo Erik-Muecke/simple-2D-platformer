@@ -95,6 +95,7 @@ public class TileManager {
 
     public void update() {
         if (gp.previousmapIndicator != gp.mapIndicator) {
+            int previousMap = gp.previousmapIndicator;
 
             gp.setMapDimensions(gp.mapIndicator); // passt Weltgröße an Map an
 
@@ -107,6 +108,7 @@ public class TileManager {
 
             gp.player.x = playerSpawnX; // Spieler-Spawn X
             gp.player.y = playerSpawnY; // Spieler-Spawn Y
+            gp.player.setPreviousSafePosition();
 
             gp.aSetter.updateScene(); // Objekte & Gegner neu setzen
 
@@ -116,9 +118,13 @@ public class TileManager {
                 case 2: break;
                 case 3: break;
                 case 4: break;
+                case 5: break;
             }
 
             gp.previousmapIndicator = gp.mapIndicator;
+            if (previousMap != -1) {
+                gp.saveLoad.save();
+            }
         }
     }
 
@@ -177,6 +183,7 @@ public class TileManager {
                             case 2: mapTileNum[col][row] = 10; break;
                             case 3: mapTileNum[col][row] = 0; break;
                             case 4: mapTileNum[col][row] = 0; break;
+                            case 5: mapTileNum[col][row] = 0; break;
                         }
                     }
 

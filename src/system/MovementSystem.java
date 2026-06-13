@@ -1,6 +1,7 @@
 package system;
 
 import entity.Entity; // base class for player, NPCs, monsters
+import entity.Player;
 import main.GamePanel; // global game state (world, camera, tilemap, player)
 import projectile.Projectile; // projectile objects like fireballs
 
@@ -50,6 +51,12 @@ public class MovementSystem {
             player.y = floorY;
             player.velocityY = 0;
             player.onGround = true;
+        }
+
+        if (player instanceof Player currentPlayer
+                && player.onGround
+                && !collisionSystem.isTouchingSpike(player)) {
+            currentPlayer.setPreviousSafePosition();
         }
 
         collisionSystem.checkSpikeDamage(player); // hazard damage check

@@ -254,6 +254,9 @@ public class AssetSetter {
             case 4:
                 setScene4();
                 break;
+            case 5:
+                setScene5();
+                break;
         }
     }
 }

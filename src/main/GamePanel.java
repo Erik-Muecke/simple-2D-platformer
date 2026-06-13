@@ -91,6 +91,7 @@ public class GamePanel extends JPanel implements Runnable {
         tileM = new TileManager(this);
         player.x = tileM.playerSpawnX;
         player.y = tileM.playerSpawnY;
+        player.setPreviousSafePosition();
         eHandler = new EventHandler(this);
         saveLoad = new SaveLoad(this);
         entityHandler = new EntityHandler(this);
@@ -131,6 +132,10 @@ public class GamePanel extends JPanel implements Runnable {
                 break;
             case 4:
                 MaxWorldCol = 48;
+                MaxWorldRow = 22;
+                break;
+            case 5:
+                MaxWorldCol = 38;
                 MaxWorldRow = 22;
                 break;
             default:
@@ -320,6 +325,7 @@ public class GamePanel extends JPanel implements Runnable {
             player.boss1 = false;
             player.x = tileM.playerSpawnX;
             player.y = tileM.playerSpawnY;
+            player.setPreviousSafePosition();
             player.velocityX = 0;
             player.velocityY = 0;
             player.invincible = false;

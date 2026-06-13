@@ -17,6 +17,8 @@ public class DataStorage implements Serializable {
     // player position in the world
     public int playerX;
     public int playerY;
+    public int previousX;
+    public int previousY;
 
     // current loaded map
     public int mapIndicator;
@@ -84,6 +86,8 @@ public class DataStorage implements Serializable {
         // save current player position
         playerX = gp.player.x;
         playerY = gp.player.y;
+        previousX = gp.player.previousX;
+        previousY = gp.player.previousY;
 
         // save current map
         mapIndicator = gp.mapIndicator;
@@ -275,6 +279,12 @@ public class DataStorage implements Serializable {
         // restore player position
         gp.player.x = playerX;
         gp.player.y = playerY;
+        if(previousX == 0 && previousY == 0) {
+            gp.player.setPreviousSafePosition();
+        } else {
+            gp.player.previousX = previousX;
+            gp.player.previousY = previousY;
+        }
 
         // restore player stats
         gp.player.life = life;

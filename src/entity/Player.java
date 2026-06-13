@@ -49,6 +49,9 @@ public class Player extends Entity {
     public int maxMana;
     public int manaCounter = 0;
 
+    public int previousX;
+    public int previousY;
+
     public int normalSpeed = 4;
     public int speedBoostCounter = 0;
     public boolean speedBoostActive = false;
@@ -92,6 +95,7 @@ public class Player extends Entity {
         life = maxLife;
         maxMana = 5;
         mana = maxMana;
+        setPreviousSafePosition();
         loadPlayerImage();
     }
 
@@ -311,6 +315,18 @@ public class Player extends Entity {
         jumpStrengthBoostActive = false;
         speedBoostCounter = 0;
         jumpStrengthBoostCounter = 0;
+    }
+
+    public void setPreviousSafePosition() {
+        previousX = x;
+        previousY = y;
+    }
+
+    public void returnToPreviousPosition() {
+        x = previousX;
+        y = previousY;
+        velocityX = 0;
+        velocityY = 0;
     }
 
     public void pickUpObject(int i) {
