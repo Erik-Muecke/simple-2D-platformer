@@ -169,8 +169,22 @@ public class Player extends Entity {
                     break;
 
                 case "Flag":
+                    velocityX = 0;
+                    velocityY = 0;
                     gp.mapIndicator++;
                     System.out.println("You win!");
+                    break;
+                case "heart":
+                    if (life < maxLife) {
+                        life++;
+                    }
+                    if (life < maxLife) {
+                            life++;
+                        System.out.println("You healed! Current life: " + life);
+                    } else {
+                        System.out.println("Your life is already full!");
+                    }
+                    gp.obj[i] = null; // heart disappears
                     break;
             }
         }//function, which is enabling the collision and interaction with the different objects
