@@ -3,8 +3,6 @@ package tile;
 import main.GamePanel;
 import main.ImageLoader;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -36,7 +34,7 @@ public class TileManager {
     try {
 
         tile[0] = new Tile();  //erstellt ein neues Tile Objekt an der Stelle 0 im Array
-        tile[0].image = imgLoader.scaleImage("/tiles/transparent.png", gp.tileSize, gp.tileSize); //Funktion aus ImageLoader wird aufgerufen um das Bild automatisch zu skalieren.
+        tile[0].image = imgLoader.scaleImage("/tiles/transparent.png", gp.tileSize, gp.tileSize); //Funktion aus ImageLoader wird aufgerufen, um das Bild automatisch zu skalieren.
         tile[0].name = "transparent";
 
         tile[1] = new Tile();
@@ -46,24 +44,30 @@ public class TileManager {
 
         tile[2] = new Tile();
         tile[2].image = imgLoader.scaleImage("/tiles/earth.png", gp.tileSize, gp.tileSize);
-        tile[0].name = "earth";
+        tile[2].collision = true;
+        tile[2].name = "earth";
 
         tile[3] = new Tile();
-        tile[3].image = imgLoader.scaleImage("/tiles/water.png", gp.tileSize, gp.tileSize);
-        tile[0].name = "water";
+        tile[3].image = imgLoader.scaleImage("/tiles/grass.png", gp.tileSize, gp.tileSize);
+        tile[3].collision = true;
+        tile[3].name = "grass";
 
         tile[4] = new Tile();
         tile[4].image = imgLoader.scaleImage("/tiles/spike.png", gp.tileSize, gp.tileSize);
         tile[4].name = "spike";
 
+        tile[5] = new Tile();
+        tile[5].image = imgLoader.scaleImage("/tiles/transparent.png", gp.tileSize, gp.tileSize);
+        tile[5].name = "spike";
+
         tile[9] = new Tile();
         tile[9].image = imgLoader.scaleImage("/tiles/transparent.png", gp.tileSize, gp.tileSize);
         tile[9].collision = false;
-        tile[0].name = "transparent";
+        tile[9].name = "transparent";
 
         tile[10] = new Tile();
         tile[10].image = imgLoader.scaleImage("/tiles/sand.png", gp.tileSize, gp.tileSize);
-        tile[0].name = "sand";
+        tile[10].name = "sand";
 
 
 
@@ -89,16 +93,13 @@ public class TileManager {
 
             col++; //erhöht den Spaltenzähler um 1
 
-            x += gp.tileSize; //erhöht die x-Position um die Größe einer Kachel
 
             if(col == gp.MaxWorldCol) { //wenn das Ende der Spalten erreicht ist-0
 
                 col = 0; //setzt den Spaltenzähler zurück auf 0
-                x = 0; //setzt die x-Position zurück auf 0
 
                 row++; //erhöht den Zeilenzähler um 1
 
-                y += gp.tileSize; //erhöht die y-Position um die Größe einer Kachel
             }
         }
     }
@@ -111,8 +112,6 @@ public class TileManager {
                 gp.aSetter.updateObject();
                 switch (gp.mapIndicator) {
                     case 0:
-                        //TODO: hier die jeweiligen platzierungen der objekte, Gegner, Backgrounds für die Karte festlegen.
-                        //Startpositionen ebenso
                         gp.player.x = playerSpawnX;
                         gp.player.y = playerSpawnY;
                         break;
@@ -129,6 +128,10 @@ public class TileManager {
                         gp.player.y = playerSpawnY;
                         break;
                     case 4:
+                        gp.player.x = playerSpawnX;
+                        gp.player.y = playerSpawnY;
+                        break;
+                    case 5:
                         gp.player.x = playerSpawnX;
                         gp.player.y = playerSpawnY;
                         break;
@@ -189,27 +192,6 @@ public class TileManager {
 
         }catch(Exception e){
             System.out.println("Fehler beim Laden der Karte: " + e.getMessage());
-        }
-    }
-
-    public BufferedImage loadTileImage(String imagePath) {
-        try (InputStream is = getClass().getResourceAsStream(imagePath)) {
-            if  (is == null) {
-                throw new Exception("Ressource nicht gefunden: " + imagePath);
-            }
-            return ImageIO.read(is);
-        } catch (Exception e) {
-            System.out.println("Fehler beim Laden der Kachelbilder: " + e.getMessage());
-            try(InputStream no_image = getClass().getResourceAsStream("/missing/image_not_found.png")){
-                if (no_image == null) {
-                    throw new Exception("Ressource nicht gefunden: /missing/image_not_found.png");
-                }
-                return ImageIO.read(no_image);
-
-            }catch(Exception f){
-                System.out.println("Fehler beim Laden der Standardfehlermeldung: " + f.getMessage());
-                return null;
-            }
         }
     }
 }

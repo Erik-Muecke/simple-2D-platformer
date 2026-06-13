@@ -22,8 +22,8 @@ public class GamePanel extends JPanel implements Runnable {
     final public int screenHeight = tileSize * MaxScreenRow; // 576 pixels
 
 
-    public int MaxWorldCol = 32; //Breite der Welt in Tiles
-    public int MaxWorldRow = 16; //Höhe der Welts in Tiles
+    public int MaxWorldCol = 38; //Breite der Welt in Tiles
+    public int MaxWorldRow = 22; //Höhe der Welts in Tiles
     public int worldWidth = tileSize * MaxWorldCol;
     public int worldHeight = tileSize * MaxWorldRow;
 
@@ -75,7 +75,7 @@ public class GamePanel extends JPanel implements Runnable {
         keyHandler = new KeyHandler(this);
         player = new Player(this, keyHandler);
         aSetter.setObjectScene0();
-        aSetter.setMonster();
+        aSetter.setMonsterScene0();
         player.x = tileM.playerSpawnX;
         player.y = tileM.playerSpawnY;
         eHandler = new EventHandler(this);
@@ -224,7 +224,6 @@ public class GamePanel extends JPanel implements Runnable {
         player.projectile.alive = false;
 
         aSetter.setObjectScene0();
-        aSetter.setMonster();
 
         camera.update(player);
         gameState = playState;
