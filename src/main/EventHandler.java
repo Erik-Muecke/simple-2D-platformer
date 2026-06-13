@@ -23,18 +23,12 @@ public class EventHandler {
     }
 
     public void checkEvent() {
-        boolean damage = hit(9, 11);
 
 
         if (!eventReady) {
             return;
         }
 
-        if (damage) {
-            gp.player.damagePlayer();
-            eventReady = false;
-            return;
-        }
     }
 
     public boolean hit(int eventCol, int eventRow) {
