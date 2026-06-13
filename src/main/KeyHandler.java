@@ -47,6 +47,7 @@ public class KeyHandler implements KeyListener {
                 if(commandNum == 1) {
                     // optional: load game
                     gp.mapIndicator = gp.saveHndlr.loadLevel();
+                    gp.player.life = gp.saveHndlr.loadLives();
                     gp.gameState = gp.playState;
                     commandNum = 0;
 
@@ -142,6 +143,7 @@ public class KeyHandler implements KeyListener {
                 if (commandNum == 1) {
                     gp.resetGame();
                     gp.mapIndicator = gp.saveHndlr.loadLevel();
+                    gp.player.life = gp.saveHndlr.loadLives();
                     gp.aSetter.updateObject();
                     gp.gameState = gp.playState;
                     commandNum = 0;

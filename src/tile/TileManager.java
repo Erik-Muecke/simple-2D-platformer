@@ -139,6 +139,7 @@ public class TileManager {
                 gp.previousmapIndicator = gp.mapIndicator;
                 System.out.println(gp.mapIndicator);
                 gp.saveHndlr.saveLevel(gp.mapIndicator);
+                gp.saveHndlr.savelives(gp.player.life);
                 System.out.println(gp.saveHndlr.loadLevel());
             }
 
