@@ -56,7 +56,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public EventHandler eHandler;
 
-    public boolean showCollisionDebug = true; //nur zum Debuggen, zeigt die Kollisionsboxen
+    public boolean showCollisionDebug = false; //nur zum Debuggen, zeigt die Kollisionsboxen
 
     //Map indicator zeigt an welche Karte gerade gespielt wird.
     public int mapIndicator = 0;

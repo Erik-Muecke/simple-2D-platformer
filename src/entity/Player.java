@@ -2,9 +2,6 @@ package entity;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import javax.imageio.ImageIO;
 
 import projectile.PT_Fireball;
 import projectile.Projectile;
@@ -315,9 +312,9 @@ public class Player extends Entity {
 
         BufferedImage img = switch (direction) { //Wechselt das Bild des Spielers je nach Richtung, in die er schaut
             case 'U' -> img1;
-            case 'D' -> img4;
-            case 'L' -> img2;
-            case 'R' -> img3;
+            case 'D' -> img1;
+            case 'L' -> img1;
+            case 'R' -> img2;
             default -> img1;
         };
         if (img != null) {

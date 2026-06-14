@@ -22,7 +22,7 @@ public class UI {
         arial_80B = new Font("Arial", Font.BOLD, 80);
 
         //Laden der Bilder
-        titleImage = imgLoader.scaleImage("/player/kartoni.png", gp.tileSize * 2, gp.tileSize * 2);
+        titleImage = imgLoader.scaleImage("/player/kartoni1.png", gp.tileSize * 2, gp.tileSize * 2);
 
         heart_full = imgLoader.scaleImage("/objects/heart_full.png", gp.tileSize, gp.tileSize);
         heart_half = imgLoader.scaleImage("/objects/heart_half.png", gp.tileSize, gp.tileSize);

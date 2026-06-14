@@ -10,8 +10,8 @@ public class Game {
 
             //Icon für das Fenster und die Taskleiste
             ImageIcon icon = new ImageIcon(
-                    Game.class.getResource("/missing/image_not_found.png")
-            );//TODO: will be replaced later with final image
+                    Game.class.getResource("/player/kartoni1.png")
+            );
 
             //Erstellen des Hauptfensters
             JFrame frame = new JFrame();

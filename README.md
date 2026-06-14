@@ -1,9 +1,6 @@
 # simple-2D-platformer
 A simple project for our IT class. Made with Swing in Java, maybe JavaFX if our teacher approves it.
 
-
-# Dokumentation
-Das Projekt besteht aus mehreren Klassen.
-- `Main`: Die Hauptklasse, die das Spiel startet, indem es die Game Klasse aufruft.
-- `GamePanel`: enthält die Spiellogik, sowie den GameLoop.
-- `Game`: Enthält wichtige Informationen um das JPanel mit dem Spiel zu starten.
+# zum starten:
+In IntelliJ Idea, muss der res Ordner als ressources root markiert sein und der src Ordner als sources root. Dann einfach die main Klasse ausfuehren.
+Ansonsten einfach selbst als .jar Datei kompilieren.u starten.
