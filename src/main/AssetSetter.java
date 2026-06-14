@@ -15,9 +15,9 @@ public class AssetSetter {
 
     public void setMonsterScene0() {
 
-        gp.monster[0] = new GreenSlime(gp);
-        gp.monster[0].x = 11 * gp.tileSize ;
-        gp.monster[0].y = 15 * gp.tileSize;
+        gp.monster[0] = new GreenSlime(gp); //Erstellen eines neuen Monsters
+        gp.monster[0].x = 11 * gp.tileSize ; //Festlegen der x-Position des Objektes
+        gp.monster[0].y = 15 * gp.tileSize; //Festlegen der y-Position des Objektes
 
         gp.monster[1] = new GreenSlime(gp);
         gp.monster[1].x = 19 * gp.tileSize ;
@@ -45,7 +45,7 @@ public class AssetSetter {
 
     public void setObjectScene0() {
 
-        gp.obj[0] = new OBJ_Key(gp); //Erstellen eines neuen Objektes und
+        gp.obj[0] = new OBJ_Key(gp); //Erstellen eines neuen Objektes
         gp.obj[0].x = 13 * gp.tileSize; //Festlegen der x-Position des Objektes
         gp.obj[0].y = 4 * gp.tileSize; //Festlegen der y-Position des Objektes
 
@@ -55,7 +55,7 @@ public class AssetSetter {
 
         gp.obj[5] = new OBJ_Heart(gp);
         gp.obj[5].x = 36 * gp.tileSize;
-        gp.obj[5].y = (3 * gp.tileSize) + 16;
+        gp.obj[5].y = (3 * gp.tileSize) + 16; //16 wird addiert um die Position des Herzens anzupassen, damit es nicht zu hoch in der Luft schwebt
     }
 
 
@@ -128,8 +128,8 @@ public class AssetSetter {
 
 
     public void updateObject() {
-        Arrays.fill(gp.obj, null);
-        Arrays.fill(gp.monster, null);
+        Arrays.fill(gp.obj, null); // Alle Objekte im Array auf null setzen, um sicherzustellen, dass keine alten Objekte mehr vorhanden sind
+        Arrays.fill(gp.monster, null); // Alle Monster im Array auf null setzen, um sicherzustellen, dass keine alten Monster mehr vorhanden sind
         switch(gp.mapIndicator){
             case 0:
                 setObjectScene0();

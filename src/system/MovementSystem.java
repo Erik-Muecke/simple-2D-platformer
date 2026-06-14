@@ -13,20 +13,22 @@ public class MovementSystem {
         this.collisionSystem = gp.collisionsystem;
     }
 
+    // Aktualisieren der Position des Spielers basierend auf seiner Geschwindigkeit und der Kollisionserkennung.
     public void updatePlayer(Entity player) {
-        // Gravity is applied before collision so the player naturally falls until a floor is hit.
+        // Schwerkraft wird auf den Spieler angewendet
         player.velocityY += 2;
-        if (player.velocityY > 31) {
+        if (player.velocityY > 31) { // Terminal velocity, um zu verhindern, dass der Spieler zu schnell fällt.
             player.velocityY = 31;
         }
         player.onGround = false;
 
-        // Resolve horizontal and vertical movement separately to prevent corner-sticking.
+        // Getrennte behandlung von horizontaler und vertikaler Bewegungen, um ein „Hängenbleiben“ in den Ecken zu vermeiden.
         player.collisionOn = false;
         player.x += player.velocityX;
         collisionSystem.collidesT(player);
         collisionSystem.collidesWithObject(player);
 
+        // Wenn eine Kollision erkannt wird, wird die horizontale Bewegung rückgängig gemacht
         if (player.collisionOn) {
             player.x -= player.velocityX;
             player.velocityX = 0;
@@ -37,6 +39,7 @@ public class MovementSystem {
         collisionSystem.collidesT(player);
         collisionSystem.collidesWithObject(player);
 
+        // Wenn eine Kollision erkannt wird, wird die vertikale Bewegung rückgängig gemacht
         if (player.collisionOn) {
             player.y -= player.velocityY;
             if (player.velocityY > 0) {
@@ -45,6 +48,7 @@ public class MovementSystem {
             player.velocityY = 0;
         }
 
+        // Sicherstellen, dass der Spieler nicht unter den Boden fällt, falls die Kollisionserkennung versagt.
         int floorY = gp.worldHeight - player.height;
         if (player.y >= floorY) {
             player.y = floorY;
@@ -54,6 +58,7 @@ public class MovementSystem {
         collisionSystem.checkSpikeDamage(player);
     }
 
+    // Aktualisieren der Position eines Projektils basierend auf seiner Geschwindigkeit und der Kollisionserkennung.
     public void updateProjectile(Projectile projectile) {
         projectile.collisionOn = false;
 
@@ -81,6 +86,7 @@ public class MovementSystem {
         }
     }
 
+    // Aktualisieren der Position eines Monsters basierend auf seiner Geschwindigkeit, der Kollisionserkennung und dem Knockback-Zustand.
     public boolean updateMonsterKnockBack(Entity monster) {
         // Knockback is short-lived movement away from the player after taking melee damage.
         int knockVelocity = monster.speed * 4;
@@ -113,6 +119,7 @@ public class MovementSystem {
         return true;
     }
 
+    // Aktualisieren der Position eines laufenden Monsters basierend auf seiner Geschwindigkeit, der Kollisionserkennung und der Schwerkraft.
     public void updateWalkingMonster(Entity monster) {
         // Walking monsters turn around when their next horizontal step would hit a wall.
         char horizontalDirection = monster.direction;
@@ -166,6 +173,7 @@ public class MovementSystem {
         }
     }
 
+    // Aktualisieren der Position eines fliegenden Monsters basierend auf seiner Geschwindigkeit, der Kollisionserkennung und der Schwerkraft.
     public void updateFlyingMonster(Entity monster) {
         // Flying monsters turn around when their next horizontal step would hit a wall.
         char horizontalDirection = monster.direction;
@@ -196,6 +204,7 @@ public class MovementSystem {
         }
     }
 
+    // Startet einen Sprung für ein Entity, indem die vertikale Geschwindigkeit auf einen negativen Wert gesetzt wird, um das Entity nach oben zu bewegen.
     public void startJump(Entity entity, int jumpStrength) {
         // Negative Y velocity moves an entity upward in screen coordinates.
         entity.velocityY = -jumpStrength;

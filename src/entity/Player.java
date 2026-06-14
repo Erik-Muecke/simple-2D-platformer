@@ -38,7 +38,7 @@ public class Player extends Entity {
 
     public int floorY;
     public Player(GamePanel gp, KeyHandler keyH) {
-        super();
+        super(); // Aufruf des Konstruktors der Entity-Klasse
         speed = 6; //Geschwindigkeit des Spielers, wie viele Pixel er sich pro Update bewegen soll
         width = 32 * GamePanel.scale; //Breite des Spielers in Pixeln
         height = 32 * GamePanel.scale; //Höhe des Spielers in Pixeln
@@ -47,6 +47,7 @@ public class Player extends Entity {
         this.gp = gp;
         this.keyH = keyH;
 
+        //Maße der Hitbox
         int hitboxWidth = 48;
         int hitboxHeight = 48;
         solidArea = new Rectangle(
@@ -57,16 +58,19 @@ public class Player extends Entity {
         );
 
         projectile = new PT_Fireball(gp);
+
+        // Setzt die Standarposition der Kollisionsbox
         solidAreaDefaultX = solidArea.x;
-        solidAreaDefaultY = solidArea.y;//declaring the solid parts of the player
-        maxLife = 6;
-        life = maxLife;
+        solidAreaDefaultY = solidArea.y;
+        maxLife = 6; // Maximale Lebenspunkte des Spielers
+        life = maxLife; // Aktuelle Lebenspunkte des Spielers
         attackWidth = gp.tileSize;
         attackHeight = gp.tileSize;
         this.movementSystem = new MovementSystem(gp);
         loadPlayerImage();
     }
 
+    // Laden der Spielerbilder aus den Ressourcen
     public void loadPlayerImage() {
             img1 = imgLoader.loadImage("/player/kartoni1.png");
             img2 = imgLoader.loadImage("/player/kartoni2.png");
@@ -74,20 +78,10 @@ public class Player extends Entity {
             img4 = imgLoader.loadImage("/player/kartoni4.png");
             img5 = imgLoader.loadImage("/player/kartoni5.png");
             img6 = imgLoader.loadImage("/player/kartoni6.png");
-
-        //laden der verschiedenen Player Bilder
-    }
-
-    private BufferedImage loadImage(String path) throws IOException {
-        InputStream stream = getClass().getResourceAsStream(path);
-        if (stream == null) {
-            throw new IOException("Ressource nicht gefunden: " + path);
-        }
-        return ImageIO.read(stream);
     }
 
     public void update() {
-        // Handle horizontal input
+        // Horizontaler Input
         if (keyH.leftPressed) {
             direction = 'L';
             velocityX = -speed;
@@ -98,18 +92,20 @@ public class Player extends Entity {
             velocityX = 0;
         }
 
-        // Handle jump
+        // Sprung
         if (keyH.jumpPressed && onGround && y < floorY - 20) {
             velocityY = -jumpStrength;
             onGround = false;
-            System.out.println("Sprung");
         }
 
+        // Angriff
         if (keyH.enterPressed && !gp.eHandler.isHealingPoolHit()) {
             attack();
             keyH.enterPressed = false;
         }
 
+        //Überprüft ob der Spieler aktuell unverwundbar ist, wenn ja wird der invincibleCounter hochgezählt,
+        // wenn der Counter 60 überschreitet, wird die Unverwundbarkeit aufgehoben und der Counter zurückgesetzt.
         if (invincible) {
             invincibleCounter++;
             if (invincibleCounter > 60) {
@@ -118,6 +114,9 @@ public class Player extends Entity {
             }
         }
 
+        // Überprüft, ob der Spieler ein Projektil abfeuern möchte und ob das Projektil nicht bereits aktiv ist.
+        // Wenn beide Bedingungen erfüllt sind, wird die Position des Projektils auf die Mitte des Spielers gesetzt und
+        // die Richtung entsprechend der aktuellen Blickrichtung des Spielers festgelegt.
         if(keyH.shotKeyPressed && !projectile.alive) {
             int projectileX = x + (width - projectile.width) / 2;
             int projectileY = y + (height - projectile.height) / 2;
@@ -131,26 +130,30 @@ public class Player extends Entity {
             keyH.shotKeyPressed = false;
         }
 
+        //Speichert die letzt bekannte Position des Spielers auf dem Boden, um ihn dorthin zurückzusetzen, falls er aus der Welt fällt.
         if (onGround && y < floorY - 20) {
             lastgroundposX = x;
             lastgroundposY = y;
             System.out.println("On ground. Last ground position updated: (" + lastgroundposX + ", " + lastgroundposY + ")");
         }
 
+        // Überprüft, ob der Spieler unter die Bodenhöhe gefallen ist, und setzt ihn zurück, wenn dies der Fall ist.
         checkOutOfBounds();
 
+        // Überprüft, ob der Spieler mit einem Objekt kollidiert, und führt die entsprechende Interaktion aus.
         int objectIndex = gp.collisionsystem.collisionObject(this, true);
         InteractObject(objectIndex);
 
 
 
-        // Delegate all physics + collision to MovementSystem
+        // Delegieren aller Bewegungs- und Kollisionslogik an das MovementSystem, um die Update-Methode des Spielers übersichtlich zu halten.
         movementSystem.updatePlayer(this);
     }
 
     public void InteractObject(int i) {
-        if (i != 999) {
-            String objectName = gp.obj[i].name;
+        if (i != 999) { // 999 bedeutet, dass keine Kollision mit einem Objekt stattgefunden hat
+            String objectName = gp.obj[i].name; // Holt den Namen des Objekts, mit dem der Spieler kollidiert ist
+            //Switch-Case-Struktur, um die Interaktion basierend auf dem Namen des Objekts zu bestimmen.
             switch (objectName) {
                 case "Key":
                     hasKey++;
@@ -168,13 +171,13 @@ public class Player extends Entity {
                     }
                     break;
 
-                case "Flag":
+                case "Flag": // Das Flag-Objekt ist für das rhöhen der mapIndicator verantwortlich, damit die nächste Karte geladen wird.
                     velocityX = 0;
                     velocityY = 0;
                     gp.mapIndicator++;
                     System.out.println("You win!");
                     break;
-                case "heart":
+                case "heart": // Das Herz-Objekt heilt den Spieler um 2 Lebenspunkte, wenn er es aufnimmt, aber nicht über die maximale Lebenspunkte hinaus.
                     if (life < maxLife) {
                         life++;
                     }
@@ -187,9 +190,10 @@ public class Player extends Entity {
                     gp.obj[i] = null; // heart disappears
                     break;
             }
-        }//function, which is enabling the collision and interaction with the different objects
+        }
     }
 
+    // Berechnet die Position und Größe des Angriffsrechtecks basierend auf der aktuellen Blickrichtung des Spielers
     public void attack() {
         Rectangle attackBox = new Rectangle();
 
@@ -210,6 +214,8 @@ public class Player extends Entity {
         checkMonsterHit(attackBox);
     }
 
+    // Überprüft, ob das Angriffsrechteck des Spielers mit einem Monster kollidiert
+    // und ruft die damageMonster-Methode auf, um dem Monster Schaden zuzufügen, wenn eine Kollision festgestellt wird.
     public void checkMonsterHit(Rectangle attackBox) {
         for (Entity monster : gp.monster) {
             if (monster == null || monster.isDead) {
@@ -229,6 +235,7 @@ public class Player extends Entity {
         }
     }
 
+    // Überprüft, ob das aktive Projektil des Spielers mit einem Monster kollidiert, und reduziert die Lebenspunkte des Monsters entsprechend.
     public void checkProjectileMonsterHit() {
         if (projectile == null || !projectile.alive) {
             return;
@@ -266,6 +273,8 @@ public class Player extends Entity {
         }
     }
 
+    // Reduziert die Lebenspunkte eines Monsters um 1, wenn es nicht unverwundbar ist
+    // und setzt es für kurze Zeit unverwundbar, um zu verhindern, dass es sofort wieder Schaden nimmt.
     public void damageMonster(Entity monster) {
         if (!monster.invincible) {
             monster.life--;
@@ -277,6 +286,8 @@ public class Player extends Entity {
         }
     }
 
+    // Reduziert die Lebenspunkte des Spielers um 1, wenn er nicht unverwundbar ist
+    // und setzt ihn für kurze Zeit unverwundbar, um zu verhindern, dass er sofort wieder Schaden nimmt.
     public void damagePlayer() {
 
         if (!invincible) {
@@ -285,6 +296,7 @@ public class Player extends Entity {
         }
     }
 
+    // Überprüft, ob der Spieler unter die Bodenhöhe gefallen ist, und setzt ihn zurück, wenn dies der Fall ist.
     public void checkOutOfBounds() {
         if (y >= floorY) {
             System.out.println("OutofBounds.");

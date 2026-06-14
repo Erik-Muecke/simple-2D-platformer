@@ -15,18 +15,18 @@ public class SaveHandler {
     public SaveHandler(GamePanel gp) {
         this.gp = gp;
 
-        createSaveFile();
+        createSaveFile(); // Erstellt die Datei, wenn sie nicht existiert
     }
 
     public void createSaveFile() {
-        if (!saveFile.exists()) {
+        if (!saveFile.exists()) { //Ueberpruefen ob die Datei existiert, wenn nicht wird sie erstellt
             Properties save = new Properties();
             save.setProperty("level", "0");
 
-            try (FileWriter writer = new FileWriter(saveFile)) {
+            try (FileWriter writer = new FileWriter(saveFile)) { // Datei wird mit einem FileWriter erstellt und die Properties werden gespeichert
                 save.store(writer, "Game Save");
             } catch (Exception e) {
-                System.out.println("Fehler beim Schreiben der Datei, nach Erstellung" + e.getMessage());
+                System.out.println("Fehler beim Schreiben der Datei, nach Erstellung" + e.getMessage()); // Fehlerbehandlung, falls die Datei nicht erstellt oder beschrieben werden kann
             }
         }
     }
@@ -36,16 +36,16 @@ public class SaveHandler {
 
         try (FileReader reader = new FileReader(saveFile)) {
             save.load(reader);
-            return Integer.parseInt(save.getProperty("level"));
+            return Integer.parseInt(save.getProperty("level")); // Rückgabe des gespeicherten Levels als Integer, wenn die Datei erfolgreich gelesen und die Property gefunden wurde
         } catch (IOException e) {
-            System.out.println("Fehler beim Einlesen der Datei" + e.getMessage());
+            System.out.println("Fehler beim Einlesen der Datei" + e.getMessage()); // Fehlerbehandlung, falls die Datei nicht gelesen werden kann oder die Property nicht gefunden wird, Rückgabe von 1 als Standardlevel
         }
 
         return 1;
     }
 
+    //Getter zum laden der Leben
     public int loadLives() {
-
         try (FileReader reader = new FileReader(saveFile)) {
             save.load(reader);
             return Integer.parseInt(save.getProperty("lives"));
@@ -56,14 +56,14 @@ public class SaveHandler {
         return 6;
     }
 
+    //Setter zum ändern der Leben
     public void savelives(int lives) {
-
-        save.setProperty("lives", String.valueOf(lives));
+        save.setProperty("lives", String.valueOf(lives)); // Setzen der "lives" Property auf den übergebenen Wert, konvertiert zu String
 
         try (FileWriter writer = new FileWriter(saveFile)) {
-            save.store(writer, "Game Save");
+            save.store(writer, "Game Save"); // Speichern der Properties in der Datei, überschreibt die vorherigen Werte
         } catch (IOException e) {
-            System.out.println("Fehler beim Schreiben der Datei, zum Leben Speichern" + e.getMessage());
+            System.out.println("Fehler beim Schreiben der Datei, zum Leben Speichern" + e.getMessage()); // Fehlerbehandlung, falls die Datei nicht beschrieben werden kann
         }
     }
 

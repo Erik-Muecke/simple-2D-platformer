@@ -8,15 +8,16 @@ import java.io.InputStream;
 public class ImageLoader {
 
 
+    // Lädt ein Bild aus dem Ressourcenordner und gibt es als BufferedImage zurück
     public BufferedImage loadImage(String imagePath) {
         try (InputStream is = getClass().getResourceAsStream(imagePath)) {
             if (is == null) {
-                throw new Exception("Ressource nicht gefunden: " + imagePath);
+                throw new Exception("Ressource nicht gefunden: " + imagePath); // Fehlermeldung, wenn die Ressource nicht gefunden wird
             }
-            return ImageIO.read(is);
+            return ImageIO.read(is); //Rückgabe als BufferedImage
         } catch (Exception e) {
-            System.out.println("Fehler beim Laden der Bildressourcen: " + e.getMessage());
-            return loadmissingImage();
+            System.out.println("Fehler beim Laden der Bildressourcen: " + e.getMessage()); // Fehlerbehandlung, falls das Bild nicht geladen werden kann oder ein anderes Problem auftritt
+            return loadmissingImage(); // Rückgabe eines Standardfehlersymbols, wenn das Bild nicht geladen werden kann, um NullPointerExceptions zu vermeiden
         }
 
     }
@@ -31,6 +32,8 @@ public class ImageLoader {
         return scaledImage; //return des skalierten Bildes
     }
 
+    // Lädt ein Standardfehlersymbol, wenn ein Bild nicht gefunden oder geladen werden kann, um NullPointerExceptions zu vermeiden
+    // Sollte dieses Bild auch nicht existieren oder geladen werden können, wird ein leeres 32x32 Pixel großes Bild zurückgegeben, um weitere Fehler zu vermeiden
     public BufferedImage loadmissingImage() {
         try (InputStream no_image = getClass().getResourceAsStream("/missing/image_not_found.png")) {
             if (no_image == null) {

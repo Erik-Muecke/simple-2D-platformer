@@ -14,31 +14,36 @@ public class CollisionSystem {
         this.gp = gp;
     }
 
+    // Berechnen der AABB für die nächste Bewegung eines Entity, um Kollisionen vorherzusagen.
     public int[] getProjectedAABB(Entity entity) {
+        // Start mit der aktuellen AABB des Entity
         int left   = entity.x + entity.solidArea.x;
         int right  = entity.x + entity.solidArea.x + entity.solidArea.width;
         int top    = entity.y + entity.solidArea.y;
         int bottom = entity.y + entity.solidArea.y + entity.solidArea.height;
 
+        //Je nach dem in welche Richtung sich das Entity bewegt, wird die AABB um die Geschwindigkeit des Entity
         switch (entity.direction) {
             case 'U': top    -= entity.speed; break;
             case 'D': bottom += entity.speed; break;
             case 'L': left   -= entity.speed; break;
             case 'R': right  += entity.speed; break;
         }
-        return new int[]{ left, right, top, bottom };
+        return new int[]{ left, right, top, bottom }; // Gibt die projizierte AABB als Array zurück
     }
 
+    // Berechnen der aktuellen AABB eines Entity, um z.B. Spike-Kollisionen zu überprüfen.
     public int[] getCurrentAABB(Entity entity) {
-        // Convert an entity's local solidArea into world-space collision bounds.
+        // Berechnet die aktuelle AABB basierend auf der aktuellen Position und der Hitbox des Entity
         int left   = entity.x + entity.solidArea.x;
         int right  = left + entity.solidArea.width;
         int top    = entity.y + entity.solidArea.y;
         int bottom = top + entity.solidArea.height;
 
-        return new int[]{ left, right, top, bottom };
+        return new int[]{ left, right, top, bottom }; // Gibt die aktuelle AABB als Array zurück
     }
 
+    // Debug-Methode zum Zeichnen der aktuellen und projizierten Hitboxen eines Entity auf dem Bildschirm.
     public void drawDebugBoxes(Graphics2D g2, Entity entity) {
         if (entity == null || entity.solidArea == null) return;
 
@@ -68,12 +73,14 @@ public class CollisionSystem {
         g2.drawRect(screenProjectedX, screenProjectedY, projectedWidth, projectedHeight);
     }
 
+    // Überprüfen, ob zwei AABBs überlappen, um Kollisionen zu erkennen.
     private boolean overlaps(int aLeft, int aRight, int aTop, int aBottom,
                              int bLeft, int bRight, int bTop, int bBottom) {
         return aLeft < bRight && aRight > bLeft &&
                 aTop  < bBottom && aBottom > bTop;
     }
 
+    // Überprüfen, ob ein gegebener tileNum gültig ist und eine Kollision verursachen kann.
     private boolean isValidCollisionTile(int tileNum) {
         return tileNum >= 0
                 && tileNum < gp.tileM.tile.length
@@ -82,6 +89,7 @@ public class CollisionSystem {
     }
 
 
+    // Überprüfen, ob die projizierte AABB eines Entity mit einem kollisionsfähigen Tile überlappt, um Kollisionen vorherzusagen.
     public void collidesT(Entity entity) {
         int[] box = getProjectedAABB(entity);
         int left = box[0], right = box[1], top = box[2], bottom = box[3];
@@ -117,6 +125,7 @@ public class CollisionSystem {
         }
     }
 
+    // Überprüfen, ob die aktuelle AABB eines Entity mit einem Spike-Tile überlappt, um Schaden zu verursachen.
     public void checkSpikeDamage(Entity entity) {
         int[] box = getCurrentAABB(entity);
         int left = box[0], right = box[1], top = box[2], bottom = box[3];
@@ -153,13 +162,14 @@ public class CollisionSystem {
         }
     }
 
+    // Verursacht Schaden an einem Entity, das mit einem Spike-Tile kollidiert, abhängig von dessen Typ.
     private void damageSpikeTarget(Entity entity) {
         if (entity == gp.player) {
             gp.player.damagePlayer();
             return;
         }
 
-        // Monster invincibility prevents one spike contact from draining all life in one frame.
+        // Monstern wird Schaden zugefügt, wenn sie nicht gerade unverwundbar sind. Wenn ihre Lebenspunkte auf 0 oder weniger fallen, werden sie als tot markiert.
         if (entity.type == Entity.TYPE_MONSTER && !entity.invincible) {
             entity.life--;
             entity.invincible = true;
@@ -170,6 +180,7 @@ public class CollisionSystem {
         }
     }
 
+    // Überprüfen, ob die aktuelle AABB eines Entity mit der des Spielers überlappt,
     public boolean collidesWithPlayer(Entity entity) {
         int entityLeft = entity.x + entity.solidArea.x;
         int entityRight = entityLeft + entity.solidArea.width;
@@ -193,21 +204,8 @@ public class CollisionSystem {
         return contactPlayer;
     }
 
-    public void collidesWithEntity(Entity a, Entity b) {
-        if (a == b) return;
 
-        int[] boxA = getProjectedAABB(a);
-        int bLeft   = b.x + b.solidArea.x;
-        int bRight  = bLeft + b.solidArea.width;
-        int bTop    = b.y  + b.solidArea.y;
-        int bBottom = bTop + b.solidArea.height;
-
-        if (overlaps(boxA[0], boxA[1], boxA[2], boxA[3],
-                bLeft,   bRight,  bTop,    bBottom)) {
-            a.collisionOn = true;
-        }
-    }
-
+    // Überprüfen, ob die aktuelle AABB eines Entity mit der eines kollisionsfähigen Objekts überlappt
     public void collidesWithObject(Entity entity) {
         int entityLeft = entity.x + entity.solidArea.x;
         int entityRight = entityLeft + entity.solidArea.width;
@@ -233,7 +231,7 @@ public class CollisionSystem {
     }
 
 
-
+    // Überprüfen, ob die projizierte AABB eines Entity mit der eines kollisionsfähigen Objekts überlappt, um Kollisionen vorherzusagen.
     public int collisionObject(Entity entity, boolean player) {
         int index = 999;
 

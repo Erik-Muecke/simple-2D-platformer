@@ -8,7 +8,7 @@ public class KeyHandler implements KeyListener {
     GamePanel gp;
     public boolean upPressed, downPressed, leftPressed, rightPressed, jumpPressed, enterPressed; //Booleans um den Status der gedrückten Tasten zu verfolgen
     public boolean shotKeyPressed;
-    public int commandNum = 0;
+    public int commandNum = 0; //Variable um die aktuelle Auswahl im Menü zu verfolgen, z.B. im Hauptmenü oder im Pausenmenü
 
     public KeyHandler(GamePanel gp) {
         this.gp = gp;
@@ -23,7 +23,8 @@ public class KeyHandler implements KeyListener {
 
         int key = e.getKeyCode(); //Gibt den Code der gedrückten Taste zurück
 
-        //Wenn die Taste gedrückt wird, wird der zugehörige boolean auf true gesetzt, somit ist die Taste gerade im Betrieb
+
+        // Je nach aktuellem Spielstatus werden unterschiedliche Tastenaktionen ausgeführt
         if(gp.gameState == gp.titleState) {
             if(key == KeyEvent.VK_W) {
                 commandNum--;
@@ -45,7 +46,7 @@ public class KeyHandler implements KeyListener {
                 }
 
                 if(commandNum == 1) {
-                    // optional: load game
+                    // Laden des gespeicherten Spiels
                     gp.mapIndicator = gp.saveHndlr.loadLevel();
                     gp.player.life = gp.saveHndlr.loadLives();
                     gp.gameState = gp.playState;
@@ -61,6 +62,7 @@ public class KeyHandler implements KeyListener {
 
         else if (gp.gameState == gp.playState) {
 
+            //Wenn die Taste gedrückt wird, wird der zugehörige boolean auf true gesetzt, somit ist die Taste gerade im Betrieb
             if (key == KeyEvent.VK_W){
                 upPressed = true;
             }
@@ -83,16 +85,18 @@ public class KeyHandler implements KeyListener {
                 shotKeyPressed = true;
             }
 
+            //Wechseln in die PauseState, wenn die Escape-Taste gedrückt wird
             if (key == KeyEvent.VK_ESCAPE) {
                 gp.gameState = gp.pauseState;
             }
-        }//moving possible, during playstate only
+        }
 
+        // Logik für die Navigation im Pausenmenü
         else if (gp.gameState == gp.pauseState) {
             if (key == KeyEvent.VK_ESCAPE) {
                 gp.gameState = gp.playState;
 
-            }//if paused, no movement possible
+            }
 
             if(key == KeyEvent.VK_W) {
                 commandNum--;
@@ -120,6 +124,7 @@ public class KeyHandler implements KeyListener {
 
         }
 
+        // Logik für die Navigation im Game Over Menü
         else if (gp.gameState == gp.gameOver) {
 
             if(key == KeyEvent.VK_W) {
@@ -155,6 +160,7 @@ public class KeyHandler implements KeyListener {
             }
         }
 
+        // Logik für die Navigation im Win Menü
         else if (gp.gameState == gp.winState) {
 
             if(key == KeyEvent.VK_W) {

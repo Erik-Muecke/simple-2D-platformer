@@ -19,12 +19,12 @@ public class Camera {
     }
 
     public void update(Player player) {
-        // center on player
+        // Kamera wird auf den Spieler zentriert
         x = player.x - screenWidth / 2;
         y = player.y - screenHeight / 2;
 
-        // clamp to world bounds
-        x = Math.max(0, Math.min(x, worldWidth - screenWidth));
-        y = Math.max(0, Math.min(y, worldHeight - screenHeight));
+        // Kamera stoppt, damit sie nicht über die Weltgrenzen hinausgeht
+        x = Math.max(0, Math.min(x, worldWidth - screenWidth)); // Verhindert, dass die Kamera über die linke oder rechte Grenze hinausgeht
+        y = Math.max(0, Math.min(y, worldHeight - screenHeight)); // Verhindert, dass die Kamera über die obere oder untere Grenze hinausgeht
     }
 }

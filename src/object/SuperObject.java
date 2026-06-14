@@ -8,9 +8,10 @@ import main.GamePanel;
 
 import main.ImageLoader;
 
+// SuperObject ist die Basisklasse für alle Objekte im Spiel
 public class SuperObject {
 
-    ImageLoader imgLoader = new ImageLoader();
+    ImageLoader imgLoader = new ImageLoader(); // Neue Instanz von ImageLoader für das Laden von Bildern
     public BufferedImage image;
     public String name;
     public boolean collision = false;
@@ -19,17 +20,19 @@ public class SuperObject {
     public int solidAreaDefaultX = 0;
     public int solidAreaDefaultY = 0;
 
+    // draw-Methode, um das Objekt auf dem Bildschirm zu zeichnen
     public void draw(Graphics2D g2, GamePanel gp) {
+        // Berechnet die Bildschirmposition des Objekts basierend auf der Kameraposition
         int screenX = x - gp.camera.x;
         int screenY = y - gp.camera.y;
 
-        // Only draw if visible on screen
+        // Zeichnet nur, wenn das Objekt im sichtbaren Bereich der Kamera liegt
         if (x + gp.tileSize > gp.camera.x &&
                 x - gp.tileSize < gp.camera.x + gp.screenWidth &&
                 y + gp.tileSize > gp.camera.y &&
                 y - gp.tileSize < gp.camera.y + gp.screenHeight) {
 
-            g2.drawImage(image, screenX, screenY, null);
+            g2.drawImage(image, screenX, screenY, null); // Zeichnet das Objekt an der berechneten Bildschirmposition
         }
     }
 }

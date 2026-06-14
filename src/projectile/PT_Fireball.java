@@ -17,6 +17,7 @@ public class PT_Fireball extends Projectile {
         maxLife = 80;
         damage = 2;
 
+        // Konstruiert die Werte für die in Projectile deklarierten Variablen
         width = gp.tileSize * 2 / 3;
         height = gp.tileSize * 2 / 3;
         int hitboxWidth = width / 2;
@@ -34,6 +35,7 @@ public class PT_Fireball extends Projectile {
     }
 
     public void getImage() {
+        // Lädt die Bilder für die Feuerball-Projektile und skaliert sie auf die Größe der Kacheln.
         img1 = imgLoader.scaleImage("/projectile/fireball_right.png", gp.tileSize, gp.tileSize);
         img2 = imgLoader.scaleImage("/projectile/fireball_left.png", gp.tileSize, gp.tileSize);
     }

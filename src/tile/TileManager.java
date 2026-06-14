@@ -35,10 +35,10 @@ public class TileManager {
 
         tile[0] = new Tile();  //erstellt ein neues Tile Objekt an der Stelle 0 im Array
         tile[0].image = imgLoader.scaleImage("/tiles/transparent.png", gp.tileSize, gp.tileSize); //Funktion aus ImageLoader wird aufgerufen, um das Bild automatisch zu skalieren.
-        tile[0].name = "transparent";
+        tile[0].name = "transparent"; //name der Tile wird festgelegt, für Kollisionsberechnung relevant
 
         tile[1] = new Tile();
-        tile[1].image = imgLoader.scaleImage("/tiles/wall.png", gp.tileSize, gp.tileSize);
+        tile[1].image = imgLoader.scaleImage("/tiles/wall1.png", gp.tileSize, gp.tileSize);
         tile[1].collision = true;
         tile[0].name = "wall";
 
@@ -72,22 +72,24 @@ public class TileManager {
 
 
     }catch(Exception e){
-    System.out.println("Fehler beim Laden der Kachelbilder: " + e.getMessage());}
+    System.out.println("Fehler beim Laden der Kachelbilder: " + e.getMessage());} //Error Handling, falls die Bilder nicht gefunden werden oder ein anderes Problem auftritt
     }
 
     public void draw(java.awt.Graphics2D g2) {
         //Hier werden die Kacheln gezeichnet
+
         int col = 0;
         int row = 0;
 
         while(col < gp.MaxWorldCol && row < gp.MaxWorldRow) {
             int tileNum = mapTileNum[col][row]; //holt die Nummer der Kachel, die an der Position (col, row) gezeichnet werden soll
 
-            int x = col * gp.tileSize;
-            int y = row * gp.tileSize;
+            int x = col * gp.tileSize; //bestimmt die y position der Kachel, indem die Spaltennummer mit der Größe der Kachel multipliziert wird
+            int y = row * gp.tileSize; //bestimmt die x position der Kachel, indem die Zeilennummer mit der Größe der Kachel multipliziert wird
 
+            // Berechnet die Bildschirmposition der Kachel, indem die Weltkoordinaten (x, y) um die Kameraposition (gp.camera.x, gp.camera.y) verschoben werden
             int screenX = x - gp.camera.x;
-            int screenY = y - gp.camera.y;//getting Screen X and Y
+            int screenY = y - gp.camera.y;
 
             g2.drawImage(tile[tileNum].image, screenX, screenY, null); //zeichnet die Kachel an der Position (x, y) mit der Größe von tileSize
 
@@ -104,43 +106,21 @@ public class TileManager {
         }
     }
 
+    //Diese Funktion sorgt für das Wechseln der Karte. Sie wird in der update Funktion des GamePanels aufgerufen,
+    // damit die Karte immer aktualisiert wird, wenn sich der mapIndicator ändert.
     public void update() {
-            if (gp.previousmapIndicator != gp.mapIndicator) {
-                gp.player.x = 2 * gp.tileSize;
-                gp.player.y = 8 * gp.tileSize;
-                loadMap();
-                gp.aSetter.updateObject();
-                switch (gp.mapIndicator) {
-                    case 0:
-                        gp.player.x = playerSpawnX;
-                        gp.player.y = playerSpawnY;
-                        break;
-                    case 1:
-                        gp.player.x = playerSpawnX;
-                        gp.player.y = playerSpawnY;
-                        break;
-                    case 2:
-                        gp.player.x = playerSpawnX;
-                        gp.player.y = playerSpawnY;
-                        break;
-                    case 3:
-                        gp.player.x = playerSpawnX;
-                        gp.player.y = playerSpawnY;
-                        break;
-                    case 4:
-                        gp.player.x = playerSpawnX;
-                        gp.player.y = playerSpawnY;
-                        break;
-                    case 5:
-                        gp.player.x = playerSpawnX;
-                        gp.player.y = playerSpawnY;
-                        break;
-                }
-                gp.previousmapIndicator = gp.mapIndicator;
-                System.out.println(gp.mapIndicator);
-                gp.saveHndlr.saveLevel(gp.mapIndicator);
-                gp.saveHndlr.savelives(gp.player.life);
-                System.out.println(gp.saveHndlr.loadLevel());
+            if (gp.previousmapIndicator != gp.mapIndicator) { //überprüft, ob der mapIndicator sich geändert hat, um unnötiges Neuladen der Karte zu vermeiden
+                loadMap(); //lädt die neue Karte basierend auf dem aktuellen mapIndicator
+                gp.aSetter.updateObject(); //aktualisiert die Positionen der Objekte auf der Karte, damit sie sich an die neue Karte anpassen
+
+                //neusetzen der Startposition des Spielers
+                gp.player.x = playerSpawnX;
+                gp.player.y = playerSpawnY;
+
+                gp.previousmapIndicator = gp.mapIndicator; //aktualisiert den previousmapIndicator, damit die Karte nicht erneut geladen wird, bis sich der mapIndicator wieder ändert
+
+                gp.saveHndlr.saveLevel(gp.mapIndicator); //speichern des mapindicators, damit die Karte beim nächsten Start des Spiels wieder geladen werden kann
+                gp.saveHndlr.savelives(gp.player.life); //speichern der Leben des Spielers, damit sie beim nächsten Start des Spiels wiederhergestellt werden können
             }
 
     }
@@ -157,7 +137,7 @@ public class TileManager {
                 throw new Exception("Ressource nicht gefunden: /tiles/tilemap" + gp.mapIndicator + ".txt"); //erstellt neue Exception, wenn der wert null ist
             }
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(is)); //lädt die Textdatei in einen Buffered reader um sie zu benutzen
+            BufferedReader br = new BufferedReader(new InputStreamReader(is)); //lädt die Textdatei in einen Buffered reader um sie einzulesen
 
             int col = 0;
             int row = 0;
@@ -175,11 +155,13 @@ public class TileManager {
 
                     mapTileNum[col][row] = num;
 
+                    //Setzen der Spawnposition des Spielers, wenn die Kachelnummer 9 ist. gezeichnet wird die Kachel als transparente Kachel
                     if (num == 9) {
                         System.out.println(col + " " + row);
+
+                        //ermittelen des x und y Werts der Spawnposition
                         playerSpawnX = col * gp.tileSize;
                         playerSpawnY = row * gp.tileSize;
-                        System.out.println(playerSpawnX + " " + playerSpawnY + " " + mapTileNum[col][row]);
                     }
 
                     col ++; //nächste Spalte
@@ -189,10 +171,10 @@ public class TileManager {
                     row ++; //nächste Zeile
                 }
             }
-            br.close();
+            br.close(); //schließt den BufferedReader, um Ressourcen freizugeben
 
         }catch(Exception e){
-            System.out.println("Fehler beim Laden der Karte: " + e.getMessage());
+            System.out.println("Fehler beim Laden der Karte: " + e.getMessage()); //Error Handling, falls die Karte nicht gefunden wird oder ein anderes Problem auftritt
         }
     }
 }
