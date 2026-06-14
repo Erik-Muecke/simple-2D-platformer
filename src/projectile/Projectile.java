@@ -1,4 +1,3 @@
-// Projectile.java
 
 package projectile;
 
@@ -23,9 +22,10 @@ public class Projectile extends Entity {
 
     public Projectile(GamePanel gp) {
         this.gp = gp;
-        solidArea = new Rectangle(0, 0, 0, 0);
+            solidArea = new Rectangle(0, 0, 0, 0); // Wird in den spezifischen Projektilklassen angepasst
     }
 
+    //Initialisieren der Projektil-Attribute, damit es an der richtigen Stelle erscheint.
     public void set(int x, int y, char direction, boolean alive) {
         this.x = x;
         this.y = y;
@@ -36,32 +36,38 @@ public class Projectile extends Entity {
     }
 
     public void update() {
-        collisionOn = false;
+        collisionOn = false; //Anfangs keine Kollision
 
         if(direction == 'L') {
-            x -= speed;
+            x -= speed + gp.player.speed - 2; // Projektilgeschwindigkeit plus Spielerbewegung, damit es sich mit dem Spieler bewegt.
+            // Der Wert am ende wird abgezogen, damit sich das projektil nicht zu schnell bewegt.
+            // Der Wert wird von der x Position abgezogen, damit es sich nach links bewegt.
         }
         if(direction == 'R') {
-            x += speed;
+            x += speed + gp.player.speed - 2; // Projektilgeschwindigkeit plus Spielerbewegung, damit es sich mit dem Spieler bewegt.
+            // Der Wert am ende wird abgezogen, damit sich das projektil nicht zu schnell bewegt.
+            // Der Wert wird zur x Position addiert, damit es sich nach rechts bewegt.
         }
 
-        gp.collisionsystem.collidesT(this);
-        gp.collisionsystem.collidesWithObject(this);
+        gp.collisionsystem.collidesT(this); // Überprüft Kollisionen mit der Tilemap
+        gp.collisionsystem.collidesWithObject(this); // Überprüft Kollisionen mit Objekten
 
+        //Wenn es mit etwas kollidiert wird das projektil gelöscht.
         if(collisionOn) {
             alive = false;
             return;
         }
 
-        life--;
+        life--; //Framebasierter Countdown der Lebensdauer des projektils, sonst würde es unendlich weit fliegen.
 
         if(life <= 0) {
-            alive = false;
+            alive = false; //wenn die lebensdauer aufgebraucht ist, wird das Projektil zerstört.
         }
     }
 
     public void draw(Graphics2D g2) {
 
+        //Überprüfen der Richtung des Projektils, damit es in die richtige Richtung zeigt. Es wird nur gezeichnet, wenn das Projektil noch lebt.
         if(alive) {
             switch(direction) {
                 case 'L':
@@ -73,9 +79,11 @@ public class Projectile extends Entity {
                     break;
             }
 
+            // Berechnet die Bildschirmposition des Projektils basierend auf der Kameraposition
             int screenX = x - gp.camera.x;
             int screenY = y - gp.camera.y;
-            g2.drawImage(image, screenX, screenY, width, height, null);
+
+            g2.drawImage(image, screenX, screenY, width, height, null); //Zeichnet das Projektil mit den berechneten Bildschirmkoordinaten
         }
     }
 }
