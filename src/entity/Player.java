@@ -284,6 +284,11 @@ public class Player extends Entity {
         if (!monster.invincible) {
             monster.life--;
             monster.invincible = true;
+            monster.knockBack = true;
+            monster.knockBackCounter = 0;
+            monster.directionBeforeKnockBack = monster.direction; // Monsterrichtung speichern
+            monster.direction = this.direction;                   // Spielerrichtung setzen, Monster fliegt weg
+
             if (monster.life <= 0) {
                 monster.isDead = true;
             }
