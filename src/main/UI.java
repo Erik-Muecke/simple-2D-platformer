@@ -147,8 +147,8 @@ public class UI {
             g2.drawString(">", x - 40, y);
         }
 
-        //Spiel beenden
-        text = "QUIT";
+        //Spiel laden
+        text = "LOAD";
         x = getXforCenteredText(text);
         y += gp.tileSize;
         g2.drawString(text, x, y);
@@ -157,6 +157,15 @@ public class UI {
             g2.drawString(">", x - 40, y);
         }
 
+        //Spiel beenden
+        text = "QUIT";
+        x = getXforCenteredText(text);
+        y += gp.tileSize;
+        g2.drawString(text, x, y);
+
+        if(gp.keyHandler.commandNum == 2) {
+            g2.drawString(">", x - 40, y);
+        }
     }
 
     public void drawGameOver() {

@@ -101,13 +101,13 @@ public class KeyHandler implements KeyListener {
             if(key == KeyEvent.VK_W) {
                 commandNum--;
                 if(commandNum < 0) {
-                    commandNum = 1;
+                    commandNum = 2;
                 }
             }
 
             if(key == KeyEvent.VK_S) {
                 commandNum++;
-                if(commandNum > 1) {
+                if(commandNum > 2) {
                     commandNum = 0;
                 }
             }
@@ -118,6 +118,15 @@ public class KeyHandler implements KeyListener {
                 }
 
                 if(commandNum == 1) {
+                    gp.resetGame();
+                    gp.mapIndicator = gp.saveHndlr.loadLevel();
+                    gp.player.life = gp.saveHndlr.loadLives();
+                    gp.aSetter.updateScene();
+                    gp.gameState = gp.playState;
+                    commandNum = 0;
+                }
+
+                if(commandNum == 2) {
                     System.exit(0);
                 }
             }
