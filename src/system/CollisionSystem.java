@@ -125,6 +125,28 @@ public class CollisionSystem {
         }
     }
 
+    public boolean isOnSpikeTile(Entity entity) {
+        int[] box = getCurrentAABB(entity);
+        int colLeft   = Math.floorDiv(box[0], gp.tileSize);
+        int colRight  = Math.floorDiv(box[1] - 1, gp.tileSize);
+        int rowTop    = Math.floorDiv(box[2], gp.tileSize);
+        int rowBottom = Math.floorDiv(box[3] - 1, gp.tileSize);
+
+        for (int col = colLeft; col <= colRight; col++) {
+            for (int row = rowTop; row <= rowBottom; row++) {
+                if (col < 0 || row < 0 ||
+                        col >= gp.tileM.mapTileNum.length ||
+                        row >= gp.tileM.mapTileNum[0].length) continue;
+
+                int tileNum = gp.tileM.mapTileNum[col][row];
+                if (isValidCollisionTile(tileNum) && gp.tileM.tile[tileNum].name.equals("spike")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     // Überprüfen, ob die aktuelle AABB eines Entity mit einem Spike-Tile überlappt, um Schaden zu verursachen.
     public void checkSpikeDamage(Entity entity) {
         int[] box = getCurrentAABB(entity);

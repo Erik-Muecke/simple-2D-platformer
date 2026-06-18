@@ -7,6 +7,7 @@ import java.awt.*;
 import entity.Entity;
 import entity.Player;
 import system.CollisionSystem;
+import system.MovementSystem;
 import tile.TileManager;
 import object.SuperObject;
 
@@ -55,6 +56,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int winState = 4;
 
     public EventHandler eHandler;
+    public MovementSystem movementSystem;
 
     public boolean showCollisionDebug = false; //nur zum Debuggen, zeigt die Kollisionsboxen
 
@@ -76,8 +78,7 @@ public class GamePanel extends JPanel implements Runnable {
         player = new Player(this, keyHandler); //erstellt eine neue Instanz des Players, damit wir ihn im Spiel verwenden können, übergibt die aktuelle Instanz von GamePanel und den KeyHandler,
         // damit der Spieler auf die Informationen und Funktionen von GamePanel und KeyHandler zugreifen kann
 
-        aSetter.setObjectScene0(); //ruft die Methode setObjectScene0() des AssetSetters auf, um die Objekte für die erste Szene zu platzieren, damit die Karte mit den entsprechenden Objekten gefüllt wird
-        aSetter.setMonsterScene0(); //ruft die Methode setMonsterScene0() des AssetSetters auf, um die Monster für die erste Szene zu platzieren, damit die Karte mit den entsprechenden Monstern gefüllt wird
+        aSetter.setScene0(); //ruft die Methode setObjectScene0() des AssetSetters auf, um die Objekte und die Monster für die erste Szene zu platzieren, damit die Karte mit den entsprechenden Objekten und Monstern gefüllt wird
 
         //setzt die Startposition des Spielers auf die Koordinaten, die im TileManager definiert sind
         player.x = tileM.playerSpawnX;
@@ -89,7 +90,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         ui = new UI(this);
 
-
+        movementSystem = new MovementSystem(this);
 
     }
 
@@ -238,8 +239,9 @@ public class GamePanel extends JPanel implements Runnable {
         player.invincible = false;
         player.invincibleCounter = 0;
         player.projectile.alive = false;
+        player.resetBoosts();
 
-        aSetter.setObjectScene0();
+        aSetter.updateScene();
 
         camera.update(player);
         gameState = playState;
