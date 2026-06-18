@@ -149,7 +149,7 @@ public class KeyHandler implements KeyListener {
                     gp.resetGame();
                     gp.mapIndicator = gp.saveHndlr.loadLevel();
                     gp.player.life = gp.saveHndlr.loadLives();
-                    gp.aSetter.updateObject();
+                    gp.aSetter.updateScene();
                     gp.gameState = gp.playState;
                     commandNum = 0;
 

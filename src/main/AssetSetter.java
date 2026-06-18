@@ -1,7 +1,7 @@
 package main;
 
 import object.*;
-import monster.GreenSlime;
+import monster.*;
 
 import java.util.Arrays;
 
@@ -13,37 +13,8 @@ public class AssetSetter {
         this.gp = gp;
     }
 
-    public void setMonsterScene0() {
 
-        gp.monster[0] = new GreenSlime(gp); //Erstellen eines neuen Monsters
-        gp.monster[0].x = 11 * gp.tileSize ; //Festlegen der x-Position des Objektes
-        gp.monster[0].y = 15 * gp.tileSize; //Festlegen der y-Position des Objektes
-
-        gp.monster[1] = new GreenSlime(gp);
-        gp.monster[1].x = 19 * gp.tileSize ;
-        gp.monster[1].y = 15 * gp.tileSize;
-    }
-
-    public void setMonsterScene3() {
-
-        gp.monster[0] = new GreenSlime(gp);
-        gp.monster[0].x = 9 * gp.tileSize ;
-        gp.monster[0].y = 9 * gp.tileSize;
-
-        gp.monster[1] = new GreenSlime(gp);
-        gp.monster[1].x = 14 * gp.tileSize ;
-        gp.monster[1].y = 9 * gp.tileSize;
-    }
-
-    public void setMonsterScene5() {
-
-        gp.monster[0] = new GreenSlime(gp);
-        gp.monster[0].x = 8 * gp.tileSize ;
-        gp.monster[0].y = 7 * gp.tileSize;
-
-    }
-
-    public void setObjectScene0() {
+    public void setScene0() {
 
         gp.obj[0] = new OBJ_Key(gp); //Erstellen eines neuen Objektes
         gp.obj[0].x = 13 * gp.tileSize; //Festlegen der x-Position des Objektes
@@ -56,11 +27,18 @@ public class AssetSetter {
         gp.obj[5] = new OBJ_Heart(gp);
         gp.obj[5].x = 36 * gp.tileSize;
         gp.obj[5].y = (3 * gp.tileSize) + 16; //16 wird addiert um die Position des Herzens anzupassen, damit es nicht zu hoch in der Luft schwebt
+        gp.monster[0] = new JumpSlime(gp); //Erstellen eines neuen Monsters
+        gp.monster[0].x = 11 * gp.tileSize ; //Festlegen der x-Position des Objektes
+        gp.monster[0].y = 15 * gp.tileSize; //Festlegen der y-Position des Objektes
+
+        gp.monster[1] = new BossSlime(gp);
+        gp.monster[1].x = 19 * gp.tileSize ;
+        gp.monster[1].y = 14 * gp.tileSize;
     }
 
 
 
-    public void setObjectScene1() {
+    public void setScene1() {
 
         gp.obj[0] = new OBJ_Key(gp);
         gp.obj[0].x = 15 * gp.tileSize;
@@ -79,7 +57,7 @@ public class AssetSetter {
         gp.obj[5].y = (7 * gp.tileSize) + 16;
     }
 
-    public void setObjectScene2() {
+    public void setScene2() {
         gp.obj[4] = new OBJ_Flag(gp);
         gp.obj[4].x = 34 * gp.tileSize;
         gp.obj[4].y = 6 * gp.tileSize;
@@ -89,7 +67,7 @@ public class AssetSetter {
         gp.obj[5].y = (16 * gp.tileSize) + 16;
     }
 
-    public void setObjectScene3() {
+    public void setScene3() {
 
         gp.obj[4] = new OBJ_Flag(gp);
         gp.obj[4].x = 35 * gp.tileSize;
@@ -98,9 +76,17 @@ public class AssetSetter {
         gp.obj[5] = new OBJ_Heart(gp);
         gp.obj[5].x = 34 * gp.tileSize;
         gp.obj[5].y = (6 * gp.tileSize) + 16;
+
+        gp.monster[0] = new GreenSlime(gp);
+        gp.monster[0].x = 9 * gp.tileSize ;
+        gp.monster[0].y = 9 * gp.tileSize;
+
+        gp.monster[1] = new GreenSlime(gp);
+        gp.monster[1].x = 14 * gp.tileSize ;
+        gp.monster[1].y = 9 * gp.tileSize;
     }
 
-    public void setObjectScene4() {
+    public void setScene4() {
 
 
         gp.obj[0] = new OBJ_Key(gp); //Erstellen eines neuen Objektes und
@@ -116,7 +102,7 @@ public class AssetSetter {
         gp.obj[4].y = 17 * gp.tileSize;
     }
 
-    public void setObjectScene5() {
+    public void setScene5() {
         gp.obj[4] = new OBJ_Flag(gp);
         gp.obj[4].x = 36 * gp.tileSize;
         gp.obj[4].y = 3 * gp.tileSize;
@@ -124,33 +110,34 @@ public class AssetSetter {
         gp.obj[5] = new OBJ_Heart(gp);
         gp.obj[5].x = 19 * gp.tileSize;
         gp.obj[5].y = (3 * gp.tileSize) + 16;
+
+        gp.monster[0] = new GreenSlime(gp);
+        gp.monster[0].x = 8 * gp.tileSize ;
+        gp.monster[0].y = 7 * gp.tileSize;
     }
 
 
-    public void updateObject() {
+    public void updateScene() {
         Arrays.fill(gp.obj, null); // Alle Objekte im Array auf null setzen, um sicherzustellen, dass keine alten Objekte mehr vorhanden sind
         Arrays.fill(gp.monster, null); // Alle Monster im Array auf null setzen, um sicherzustellen, dass keine alten Monster mehr vorhanden sind
         switch(gp.mapIndicator){
             case 0:
-                setObjectScene0();
-                setMonsterScene0();
+                setScene0();
                 break;
             case 1:
-                setObjectScene1();
+                setScene1();
                 break;
             case 2:
-                setObjectScene2();
+                setScene2();
                 break;
             case 3:
-                setObjectScene3();
-                setMonsterScene3();
+                setScene3();
                 break;
             case 4:
-                setObjectScene4();
+                setScene4();
                 break;
             case 5:
-                setObjectScene5();
-                setMonsterScene5();
+                setScene5();
                 break;
 
         }

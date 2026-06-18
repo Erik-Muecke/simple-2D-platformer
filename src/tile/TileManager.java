@@ -111,7 +111,7 @@ public class TileManager {
     public void update() {
             if (gp.previousmapIndicator != gp.mapIndicator) { //überprüft, ob der mapIndicator sich geändert hat, um unnötiges Neuladen der Karte zu vermeiden
                 loadMap(); //lädt die neue Karte basierend auf dem aktuellen mapIndicator
-                gp.aSetter.updateObject(); //aktualisiert die Positionen der Objekte auf der Karte, damit sie sich an die neue Karte anpassen
+                gp.aSetter.updateScene(); //aktualisiert die Positionen der Objekte auf der Karte, damit sie sich an die neue Karte anpassen
 
                 //neusetzen der Startposition des Spielers
                 gp.player.x = playerSpawnX;
