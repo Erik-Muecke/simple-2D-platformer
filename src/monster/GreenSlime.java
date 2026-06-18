@@ -1,17 +1,25 @@
 package monster;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.util.Random;
-
 import entity.Entity;
 import main.GamePanel;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Random;
+
+// Der einfachste Gegner — ein langsamer Bodenschleim, der zufällig links/rechts läuft
+// und Berührungsschaden verursacht. Hat keinen Fernkampfangriff.
 public class GreenSlime extends Entity {
 
     private final GamePanel gp;
     private final Random random = new Random();
+
+    // Animationsframes als Felder
+    private BufferedImage frame1;
+    private BufferedImage frame2;
 
     public GreenSlime(GamePanel gp) {
         super();
@@ -23,33 +31,69 @@ public class GreenSlime extends Entity {
         width = gp.tileSize;
         height = gp.tileSize;
         direction = 'L';
+        directionBeforeKnockBack = 'L';
 
-        solidArea = new java.awt.Rectangle(8, 16, gp.tileSize - 16, gp.tileSize - 16);
+        // Kollisionsbox setzen
+        solidArea = new Rectangle(0, 0, 48, 48);
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
 
         maxLife = 3;
         life = maxLife;
+
+        // Bilder beim Erstellen laden, nicht jeden Frame neu
+        frame1 = loadImage("/monsters/greenslime.png");
+        frame2 = loadImage("/monsters/greenslime1.png");
+        image = frame1; // Startbild setzen
     }
 
-    // Zufääiges änder der Bewegungsrichtung alle 2 Sekunden
+    /**
+     * Lädt ein Bild aus dem Classpath.
+     * Gibt image_not_found.png zurück, falls die Datei fehlt.
+     */
+    private BufferedImage loadImage(String path) {
+        try (InputStream stream = getClass().getResourceAsStream(path)) {
+            if (stream != null) return ImageIO.read(stream); // Bild laden, falls gefunden
+        } catch (IOException e) {
+            System.err.println("Fehler beim Laden: " + path);
+        }
+
+        // Fallback: image_not_found.png laden
+        try (InputStream stream = getClass().getResourceAsStream("/missing/image_not_found.png")) {
+            if (stream != null) return ImageIO.read(stream);
+        } catch (IOException e) {
+            System.err.println("Fallback Fehler: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    // Wechselt alle 120 Frames zufällig die Richtung
     public void setAction() {
         actionLockCounter++;
 
         if (actionLockCounter >= 120) {
-            if (random.nextBoolean()) {
-                direction = 'L';
-            } else {
-                direction = 'R';
-            }
+            direction = random.nextBoolean() ? 'L' : 'R';
             actionLockCounter = 0;
         }
     }
 
-    // update-Methode, überschreibt die update Methode der Entity-Klasse
+    // Wechselt zwischen zwei Frames für eine einfache Laufanimation
+    public void setWalking() {
+        walkingCounter++;
+
+        if (walkingCounter >= 20) {
+            image = frame1;
+        }
+        if (walkingCounter >= 40) {
+            image = frame2;
+            walkingCounter = 0;
+        }
+    }
+
     @Override
     public void update() {
-        // Wenn der Slime unverwundbar ist, erhöht sich der invincibleCounter. Nach 40 Frames wird die Unverwundbarkeit aufgehoben.
+        // Unverwundbarkeits-Frames nach einem Treffer herunterzählen
         if (invincible) {
             invincibleCounter++;
 
@@ -59,80 +103,29 @@ public class GreenSlime extends Entity {
             }
         }
 
-        // Wenn der Slime gerade eine Kollision hatte, wird er für 15 Frames bewegungsunfähig (freezeFrames). Während dieser Zeit wird die setAction-Methode nicht aufgerufen,
-        // damit der Slime nicht sofort die Richtung ändert.
+        // Während des Rückstoßes in Trefferrichtung bewegen und normale KI überspringen
+        if (knockBack) {
+            gp.movementSystem.updateMonsterKnockBack(this);
+            return;
+        }
+
+        // Freeze-Frames pausieren kurz die Bewegung nach einem Treffer
         if (freezeFrames > 0) {
             freezeFrames--;
             return;
         }
 
-        //aufruf der setAction Methode, um die Bewegungsrichtung zu bestimmen
         setAction();
-
-        // Berechnung der horizontalen Bewegung basierend auf der aktuellen Richtung
-        char horizontalDirection = direction;
-        if (horizontalDirection == 'L') {
-            velocityX = -speed;
-        } else {
-            velocityX = speed;
-        }
-
-        // Aktualisierung der x-Position basierend auf der horizontalen Geschwindigkeit
-        x += velocityX;
-        direction = horizontalDirection;
-        collisionOn = false;
-        gp.collisionsystem.collidesT(this);
-        gp.collisionsystem.collidesWithObject(this);
-
-        // Wenn eine Kollision erkannt wird oder der Slime den Rand der Welt erreicht, wird die Bewegung rückgängig gemacht und die Richtung geändert.
-        if (collisionOn || x <= 0 || x + width >= gp.worldWidth) {
-            x -= velocityX;
-            if (horizontalDirection == 'L') {
-                direction = 'R';
-            } else {
-                direction = 'L';
-            }
-            velocityX = 0;
-            freezeFrames = 15;
-        }
-
-        // Berechnung der vertikalen Bewegung (Schwerkraft)
-        velocityY += 2;
-        if (velocityY > 31) {
-            velocityY = 31;
-        }
-
-        // Aktualisierung der y-Position basierend auf der vertikalen Geschwindigkeit
-        y += velocityY;
-        char savedDirection = direction;
-        direction = 'D';
-        collisionOn = false;
-        gp.collisionsystem.collidesT(this);
-        gp.collisionsystem.collidesWithObject(this);
-        direction = savedDirection;
-
-        // Wenn eine Kollision erkannt wird, wird die vertikale Bewegung rückgängig gemacht
-        if (collisionOn) {
-            y -= velocityY;
-            velocityY = 0;
-            onGround = true;
-        } else {
-            onGround = false;
-        }
-
-        // Überprüfen, ob der Slime mit dem Spieler kollidiert. Wenn ja, wird die damagePlayer-Methode des Spielers aufgerufen, um Schaden zu verursachen.
-        if (gp.collisionsystem.collidesWithPlayer(this)) {
-            gp.player.damagePlayer();
-        }
+        setWalking();
+        gp.movementSystem.updateWalkingMonster(this);
     }
 
     @Override
     public void draw(Graphics2D g2) {
-        // Berechnung der Bildschirmposition basierend auf der Kameraposition
         int screenX = x - gp.camera.x;
         int screenY = y - gp.camera.y;
 
-        // Überprüfen, ob der Slime innerhalb des sichtbaren Bereichs der Kamera liegt. Wenn nicht, wird die Methode verlassen, um unnötiges Zeichnen zu vermeiden.
+        // Außerhalb des Bildschirms: nicht zeichnen — kein Projektil für diesen Gegner
         if (x + width < gp.camera.x ||
                 x > gp.camera.x + gp.screenWidth ||
                 y + height < gp.camera.y ||
@@ -140,21 +133,22 @@ public class GreenSlime extends Entity {
             return;
         }
 
-        // Wenn der Slime unverwundbar ist, wird die Transparenz auf 40% gesetzt, um dies visuell darzustellen.
+        // Halbtransparent blinken während der Unverwundbarkeit
         if (invincible) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         }
 
-        // Zeichnen des Slimes
-        g2.setColor(new Color(58, 176, 84));
-        g2.fillOval(screenX + 6, screenY + 18, width - 12, height - 22);
+        // Bild zeichnen oder rotes Rechteck als Fallback, falls kein Bild vorhanden
+        if (image != null) {
+            g2.drawImage(image, screenX, screenY, width, height, null);
+        } else {
+            g2.setColor(Color.RED);
+            g2.fillRect(screenX, screenY, width, height);
+        }
 
-        g2.setColor(new Color(25, 92, 45));
-        g2.fillOval(screenX + 20, screenY + 30, 7, 7);
-        g2.fillOval(screenX + width - 27, screenY + 30, 7, 7);
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
-        // Zeichnen der Lebensleiste über dem Slime, wenn er nicht volle Lebenspunkte hat
+        // Lebensanzeige sobald Schaden erlitten wurde
         if (life < maxLife) {
             int barWidth = width - 12;
             int currentLifeWidth = barWidth * life / maxLife;
