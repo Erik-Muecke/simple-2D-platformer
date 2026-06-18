@@ -65,6 +65,15 @@ public class Projectile extends Entity {
         }
     }
 
+    public Rectangle getCollisionBox() { // Kollisionsbereich des Projektils
+        return new Rectangle(
+                x + solidArea.x, // echte x-Position der Hitbox
+                y + solidArea.y, // echte y-Position der Hitbox
+                solidArea.width,  // Breite der Hitbox
+                solidArea.height  // Höhe der Hitbox
+        );
+    }
+
     public void draw(Graphics2D g2) {
 
         //Überprüfen der Richtung des Projektils, damit es in die richtige Richtung zeigt. Es wird nur gezeichnet, wenn das Projektil noch lebt.
