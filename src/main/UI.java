@@ -281,6 +281,7 @@ public class UI {
         }
     }
 
+    int maxCoins = 5;
 
     public void drawPlayerLife() {
 
@@ -318,6 +319,13 @@ public class UI {
             i++;
             x += gp.tileSize;
         }
+
+        // Coin-Anzeige unter den Herzen
+        g2.setFont(new Font("Arial", Font.BOLD, 30));
+        g2.setColor(Color.YELLOW);
+
+        String coinText = "Coins: " + gp.player.hasCoin + " / " + this.maxCoins;
+        g2.drawString(coinText, gp.tileSize / 4, gp.tileSize + 40);
     }
 
     // Berechnet die x-Koordinate, um den gegebenen Text zentriert auf dem Bildschirm zu platzieren,
