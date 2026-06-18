@@ -119,21 +119,27 @@ public class MovementSystem {
         return true;
     }
 
-    // Aktualisieren der Position eines laufenden Monsters basierend auf seiner Geschwindigkeit, der Kollisionserkennung und der Schwerkraft.
+    // Aktualisiert die Position eines laufenden Monsters anhand von Bewegung,
+// Kollisionen, Schwerkraft und Spielerkontakt.
     public void updateWalkingMonster(Entity monster) {
-        // Walking monsters turn around when their next horizontal step would hit a wall.
+
+        // Horizontale Bewegung entsprechend der aktuellen Richtung
         char horizontalDirection = monster.direction;
         if (horizontalDirection == 'L') {
             monster.velocityX = -monster.speed;
         } else {
             monster.velocityX = monster.speed;
         }
+
         monster.x += monster.velocityX;
         monster.direction = horizontalDirection;
+
+        // Kollision mit Blöcken oder Objekten prüfen
         monster.collisionOn = false;
         collisionSystem.collidesT(monster);
         collisionSystem.collidesWithObject(monster);
 
+        // Bei einer Kollision oder dem Erreichen des Weltrandes umdrehen
         if (monster.collisionOn || monster.x <= 0 || monster.x + monster.width >= gp.worldWidth) {
             monster.x -= monster.velocityX;
             if (horizontalDirection == 'L') {
@@ -145,7 +151,7 @@ public class MovementSystem {
             monster.freezeFrames = 15;
         }
 
-        // Monsters use the same gravity style as the player but do not react to jump input.
+        // Schwerkraft anwenden und vertikale Bewegung ausführen
         monster.velocityY += 2;
         if (monster.velocityY > 31) {
             monster.velocityY = 31;
@@ -153,6 +159,8 @@ public class MovementSystem {
         monster.onGround = false;
 
         monster.y += monster.velocityY;
+
+        // Vertikale Kollision prüfen
         char savedDirection = monster.direction;
         monster.direction = 'D';
         monster.collisionOn = false;
@@ -160,6 +168,7 @@ public class MovementSystem {
         collisionSystem.collidesWithObject(monster);
         monster.direction = savedDirection;
 
+        // Position und Geschwindigkeit bei einer Kollision korrigieren
         if (monster.collisionOn) {
             monster.y -= monster.velocityY;
             monster.velocityY = 0;
@@ -168,26 +177,33 @@ public class MovementSystem {
             monster.onGround = false;
         }
 
+        // Spielerkontakt prüfen
         if (collisionSystem.collidesWithPlayer(monster)) {
             gp.player.damagePlayer();
         }
     }
 
-    // Aktualisieren der Position eines fliegenden Monsters basierend auf seiner Geschwindigkeit, der Kollisionserkennung und der Schwerkraft.
+    // Aktualisiert die Position eines fliegenden Monsters anhand von Bewegung,
+    // Kollisionen und Spielerkontakt.
     public void updateFlyingMonster(Entity monster) {
-        // Flying monsters turn around when their next horizontal step would hit a wall.
+
+        // Horizontale Bewegung entsprechend der aktuellen Richtung
         char horizontalDirection = monster.direction;
         if (horizontalDirection == 'L') {
             monster.velocityX = -monster.speed;
         } else {
             monster.velocityX = monster.speed;
         }
+
         monster.x += monster.velocityX;
         monster.direction = horizontalDirection;
+
+        // Kollision mit Blöcken oder Objekten prüfen
         monster.collisionOn = false;
         collisionSystem.collidesT(monster);
         collisionSystem.collidesWithObject(monster);
 
+        // Bei einer Kollision oder dem Erreichen des Weltrandes umdrehen
         if (monster.collisionOn || monster.x <= 0 || monster.x + monster.width >= gp.worldWidth) {
             monster.x -= monster.velocityX;
             if (horizontalDirection == 'L') {
@@ -199,6 +215,7 @@ public class MovementSystem {
             monster.freezeFrames = 15;
         }
 
+        // Spielerkontakt prüfen
         if (collisionSystem.collidesWithPlayer(monster)) {
             gp.player.damagePlayer();
         }
