@@ -29,6 +29,7 @@ public class Player extends Entity {
     public int invincibleCounter = 0;
     // Player additions
     public Projectile projectile;
+    private int cooldownCounter = 0;
 
     public int lastgroundposX;
     public int lastgroundposY;
@@ -111,10 +112,15 @@ public class Player extends Entity {
             }
         }
 
+        //Abklingen lassen des Cooldowns
+        if (cooldownCounter >= 0){
+            cooldownCounter--;
+        }
+
         // Überprüft, ob der Spieler ein Projektil abfeuern möchte und ob das Projektil nicht bereits aktiv ist.
         // Wenn beide Bedingungen erfüllt sind, wird die Position des Projektils auf die Mitte des Spielers gesetzt und
         // die Richtung entsprechend der aktuellen Blickrichtung des Spielers festgelegt.
-        if(keyH.shotKeyPressed && !projectile.alive) {
+        if(keyH.shotKeyPressed && !projectile.alive && cooldownCounter <= 0) {
             int projectileX = x + (width - projectile.width) / 2;
             int projectileY = y + (height - projectile.height) / 2;
             char projectileDirection = direction;
@@ -125,6 +131,8 @@ public class Player extends Entity {
 
             projectile.set(projectileX, projectileY, projectileDirection, true);
             keyH.shotKeyPressed = false;
+
+            cooldownCounter = 120;//setzen des Cooldown
         }
 
         //Speichert die letzt bekannte Position des Spielers auf dem Boden, um ihn dorthin zurückzusetzen, falls er aus der Welt fällt.
@@ -276,7 +284,6 @@ public class Player extends Entity {
         if (!monster.invincible) {
             monster.life--;
             monster.invincible = true;
-
             if (monster.life <= 0) {
                 monster.isDead = true;
             }
