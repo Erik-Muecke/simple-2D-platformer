@@ -35,6 +35,16 @@ public class Player extends Entity {
     public int lastgroundposY;
 
     public int floorY;
+
+
+    public int normalSpeed = 6;
+    public int speedBoostCounter = 0;
+    public boolean speedBoostActive = false;
+
+    public int normalJumpStrength = 34;
+    public int jumpStrengthBoostCounter = 0;
+    public boolean jumpStrengthBoostActive = false;
+
     public Player(GamePanel gp, KeyHandler keyH) {
         super(); // Aufruf des Konstruktors der Entity-Klasse
         speed = 6; //Geschwindigkeit des Spielers, wie viele Pixel er sich pro Update bewegen soll
@@ -70,15 +80,33 @@ public class Player extends Entity {
 
     // Laden der Spielerbilder aus den Ressourcen
     public void loadPlayerImage() {
-            img1 = imgLoader.loadImage("/player/kartoni1.png");
-            img2 = imgLoader.loadImage("/player/kartoni2.png");
-            img3 = imgLoader.loadImage("/player/kartoni3.png");
-            img4 = imgLoader.loadImage("/player/kartoni4.png");
-            img5 = imgLoader.loadImage("/player/kartoni5.png");
-            img6 = imgLoader.loadImage("/player/kartoni6.png");
+        img1 = imgLoader.loadImage("/player/kartoni1.png");
+        img2 = imgLoader.loadImage("/player/kartoni2.png");
+        img3 = imgLoader.loadImage("/player/kartoni3.png");
+        img4 = imgLoader.loadImage("/player/kartoni4.png");
+        img5 = imgLoader.loadImage("/player/kartoni5.png");
+        img6 = imgLoader.loadImage("/player/kartoni6.png");
     }
 
     public void update() {
+        if (speedBoostActive) {
+            speedBoostCounter++;
+            if (speedBoostCounter >= 300) {
+                speed = normalSpeed;
+                speedBoostActive = false;
+                speedBoostCounter = 0;
+            }
+        }
+
+        if (jumpStrengthBoostActive) {
+            jumpStrengthBoostCounter++;
+            if (jumpStrengthBoostCounter >= 300) {
+                jumpStrength = normalJumpStrength;
+                jumpStrengthBoostActive = false;
+                jumpStrengthBoostCounter = 0;
+            }
+        }
+
         // Horizontaler Input
         if (keyH.leftPressed) {
             direction = 'L';
@@ -135,13 +163,6 @@ public class Player extends Entity {
             cooldownCounter = 120;//setzen des Cooldown
         }
 
-        //Speichert die letzt bekannte Position des Spielers auf dem Boden, um ihn dorthin zurückzusetzen, falls er aus der Welt fällt.
-        if (onGround && y < floorY - 20) {
-            lastgroundposX = x;
-            lastgroundposY = y;
-            System.out.println("On ground. Last ground position updated: (" + lastgroundposX + ", " + lastgroundposY + ")");
-        }
-
         // Überprüft, ob der Spieler unter die Bodenhöhe gefallen ist, und setzt ihn zurück, wenn dies der Fall ist.
         checkOutOfBounds();
 
@@ -149,7 +170,13 @@ public class Player extends Entity {
         int objectIndex = gp.collisionsystem.collisionObject(this, true);
         InteractObject(objectIndex);
 
-
+        //Speichert die letzt bekannte Position des Spielers auf dem Boden, um ihn dorthin zurückzusetzen, falls er aus der Welt fällt.
+        boolean onSpike = gp.collisionsystem.isOnSpikeTile(this);
+        if (onGround && y < floorY - 20 && !onSpike) {
+            lastgroundposX = x;
+            lastgroundposY = y;
+            System.out.println("On ground. Last ground position updated: (" + lastgroundposX + ", " + lastgroundposY + ")");
+        }
 
         // Delegieren aller Bewegungs- und Kollisionslogik an das MovementSystem, um die Update-Methode des Spielers übersichtlich zu halten.
         movementSystem.updatePlayer(this);
@@ -187,15 +214,54 @@ public class Player extends Entity {
                         life++;
                     }
                     if (life < maxLife) {
-                            life++;
+                        life++;
                         System.out.println("You healed! Current life: " + life);
                     } else {
                         System.out.println("Your life is already full!");
                     }
                     gp.obj[i] = null; // heart disappears
                     break;
+
+                case "SpeedBoost":
+                    activateSpeedBoost();
+                    gp.obj[i] = null;
+                    break;
+
+                case "SpeedBooster":
+                    activateSpeedBoost();
+                    break;
+
+                case "JumpBoost":
+                    activateJumpBoost();
+                    gp.obj[i] = null;
+                    break;
+
+                case "JumpBooster":
+                    activateJumpBoost();
+                    break;
             }
         }
+    }
+
+    public void activateSpeedBoost() {
+        speed = normalSpeed + 2;
+        speedBoostActive = true;
+        speedBoostCounter = 0;
+    }
+
+    public void activateJumpBoost() {
+        jumpStrength = normalJumpStrength + 10;
+        jumpStrengthBoostActive = true;
+        jumpStrengthBoostCounter = 0;
+    }
+
+    public void resetBoosts() {
+        speed = normalSpeed;
+        jumpStrength = normalJumpStrength;
+        speedBoostActive = false;
+        jumpStrengthBoostActive = false;
+        speedBoostCounter = 0;
+        jumpStrengthBoostCounter = 0;
     }
 
     // Berechnet die Position und Größe des Angriffsrechtecks basierend auf der aktuellen Blickrichtung des Spielers
@@ -298,7 +364,6 @@ public class Player extends Entity {
     // Reduziert die Lebenspunkte des Spielers um 1, wenn er nicht unverwundbar ist
     // und setzt ihn für kurze Zeit unverwundbar, um zu verhindern, dass er sofort wieder Schaden nimmt.
     public void damagePlayer() {
-
         if (!invincible) {
             life -= 1;
             invincible = true;
