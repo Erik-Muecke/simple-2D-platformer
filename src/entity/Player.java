@@ -20,6 +20,7 @@ public class Player extends Entity {
     private int jumpStrength = 34;
     private MovementSystem movementSystem;
     public int hasKey = 0;
+    public int hasCoin = 0;
 
     ImageLoader imgLoader = new ImageLoader();
 
@@ -35,7 +36,6 @@ public class Player extends Entity {
     public int lastgroundposY;
 
     public int floorY;
-
 
     public int normalSpeed = 6;
     public int speedBoostCounter = 0;
@@ -238,6 +238,11 @@ public class Player extends Entity {
 
                 case "JumpBooster":
                     activateJumpBoost();
+                    break;
+
+                case "Coin":
+                    hasCoin++;
+                    gp.obj[i] = null;
                     break;
             }
         }
