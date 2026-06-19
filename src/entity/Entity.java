@@ -42,6 +42,7 @@ public class Entity {
 
     public boolean knockBack = false;
     public int knockBackCounter = 0;
+    public int walkingCounter;
 
     public BufferedImage img1, img2, img3, img4, img5, img6;
     public Entity() {
