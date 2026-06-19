@@ -28,6 +28,10 @@ public class AssetSetter {
         gp.obj[5].x = 36 * gp.tileSize;
         gp.obj[5].y = (3 * gp.tileSize) + 16; //16 wird addiert, um die Position des Herzens anzupassen, damit es nicht zu hoch in der Luft schwebt
 
+        gp.obj[7] = new OBJ_SpeedBooster(gp);
+        gp.obj[7].x = 7 * gp.tileSize;
+        gp.obj[7].y = 15 * gp.tileSize;
+
         gp.monster[0] = new JumpSlime(gp); //Erstellen eines neuen Monsters
         gp.monster[0].x = 11 * gp.tileSize ; //Festlegen der x-Position des Objektes
         gp.monster[0].y = 15 * gp.tileSize; //Festlegen der y-Position des Objektes
@@ -60,6 +64,11 @@ public class AssetSetter {
         gp.obj[5] = new OBJ_Heart(gp);
         gp.obj[5].x = 18 * gp.tileSize;
         gp.obj[5].y = (7 * gp.tileSize) + 16;
+
+        gp.obj[7] = new OBJ_SpeedBooster(gp);
+        gp.obj[7].x = 18 * gp.tileSize;
+        gp.obj[7].y = 15 * gp.tileSize;
+
     }
 
     public void setScene2() {
@@ -75,6 +84,10 @@ public class AssetSetter {
         gp.obj[5] = new OBJ_Heart(gp);
         gp.obj[5].x = 24 * gp.tileSize;
         gp.obj[5].y = (16 * gp.tileSize) + 16;
+
+        gp.obj[7] = new OBJ_JumpBooster(gp);
+        gp.obj[7].x = 15 * gp.tileSize;
+        gp.obj[7].y = 12 * gp.tileSize;
 
         gp.monster[1] = new HeavyFlyer(gp);
         gp.monster[1].x = 18 * gp.tileSize ;
@@ -136,6 +149,10 @@ public class AssetSetter {
         gp.obj[5] = new OBJ_Heart(gp);
         gp.obj[5].x = 19 * gp.tileSize;
         gp.obj[5].y = (3 * gp.tileSize) + 16;
+
+        gp.obj[7] = new OBJ_JumpBooster(gp);
+        gp.obj[7].x = 30 * gp.tileSize;
+        gp.obj[7].y = 7 * gp.tileSize;
 
         gp.monster[0] = new GreenSlime(gp);
         gp.monster[0].x = 8 * gp.tileSize ;
