@@ -49,6 +49,12 @@ public class Projectile extends Entity {
             // Der Wert wird zur x Position addiert, damit es sich nach rechts bewegt.
         }
 
+        if(direction == 'D') {
+            y += speed + gp.player.speed - 2; // Projektilgeschwindigkeit plus Spielerbewegung, damit es sich mit dem Spieler bewegt.
+            // Der Wert am ende wird abgezogen, damit sich das projektil nicht zu schnell bewegt.
+            // Der Wert wird zur y Position addiert, damit es sich nach unten bewegt.
+        }
+
         gp.collisionsystem.collidesT(this); // Überprüft Kollisionen mit der Tilemap
         gp.collisionsystem.collidesWithObject(this); // Überprüft Kollisionen mit Objekten
 
@@ -85,6 +91,10 @@ public class Projectile extends Entity {
 
                 case 'R':
                     image = img2;
+                    break;
+
+                case 'D':
+                    image = img3;
                     break;
             }
 
