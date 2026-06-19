@@ -16,9 +16,9 @@ public class AssetSetter {
 
     public void setScene0() {
 
-        gp.obj[0] = new OBJ_Key(gp); //Erstellen eines neuen Objektes
-        gp.obj[0].x = 13 * gp.tileSize; //Festlegen der x-Position des Objektes
-        gp.obj[0].y = 4 * gp.tileSize; //Festlegen der y-Position des Objektes
+        gp.obj[6] = new OBJ_Coin(gp); //Erstellen eines neuen Objektes
+        gp.obj[6].x = 13 * gp.tileSize; //Festlegen der x-Position des Objektes
+        gp.obj[6].y = 4 * gp.tileSize; //Festlegen der y-Position des Objektes
 
         gp.obj[4] = new OBJ_Flag(gp);
         gp.obj[4].x = 31 * gp.tileSize;
@@ -41,6 +41,10 @@ public class AssetSetter {
 
     public void setScene1() {
 
+        gp.obj[6] = new OBJ_Coin(gp);
+        gp.obj[6].x = 36 * gp.tileSize;
+        gp.obj[6].y = 4 * gp.tileSize;
+
         gp.obj[0] = new OBJ_Key(gp);
         gp.obj[0].x = 15 * gp.tileSize;
         gp.obj[0].y = 3 * gp.tileSize;
@@ -59,6 +63,11 @@ public class AssetSetter {
     }
 
     public void setScene2() {
+
+        gp.obj[6] = new OBJ_Coin(gp);
+        gp.obj[6].x = 7 * gp.tileSize;
+        gp.obj[6].y = 3 * gp.tileSize;
+
         gp.obj[4] = new OBJ_Flag(gp);
         gp.obj[4].x = 34 * gp.tileSize;
         gp.obj[4].y = 6 * gp.tileSize;
@@ -69,6 +78,10 @@ public class AssetSetter {
     }
 
     public void setScene3() {
+
+        gp.obj[6] = new OBJ_Coin(gp);
+        gp.obj[6].x = 14 * gp.tileSize;
+        gp.obj[6].y = 2 * gp.tileSize;
 
         gp.obj[4] = new OBJ_Flag(gp);
         gp.obj[4].x = 35 * gp.tileSize;
@@ -89,7 +102,6 @@ public class AssetSetter {
 
     public void setScene4() {
 
-
         gp.obj[0] = new OBJ_Key(gp); //Erstellen eines neuen Objektes und
         gp.obj[0].x = 16 * gp.tileSize; //Festlegen der x-Position des Objektes
         gp.obj[0].y = 4 * gp.tileSize; //Festlegen der y-Position des Objektes
@@ -104,6 +116,11 @@ public class AssetSetter {
     }
 
     public void setScene5() {
+
+        gp.obj[6] = new OBJ_Coin(gp);
+        gp.obj[6].x = 7 * gp.tileSize;
+        gp.obj[6].y = 14 * gp.tileSize;
+
         gp.obj[4] = new OBJ_Flag(gp);
         gp.obj[4].x = 36 * gp.tileSize;
         gp.obj[4].y = 3 * gp.tileSize;

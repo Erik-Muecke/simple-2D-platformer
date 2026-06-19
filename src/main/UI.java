@@ -232,7 +232,7 @@ public class UI {
 
         // Zeichnen des Charakterbildes
         int imgX = gp.screenWidth / 2 - (gp.tileSize * 2) / 2;
-        int imgY = gp.tileSize * 5;
+        int imgY = gp.tileSize * 4;
 
         g2.drawImage(titleImage, imgX, imgY, null);
 
@@ -254,10 +254,16 @@ public class UI {
         // Menü
         g2.setFont(arial_40);
 
-        text = "This is everything. You now can quit. Or you play it again.";
+        text = "This is everything. You can quit. Or you play it again.";
         x = getXforCenteredText(text);
-        y += gp.tileSize * 5;
+        y += gp.tileSize * 4;
         g2.drawString(text, x, y);
+
+        text = "You collected " + gp.player.hasCoin + " / " + this.maxCoins + " coins.";
+        x = getXforCenteredText(text);
+        y += gp.tileSize * 1;
+        g2.drawString(text, x, y);
+
 
         // Neues Spiel
         text = "NEW GAME";
