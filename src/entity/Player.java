@@ -200,6 +200,7 @@ public class Player extends Entity {
                 case "Key":
                     hasKey++;
                     System.out.println("You got a key! Total: " + hasKey);
+                    gp.saveHndlr.saveKeys(hasKey);
                     gp.obj[i] = null;
                     break;
 
@@ -252,6 +253,7 @@ public class Player extends Entity {
 
                 case "Coin":
                     hasCoin++;
+                    gp.saveHndlr.saveCoins(hasCoin);
                     gp.obj[i] = null;
                     break;
             }
