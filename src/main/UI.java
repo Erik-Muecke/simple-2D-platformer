@@ -45,7 +45,6 @@ public class UI {
             drawPlayerLife();
         }
         if(gp.gameState == gp.gameOver) {
-            drawPlayerLife();
             drawGameOver();
         }
 

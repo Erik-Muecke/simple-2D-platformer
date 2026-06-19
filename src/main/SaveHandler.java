@@ -19,15 +19,26 @@ public class SaveHandler {
     }
 
     public void createSaveFile() {
-        if (!saveFile.exists()) { //Ueberpruefen ob die Datei existiert, wenn nicht wird sie erstellt
-            Properties save = new Properties();
-            save.setProperty("level", "0");
+        Properties save = new Properties();
 
-            try (FileWriter writer = new FileWriter(saveFile)) { // Datei wird mit einem FileWriter erstellt und die Properties werden gespeichert
-                save.store(writer, "Game Save");
+        if (saveFile.exists()) { // Ueberpruefen ob die Datei existiert, wenn ja wird sie geladen
+            try (FileReader reader = new FileReader(saveFile)) {
+                save.load(reader);
             } catch (Exception e) {
-                System.out.println("Fehler beim Schreiben der Datei, nach Erstellung" + e.getMessage()); // Fehlerbehandlung, falls die Datei nicht erstellt oder beschrieben werden kann
+                System.out.println("Fehler beim Lesen" + e.getMessage());
             }
+        }
+
+        // fehlende Properties mit Standardwerten ergänzen
+        if (save.getProperty("level") == null)  save.setProperty("level", "0");
+        if (save.getProperty("lives") == null)  save.setProperty("lives", "6");
+        if (save.getProperty("coins") == null)  save.setProperty("coins", "0");
+        if (save.getProperty("hasKey") == null) save.setProperty("hasKey", "0");
+
+        try (FileWriter writer = new FileWriter(saveFile)) { // Datei wird mit einem FileWriter erstellt und die Properties werden gespeichert
+            save.store(writer, "Game Save");
+        } catch (Exception e) {
+            System.out.println("Fehler beim Schreiben der Datei, nach Erstellung" + e.getMessage()); // Fehlerbehandlung, falls die Datei nicht erstellt oder beschrieben werden kann
         }
     }
 
@@ -44,6 +55,28 @@ public class SaveHandler {
         return 1;
     }
 
+    //Getter zum laden der Münzen
+    public int loadHasCoin() {
+        try (FileReader reader = new FileReader(saveFile)) {
+            save.load(reader);
+            return Integer.parseInt(save.getProperty("hasCoin"));
+        } catch (IOException e) {
+            System.out.println("Fehler beim Einlesen der Datei" + e.getMessage());
+        }
+        return 0;
+    }
+
+    //Getter zum laden des Schlüssels
+    public int loadHasKey() {
+        try (FileReader reader = new FileReader(saveFile)) {
+            save.load(reader);
+            return Integer.parseInt(save.getProperty("hasKey"));
+        } catch (IOException e) {
+            System.out.println("Fehler beim Einlesen der Datei" + e.getMessage());
+        }
+        return 0;
+    }
+
     //Getter zum laden der Leben
     public int loadLives() {
         try (FileReader reader = new FileReader(saveFile)) {
@@ -52,7 +85,6 @@ public class SaveHandler {
         } catch (IOException e) {
             System.out.println("Fehler beim Einlesen der Datei" + e.getMessage());
         }
-
         return 6;
     }
 

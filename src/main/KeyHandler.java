@@ -49,6 +49,8 @@ public class KeyHandler implements KeyListener {
                     // Laden des gespeicherten Spiels
                     gp.mapIndicator = gp.saveHndlr.loadLevel();
                     gp.player.life = gp.saveHndlr.loadLives();
+                    gp.player.hasCoin = gp.saveHndlr.loadHasCoin();
+                    gp.player.hasKey = gp.saveHndlr.loadHasKey();
                     gp.gameState = gp.playState;
                     commandNum = 0;
 
@@ -121,6 +123,8 @@ public class KeyHandler implements KeyListener {
                     gp.resetGame();
                     gp.mapIndicator = gp.saveHndlr.loadLevel();
                     gp.player.life = gp.saveHndlr.loadLives();
+                    gp.player.hasCoin = gp.saveHndlr.loadHasCoin();
+                    gp.player.hasKey = gp.saveHndlr.loadHasKey();
                     gp.aSetter.updateScene();
                     gp.gameState = gp.playState;
                     commandNum = 0;
@@ -158,6 +162,8 @@ public class KeyHandler implements KeyListener {
                     gp.resetGame();
                     gp.mapIndicator = gp.saveHndlr.loadLevel();
                     gp.player.life = gp.saveHndlr.loadLives();
+                    gp.player.hasCoin = gp.saveHndlr.loadHasCoin();
+                    gp.player.hasKey = gp.saveHndlr.loadHasKey();
                     gp.aSetter.updateScene();
                     gp.gameState = gp.playState;
                     commandNum = 0;

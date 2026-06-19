@@ -160,7 +160,7 @@ public class Player extends Entity {
             projectile.set(projectileX, projectileY, projectileDirection, true);
             keyH.shotKeyPressed = false;
 
-            cooldownCounter = 120;//setzen des Cooldown
+            cooldownCounter = 90;//setzen des Cooldown
         }
 
         // Überprüft, ob der Spieler unter die Bodenhöhe gefallen ist, und setzt ihn zurück, wenn dies der Fall ist.
@@ -203,7 +203,7 @@ public class Player extends Entity {
                     }
                     break;
 
-                case "Flag": // Das Flag-Objekt ist für das rhöhen der mapIndicator verantwortlich, damit die nächste Karte geladen wird.
+                case "Flag": // Das Flag-Objekt ist für das erhöhen des mapIndicator verantwortlich, damit die nächste Karte geladen wird.
                     velocityX = 0;
                     velocityY = 0;
                     gp.mapIndicator++;
