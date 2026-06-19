@@ -34,6 +34,11 @@ public class MovementSystem {
             player.velocityX = 0;
         }
 
+        if (player.x < 0) {
+            player.x = 0;
+            player.velocityX = 0;
+        }
+
         player.collisionOn = false;
         player.y += player.velocityY;
         collisionSystem.collidesT(player);
