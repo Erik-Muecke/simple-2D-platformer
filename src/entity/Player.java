@@ -44,6 +44,9 @@ public class Player extends Entity {
     public int jumpStrengthBoostCounter = 0;
     public boolean jumpStrengthBoostActive = false;
 
+    public int spriteCounter = 0;
+    public int spriteNumber = 1;
+
     public Player(GamePanel gp, KeyHandler keyH) {
         super(); // Aufruf des Konstruktors der Entity-Klasse
         speed = 6; //Geschwindigkeit des Spielers, wie viele Pixel er sich pro Update bewegen soll
@@ -83,8 +86,6 @@ public class Player extends Entity {
         img2 = imgLoader.loadImage("/player/kartoni2.png");
         img3 = imgLoader.loadImage("/player/kartoni3.png");
         img4 = imgLoader.loadImage("/player/kartoni4.png");
-        img5 = imgLoader.loadImage("/player/kartoni5.png");
-        img6 = imgLoader.loadImage("/player/kartoni6.png");
     }
 
     public void update() {
@@ -175,6 +176,16 @@ public class Player extends Entity {
             lastgroundposX = x;
             lastgroundposY = y;
             System.out.println("On ground. Last ground position updated: (" + lastgroundposX + ", " + lastgroundposY + ")");
+        }
+
+        spriteCounter++;
+        if (spriteCounter > 30) {
+            if (spriteNumber == 1) {
+                spriteNumber = 2;
+            } else if (spriteNumber == 2) {
+                spriteNumber = 1;
+            }
+            spriteCounter = 0;
         }
 
         // Delegieren aller Bewegungs- und Kollisionslogik an das MovementSystem, um die Update-Methode des Spielers übersichtlich zu halten.
@@ -390,19 +401,36 @@ public class Player extends Entity {
         if (invincible) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         }
+        BufferedImage image = null;
+        switch (direction) { //Wechselt das Bild des Spielers je nach Richtung, in die er schaut
+            case 'U': image = img1;
+            break;
+            case 'D': image = img1;
+            break;
+            case 'L':
+                if (spriteNumber == 1) {
+                    image = img1;
+                } else if (spriteNumber == 2) {
+                    image = img2;
+                }
+                    break;
+            case 'R':
+                if (spriteNumber == 1) {
+                image = img3;
+            } else if (spriteNumber == 2) {
+                image = img4;
+            }
+                break;
+            default: image = img3;
+            break;
+        }
 
-        BufferedImage img = switch (direction) { //Wechselt das Bild des Spielers je nach Richtung, in die er schaut
-            case 'U' -> img1;
-            case 'D' -> img1;
-            case 'L' -> img1;
-            case 'R' -> img2;
-            default -> img1;
-        };
-        if (img != null) {
+
+        if (image != null) {
             int screenX = x - gp.camera.x;
             int screenY = y - gp.camera.y;
 
-            g2.drawImage(img, screenX, screenY, width, height, null);
+            g2.drawImage(image, screenX, screenY, width, height, null);
         }//using the camera for the player
 
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
