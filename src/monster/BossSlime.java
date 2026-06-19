@@ -46,30 +46,11 @@ public class BossSlime extends Entity {
         solidAreaDefaultY = solidArea.y;
 
         // Bilder beim Erstellen laden, nicht jeden Frame neu
-        frame1 = loadImage("/monsters/bossslime.png");
-        frame2 = loadImage("/monsters/bossslime1.png");
+        frame1 = imgLoader.scaleImage("/monsters/bossslime.png", width, height);
+        frame2 = imgLoader.scaleImage("/monsters/bossslime1.png", width, height);
         image = frame1; // Startbild setzen
 
         projectile = new PT_Fireball(gp);
-    }
-
-//  Lädt ein Bild aus dem Classpath.
-//  Gibt image_not_found.png zurück, falls die Datei fehlt.
-    private BufferedImage loadImage(String path) {
-        try (InputStream stream = getClass().getResourceAsStream(path)) {
-            if (stream != null) return ImageIO.read(stream); // Bild laden, falls gefunden
-        } catch (IOException e) {
-            System.err.println("Fehler beim Laden: " + path);
-        }
-
-        // Fallback: image_not_found.png laden
-        try (InputStream stream = getClass().getResourceAsStream("/missing/image_not_found.png")) {
-            if (stream != null) return ImageIO.read(stream);
-        } catch (IOException e) {
-            System.err.println("Fallback Fehler: " + e.getMessage());
-        }
-
-        return null;
     }
 
     // Gibt das Projektil zurück, damit GamePanel Kollisionen mit dem Spieler-Feuerball prüfen kann

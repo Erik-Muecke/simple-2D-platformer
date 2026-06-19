@@ -1,5 +1,7 @@
 package entity;
 
+import main.ImageLoader;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -44,6 +46,7 @@ public class Entity {
     public int knockBackCounter = 0;
     public int walkingCounter;
 
+    public ImageLoader imgLoader = new ImageLoader();
     public BufferedImage img1, img2, img3, img4, img5, img6;
     public Entity() {
     }

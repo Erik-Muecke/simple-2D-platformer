@@ -48,26 +48,7 @@ public class FireFlyer extends Entity {
 
         projectile  = new PT_Fireball(gp);
         projectile2 = new PT_Fireball(gp);
-        image = loadImage("/monsters/FireFlyer.png");
-    }
-
-//  Lädt ein Bild aus dem Classpath.
-//  Gibt image_not_found.png zurück, falls die Datei fehlt.
-    private BufferedImage loadImage(String path) {
-        try (InputStream stream = getClass().getResourceAsStream(path)) {
-            if (stream != null) return ImageIO.read(stream); // Bild laden, falls gefunden
-        } catch (IOException e) {
-            System.err.println("Fehler beim Laden: " + path);
-        }
-
-        // Fallback: image_not_found.png laden
-        try (InputStream stream = getClass().getResourceAsStream("/missing/image_not_found.png")) {
-            if (stream != null) return ImageIO.read(stream);
-        } catch (IOException e) {
-            System.err.println("Fallback Fehler: " + e.getMessage());
-        }
-
-        return null;
+        image = imgLoader.scaleImage("/monsters/FireFlyer.png", width, height);
     }
 
     // Gibt das primäre Projektil zurück damit GamePanel Kollisionen in der Luft prüfen kann

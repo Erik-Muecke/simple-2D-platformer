@@ -9,7 +9,7 @@ import tile.TileManager;
 
 import main.GamePanel;
 import main.KeyHandler;
-import main.ImageLoader;
+
 import system.MovementSystem;
 
 public class Player extends Entity {
@@ -22,7 +22,6 @@ public class Player extends Entity {
     public int hasKey = 0;
     public int hasCoin = 0;
 
-    ImageLoader imgLoader = new ImageLoader();
 
     public int maxLife;
     public int life;

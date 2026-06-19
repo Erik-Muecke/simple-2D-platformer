@@ -36,28 +36,9 @@ public class HeavyFlyer extends Entity {
 
         maxLife = 10; // deutlich mehr Gesundheit als normale Flyer
         life = maxLife;
-        image = loadImage("/monsters/HeavyFlyer.png");
+        image = imgLoader.scaleImage("/monsters/HeavyFlyer.png", width, height); // Bild auf die Größe der Kacheln skalieren
     }
 
-
-    //  Lädt ein Bild aus dem Classpath.
-//  Gibt image_not_found.png zurück, falls die Datei fehlt.
-    private BufferedImage loadImage(String path) {
-        try (InputStream stream = getClass().getResourceAsStream(path)) {
-            if (stream != null) return ImageIO.read(stream); // Bild laden, falls gefunden
-        } catch (IOException e) {
-            System.err.println("Fehler beim Laden: " + path);
-        }
-
-        // Fallback: image_not_found.png laden
-        try (InputStream stream = getClass().getResourceAsStream("/missing/image_not_found.png")) {
-            if (stream != null) return ImageIO.read(stream);
-        } catch (IOException e) {
-            System.err.println("Fallback Fehler: " + e.getMessage());
-        }
-
-        return null;
-    }
 
     @Override
     public void update() {
