@@ -75,6 +75,10 @@ public class AssetSetter {
         gp.obj[5] = new OBJ_Heart(gp);
         gp.obj[5].x = 24 * gp.tileSize;
         gp.obj[5].y = (16 * gp.tileSize) + 16;
+
+        gp.monster[1] = new HeavyFlyer(gp);
+        gp.monster[1].x = 18 * gp.tileSize ;
+        gp.monster[1].y = 11 * gp.tileSize;
     }
 
     public void setScene3() {
@@ -113,6 +117,10 @@ public class AssetSetter {
         gp.obj[4] = new OBJ_Flag(gp);
         gp.obj[4].x = 34 * gp.tileSize;
         gp.obj[4].y = 17 * gp.tileSize;
+
+        gp.monster[1] = new HeavyFlyer(gp);
+        gp.monster[1].x = 11 * gp.tileSize ;
+        gp.monster[1].y = 16 * gp.tileSize;
     }
 
     public void setScene5() {
@@ -132,6 +140,10 @@ public class AssetSetter {
         gp.monster[0] = new GreenSlime(gp);
         gp.monster[0].x = 8 * gp.tileSize ;
         gp.monster[0].y = 7 * gp.tileSize;
+
+        gp.monster[1] = new HeavyFlyer(gp);
+        gp.monster[1].x = 14 * gp.tileSize ;
+        gp.monster[1].y = 12 * gp.tileSize;
     }
 
 
