@@ -15,11 +15,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
 
-// Ein fliegender Feind der in der Luft schwebt und zwei gleichzeitige Feuerbälle nach unten abfeuert.
+// Ein fliegender Feind ,der in der Luft schwebt und zwei gleichzeitige Feuerbälle nach unten abfeuert.
 // Verfolgt den Spieler horizontal und schießt in Salven.
-/**
- * Fliegender Feuergegner der patrouilliert und aus der Luft angreift.
- */
+//Fliegender Feuergegner der patrouilliert und aus der Luft angreift.
 public class FireFlyer extends Entity {
 
     private final GamePanel gp;

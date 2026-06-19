@@ -27,13 +27,14 @@ public class AssetSetter {
         gp.obj[5] = new OBJ_Heart(gp);
         gp.obj[5].x = 36 * gp.tileSize;
         gp.obj[5].y = (3 * gp.tileSize) + 16; //16 wird addiert, um die Position des Herzens anzupassen, damit es nicht zu hoch in der Luft schwebt
+
         gp.monster[0] = new JumpSlime(gp); //Erstellen eines neuen Monsters
         gp.monster[0].x = 11 * gp.tileSize ; //Festlegen der x-Position des Objektes
         gp.monster[0].y = 15 * gp.tileSize; //Festlegen der y-Position des Objektes
 
-        gp.monster[1] = new BossSlime(gp);
+        gp.monster[1] = new HeavyFlyer(gp);
         gp.monster[1].x = 19 * gp.tileSize ;
-        gp.monster[1].y = 14 * gp.tileSize;
+        gp.monster[1].y = 13 * gp.tileSize;
     }
 
 

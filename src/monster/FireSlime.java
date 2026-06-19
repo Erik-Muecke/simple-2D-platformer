@@ -14,9 +14,7 @@ import java.util.Random;
 
 // Bodenschleim der zufällig links/rechts läuft und alle 180 Frames einen horizontalen
 // Feuerball in seine aktuelle Blickrichtung schießt.
-/**
- * Feuervariante des Schleimgegners mit stärkeren Kampfwerten.
- */
+//Feuervariante des Schleimgegners mit stärkeren Kampfwerten.
 public class FireSlime extends Entity {
 
     private final GamePanel gp;
@@ -56,10 +54,8 @@ public class FireSlime extends Entity {
         projectile = new PT_Fireball(gp);
     }
 
-    /**
-     * Lädt ein Bild aus dem Classpath.
-     * Gibt image_not_found.png zurück, falls die Datei fehlt.
-     */
+//  Lädt ein Bild aus dem Classpath.
+//  Gibt image_not_found.png zurück, falls die Datei fehlt.
     private BufferedImage loadImage(String path) {
         try (InputStream stream = getClass().getResourceAsStream(path)) {
             if (stream != null) return ImageIO.read(stream); // Bild laden, falls gefunden

@@ -12,10 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 // Der finale Boss — ein großer Schleim der den Spieler verfolgt, periodisch springt
-// und Feuerbälle schießt. Wird erst aktiv nachdem der Spieler die Bosstür öffnet (boss1 == true).
-/**
- * Bossgegner mit hoher Gesundheit, Berührungsschaden und Fernkampfdruck.
- */
+// und Feuerbälle schießt.
+//Bossgegner mit hoher Gesundheit, Berührungsschaden und Fernkampfdruck.
 public class BossSlime extends Entity {
 
     private final GamePanel gp;
@@ -55,10 +53,8 @@ public class BossSlime extends Entity {
         projectile = new PT_Fireball(gp);
     }
 
-    /**
-     * Lädt ein Bild aus dem Classpath.
-     * Gibt image_not_found.png zurück, falls die Datei fehlt.
-     */
+//  Lädt ein Bild aus dem Classpath.
+//  Gibt image_not_found.png zurück, falls die Datei fehlt.
     private BufferedImage loadImage(String path) {
         try (InputStream stream = getClass().getResourceAsStream(path)) {
             if (stream != null) return ImageIO.read(stream); // Bild laden, falls gefunden

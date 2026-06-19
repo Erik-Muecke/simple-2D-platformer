@@ -12,9 +12,7 @@ import java.util.Random;
 
 // Bodenschleim der periodisch springt. Synchronisiert sich auch mit der Sprungtaste des Spielers —
 // wenn der Spieler springt während dieser Schleim bereit ist, springt er gleichzeitig.
-/**
- * Schleimgegner der Sprungbewegungen nutzt um den Spieler unter Druck zu setzen.
- */
+//Schleimgegner der Sprungbewegungen nutzt um den Spieler unter Druck zu setzen.
 public class JumpSlime extends Entity {
 
     private final GamePanel gp;
@@ -46,17 +44,14 @@ public class JumpSlime extends Entity {
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
 
-
         // Bilder beim Erstellen laden, nicht jeden Frame neu
         frame1 = loadImage("/monsters/jumpslime.png");
         frame2 = loadImage("/monsters/jumpslime1.png");
         image = frame1; // Startbild setzen
     }
 
-    /**
-     * Lädt ein Bild aus dem Classpath.
-     * Gibt image_not_found.png zurück, falls die Datei fehlt.
-     */
+//  Lädt ein Bild aus dem Classpath.
+//  Gibt image_not_found.png zurück, falls die Datei fehlt.
     private BufferedImage loadImage(String path) {
         try (InputStream stream = getClass().getResourceAsStream(path)) {
             if (stream != null) return ImageIO.read(stream); // Bild laden, falls gefunden

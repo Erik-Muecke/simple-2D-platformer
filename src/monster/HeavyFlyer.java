@@ -12,9 +12,7 @@ import java.util.Random;
 
 // Ein zäher fliegender Feind mit hoher Gesundheit. Fliegt auf den Spieler zu und verursacht Berührungsschaden.
 // Ignoriert Rückstoß — er setzt seinen Kurs nach einem Treffer einfach fort.
-/**
- * Robuster fliegender Gegner mit langsamerer Bewegung und höherer Gesundheit.
- */
+//Robuster fliegender Gegner mit langsamerer Bewegung und höherer Gesundheit.
 public class HeavyFlyer extends Entity {
 
     private final GamePanel gp;

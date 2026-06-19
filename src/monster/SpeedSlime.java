@@ -11,9 +11,7 @@ import java.io.InputStream;
 import java.util.Random;
 import java.awt.Rectangle;
 
-/**
- * Schneller Schleimgegner, der aggressiver als normale Schleime vorgeht.
- */
+//Schneller Schleimgegner, der aggressiver als normale Schleime vorgeht.
 public class SpeedSlime extends Entity {
 
     private final GamePanel gp;
@@ -49,10 +47,8 @@ public class SpeedSlime extends Entity {
         image = frame1; // Startbild setzen
     }
 
-    /**
-     * Lädt ein Bild aus dem Classpath.
-     * Gibt ein magenta Platzhalterbild zurück, falls die Datei fehlt.
-     */
+//  Lädt ein Bild aus dem Classpath.
+//  Gibt image_not_found.png zurück, falls die Datei fehlt.
     private BufferedImage loadImage(String path) {
         try (InputStream stream = getClass().getResourceAsStream(path)) {
             if (stream != null) return ImageIO.read(stream); // Bild laden, falls gefunden

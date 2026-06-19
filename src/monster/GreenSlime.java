@@ -47,10 +47,8 @@ public class GreenSlime extends Entity {
         image = frame1; // Startbild setzen
     }
 
-    /**
-     * Lädt ein Bild aus dem Classpath.
-     * Gibt image_not_found.png zurück, falls die Datei fehlt.
-     */
+//  Lädt ein Bild aus dem Classpath.
+//  Gibt image_not_found.png zurück, falls die Datei fehlt.
     private BufferedImage loadImage(String path) {
         try (InputStream stream = getClass().getResourceAsStream(path)) {
             if (stream != null) return ImageIO.read(stream); // Bild laden, falls gefunden
