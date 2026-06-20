@@ -232,7 +232,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         player.life = player.maxLife;
         player.hasCoin = 0;
-        saveHndlr.saveCoins(player.hasCoin);
+//        saveHndlr.saveCoins(player.hasCoin);
         player.hasKey = 0;
         saveHndlr.saveKeys(player.hasKey);
         player.x = tileM.playerSpawnX;

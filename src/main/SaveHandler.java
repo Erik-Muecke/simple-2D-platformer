@@ -121,7 +121,7 @@ public class SaveHandler {
     }
 
     public void saveKeys(int hasKey) {
-        save.setProperty("hasKeys", String.valueOf(hasKey));
+        save.setProperty("hasKey", String.valueOf(hasKey));
 
         try (FileWriter writer = new FileWriter(saveFile)) {
             save.store(writer, "Game Save");

@@ -121,6 +121,8 @@ public class TileManager {
 
                 gp.saveHndlr.saveLevel(gp.mapIndicator); //speichern des mapindicators, damit die Karte beim nächsten Start des Spiels wieder geladen werden kann
                 gp.saveHndlr.savelives(gp.player.life); //speichern der Leben des Spielers, damit sie beim nächsten Start des Spiels wiederhergestellt werden können
+                gp.saveHndlr.saveCoins(gp.player.hasCoin); // speichern der Münzen des Spielers, damit sie beim nächsten Start des Spiels in der richtigen Anzahl vorhanden sind
+                gp.saveHndlr.saveKeys(gp.player.hasCoin); // speichern der Schlüssel des Spielers, damit sie beim nächsten Start des Spiels in der richtigen Anzahl vorhanden sind
             }
 
     }
