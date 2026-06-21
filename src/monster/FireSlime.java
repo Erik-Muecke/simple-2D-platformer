@@ -2,6 +2,8 @@ package monster;
 
 import entity.Entity;
 import main.GamePanel;
+import projectile.PT_Fireball;
+import projectile.Projectile;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -10,47 +12,56 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
 
-// Der einfachste Gegner — ein langsamer Bodenschleim, der zufällig links/rechts läuft
-// und Berührungsschaden verursacht. Hat keinen Fernkampfangriff.
-public class GreenSlime extends Entity {
+// Bodenschleim der zufällig links/rechts läuft und alle 180 Frames einen horizontalen
+// Feuerball in seine aktuelle Blickrichtung schießt.
+//Feuervariante des Schleimgegners mit stärkeren Kampfwerten.
+public class FireSlime extends Entity {
 
     private final GamePanel gp;
     private final Random random = new Random();
+    private final Projectile projectile; // der Feuerball den dieser Schleim schießt
+    private int shotCounter = 0;         // zählt Frames zwischen den Schüssen
 
     // Animationsframes als Felder
     private BufferedImage frame1;
     private BufferedImage frame2;
 
-    public GreenSlime(GamePanel gp) {
+    public FireSlime(GamePanel gp) {
         super();
         this.gp = gp;
 
         type = TYPE_MONSTER;
-        name = "Green Slime";
+        name = "Fire Slime";
         speed = 2;
         width = gp.tileSize;
         height = gp.tileSize;
         direction = 'L';
         directionBeforeKnockBack = 'L';
 
+        maxLife = 5;
+        life = maxLife;
+
         // Kollisionsbox setzen
         solidArea = new Rectangle(0, 0, 48, 48);
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
 
-        maxLife = 3;
-        life = maxLife;
-
         // Bilder beim Erstellen laden, nicht jeden Frame neu
-        frame1 = imgLoader.scaleImage("/monsters/greenslime.png", width, height);
-        frame2 = imgLoader.scaleImage("/monsters/greenslime1.png", width, height);
+        frame1 = imgLoader.scaleImage("/monsters/fireslime.png", width, height);
+        frame2 = imgLoader.scaleImage("/monsters/fireslime1.png", width, height);
         image = frame1; // Startbild setzen
+
+        projectile = new PT_Fireball(gp);
+    }
+
+    // Gibt das Projektil zurück, damit GamePanel Kollisionen mit dem Spieler-Feuerball prüfen kann
+    public Projectile getProjectile() {
+        return projectile;
     }
 
     // Wechselt alle 120 Frames zufällig die Richtung
     public void setAction() {
         actionLockCounter++;
-
         if (actionLockCounter >= 120) {
             direction = random.nextBoolean() ? 'L' : 'R';
             actionLockCounter = 0;
@@ -60,7 +71,6 @@ public class GreenSlime extends Entity {
     // Wechselt zwischen zwei Frames für eine einfache Laufanimation
     public void setWalking() {
         walkingCounter++;
-
         if (walkingCounter >= 20) {
             image = frame1;
         }
@@ -75,17 +85,32 @@ public class GreenSlime extends Entity {
         // Unverwundbarkeits-Frames nach einem Treffer herunterzählen
         if (invincible) {
             invincibleCounter++;
-
             if (invincibleCounter > 40) {
                 invincible = false;
                 invincibleCounter = 0;
             }
         }
 
+        // Aktives Projektil bewegen und auf Treffer mit Spieler oder Spieler-Feuerball prüfen
+        updateProjectileInteractions();
+
         // Während des Rückstoßes in Trefferrichtung bewegen und normale KI überspringen
         if (knockBack) {
-            gp.movementSystem.updateMonsterKnockBack(this);
+            boolean stillKnockedBack = gp.movementSystem.updateMonsterKnockBack(this);
+            if (!stillKnockedBack) {
+                // Schusszähler zurückziehen damit Erholung nicht sofort einen neuen Schuss auslöst
+                shotCounter = shotCounter - 10;
+            }
             return;
+        }
+
+        // Alle 180 Frames ein Projektil in die aktuelle Blickrichtung abfeuern
+        shotCounter++;
+        if (shotCounter > 180 && !projectile.alive) {
+            int projectileX = x + (width - projectile.width) / 2;
+            int projectileY = y + (height - projectile.height) / 2;
+            projectile.set(projectileX, projectileY, direction, true);
+            shotCounter = 0;
         }
 
         // Freeze-Frames pausieren kurz die Bewegung nach einem Treffer
@@ -99,16 +124,53 @@ public class GreenSlime extends Entity {
         gp.movementSystem.updateWalkingMonster(this);
     }
 
+    // Bewegt das aktive Projektil und prüft ob es den Spieler oder seinen Feuerball trifft
+    private void updateProjectileInteractions() {
+        if (!projectile.alive) {
+            return;
+        }
+
+        projectile.update();
+
+        Rectangle projectileBox = projectile.getCollisionBox();
+
+        // Beide Projektile aufheben wenn sie sich in der Luft treffen
+        if (gp.player.projectile != null
+                && gp.player.projectile.alive
+                && projectileBox.intersects(gp.player.projectile.getCollisionBox())) {
+            projectile.alive = false;
+            gp.player.projectile.alive = false;
+            return;
+        }
+
+        Rectangle playerBox = new Rectangle(
+                gp.player.x + gp.player.solidArea.x,
+                gp.player.y + gp.player.solidArea.y,
+                gp.player.solidArea.width,
+                gp.player.solidArea.height
+        );
+
+        // Schaden verursachen wenn das Projektil den Spieler erreicht
+        if (projectileBox.intersects(playerBox)) {
+            if (!gp.player.invincible) {
+                gp.player.life -= projectile.damage;
+                gp.player.invincible = true;
+            }
+            projectile.alive = false;
+        }
+    }
+
     @Override
     public void draw(Graphics2D g2) {
         int screenX = x - gp.camera.x;
         int screenY = y - gp.camera.y;
 
-        // Außerhalb des Bildschirms: nicht zeichnen — kein Projektil für diesen Gegner
+        // Projektil auch zeichnen wenn der Schleim selbst außerhalb des Bildschirms ist
         if (x + width < gp.camera.x ||
                 x > gp.camera.x + gp.screenWidth ||
                 y + height < gp.camera.y ||
                 y > gp.camera.y + gp.screenHeight) {
+            projectile.draw(g2);
             return;
         }
 
@@ -139,5 +201,7 @@ public class GreenSlime extends Entity {
             g2.fillRect(screenX + 6, screenY + 6, currentLifeWidth, 6);
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         }
+
+        projectile.draw(g2);
     }
 }

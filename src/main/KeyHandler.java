@@ -49,9 +49,10 @@ public class KeyHandler implements KeyListener {
                     // Laden des gespeicherten Spiels
                     gp.mapIndicator = gp.saveHndlr.loadLevel();
                     gp.player.life = gp.saveHndlr.loadLives();
+                    gp.player.hasCoin = gp.saveHndlr.loadHasCoin();
+                    gp.player.hasKey = gp.saveHndlr.loadHasKey();
                     gp.gameState = gp.playState;
                     commandNum = 0;
-
                 }
 
                 if(commandNum == 2) {
@@ -101,13 +102,13 @@ public class KeyHandler implements KeyListener {
             if(key == KeyEvent.VK_W) {
                 commandNum--;
                 if(commandNum < 0) {
-                    commandNum = 1;
+                    commandNum = 2;
                 }
             }
 
             if(key == KeyEvent.VK_S) {
                 commandNum++;
-                if(commandNum > 1) {
+                if(commandNum > 2) {
                     commandNum = 0;
                 }
             }
@@ -118,6 +119,22 @@ public class KeyHandler implements KeyListener {
                 }
 
                 if(commandNum == 1) {
+                    // Zuerst laden, dann reset, damit die gespeicherten Werte nicht überschrieben werden
+                    int savedLevel = gp.saveHndlr.loadLevel();
+                    int savedLives = gp.saveHndlr.loadLives();
+                    int savedCoins = gp.saveHndlr.loadHasCoin();
+                    int savedKey = gp.saveHndlr.loadHasKey();
+                    gp.resetGame();
+                    gp.mapIndicator = savedLevel;
+                    gp.player.life = savedLives;
+                    gp.player.hasCoin = savedCoins;
+                    gp.player.hasKey = savedKey;
+                    gp.aSetter.updateScene();
+                    gp.gameState = gp.playState;
+                    commandNum = 0;
+                }
+
+                if(commandNum == 2) {
                     System.exit(0);
                 }
             }
@@ -145,15 +162,22 @@ public class KeyHandler implements KeyListener {
                 if(commandNum == 0) {
                     gp.resetGame();
                 }
-                if (commandNum == 1) {
+                if(commandNum == 1) {
+                    // Zuerst laden, dann reset, damit die gespeicherten Werte nicht überschrieben werden
+                    int savedLevel = gp.saveHndlr.loadLevel();
+                    int savedLives = gp.saveHndlr.loadLives();
+                    int savedCoins = gp.saveHndlr.loadHasCoin();
+                    int savedKey = gp.saveHndlr.loadHasKey();
                     gp.resetGame();
-                    gp.mapIndicator = gp.saveHndlr.loadLevel();
-                    gp.player.life = gp.saveHndlr.loadLives();
-                    gp.aSetter.updateObject();
+                    gp.mapIndicator = savedLevel;
+                    gp.player.life = savedLives;
+                    gp.player.hasCoin = savedCoins;
+                    gp.player.hasKey = savedKey;
+                    gp.aSetter.updateScene();
                     gp.gameState = gp.playState;
                     commandNum = 0;
-
                 }
+
                 if(commandNum == 2) {
                     System.exit(0);
                 }

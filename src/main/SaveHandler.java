@@ -19,15 +19,26 @@ public class SaveHandler {
     }
 
     public void createSaveFile() {
-        if (!saveFile.exists()) { //Ueberpruefen ob die Datei existiert, wenn nicht wird sie erstellt
-            Properties save = new Properties();
-            save.setProperty("level", "0");
+        Properties save = new Properties();
 
-            try (FileWriter writer = new FileWriter(saveFile)) { // Datei wird mit einem FileWriter erstellt und die Properties werden gespeichert
-                save.store(writer, "Game Save");
+        if (saveFile.exists()) { // Ueberpruefen ob die Datei existiert, wenn ja wird sie geladen
+            try (FileReader reader = new FileReader(saveFile)) {
+                save.load(reader);
             } catch (Exception e) {
-                System.out.println("Fehler beim Schreiben der Datei, nach Erstellung" + e.getMessage()); // Fehlerbehandlung, falls die Datei nicht erstellt oder beschrieben werden kann
+                System.out.println("Fehler beim Lesen" + e.getMessage());
             }
+        }
+
+        // fehlende Properties mit Standardwerten ergänzen
+        if (save.getProperty("level") == null)  save.setProperty("level", "0");
+        if (save.getProperty("lives") == null)  save.setProperty("lives", "6");
+        if (save.getProperty("hasCoin") == null) save.setProperty("hasCoin", "0");
+        if (save.getProperty("hasKey") == null) save.setProperty("hasKey", "0");
+
+        try (FileWriter writer = new FileWriter(saveFile)) { // Datei wird mit einem FileWriter erstellt und die Properties werden gespeichert
+            save.store(writer, "Game Save");
+        } catch (Exception e) {
+            System.out.println("Fehler beim Schreiben der Datei, nach Erstellung" + e.getMessage()); // Fehlerbehandlung, falls die Datei nicht erstellt oder beschrieben werden kann
         }
     }
 
@@ -41,7 +52,29 @@ public class SaveHandler {
             System.out.println("Fehler beim Einlesen der Datei" + e.getMessage()); // Fehlerbehandlung, falls die Datei nicht gelesen werden kann oder die Property nicht gefunden wird, Rückgabe von 1 als Standardlevel
         }
 
-        return 1;
+        return 0;
+    }
+
+    //Getter zum laden der Münzen
+    public int loadHasCoin() {
+        try (FileReader reader = new FileReader(saveFile)) {
+            save.load(reader);
+            return Integer.parseInt(save.getProperty("hasCoin", "0"));
+        } catch (IOException e) {
+            System.out.println("Fehler beim Einlesen der Datei" + e.getMessage());
+        }
+        return 0;
+    }
+
+    //Getter zum laden des Schlüssels
+    public int loadHasKey() {
+        try (FileReader reader = new FileReader(saveFile)) {
+            save.load(reader);
+            return Integer.parseInt(save.getProperty("hasKey"));
+        } catch (IOException e) {
+            System.out.println("Fehler beim Einlesen der Datei" + e.getMessage());
+        }
+        return 0;
     }
 
     //Getter zum laden der Leben
@@ -52,7 +85,6 @@ public class SaveHandler {
         } catch (IOException e) {
             System.out.println("Fehler beim Einlesen der Datei" + e.getMessage());
         }
-
         return 6;
     }
 
@@ -71,6 +103,25 @@ public class SaveHandler {
     public void saveLevel(int level) {
 
         save.setProperty("level", String.valueOf(level));
+
+        try (FileWriter writer = new FileWriter(saveFile)) {
+            save.store(writer, "Game Save");
+        } catch (IOException e) {
+            System.out.println("Fehler beim Schreiben der Datei, zum Level Speichern" + e.getMessage());
+        }
+    }
+
+    public void saveCoins(int hasCoin) {
+        save.setProperty("hasCoin", String.valueOf(hasCoin));
+        try (FileWriter writer = new FileWriter(saveFile)) {
+            save.store(writer, "Game Save");
+        } catch (IOException e) {
+            System.out.println("Fehler beim Schreiben der Datei, zum Leben Speichern" + e.getMessage());
+        }
+    }
+
+    public void saveKeys(int hasKey) {
+        save.setProperty("hasKey", String.valueOf(hasKey));
 
         try (FileWriter writer = new FileWriter(saveFile)) {
             save.store(writer, "Game Save");

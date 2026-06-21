@@ -10,40 +10,43 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
 
-// Der einfachste Gegner — ein langsamer Bodenschleim, der zufällig links/rechts läuft
-// und Berührungsschaden verursacht. Hat keinen Fernkampfangriff.
-public class GreenSlime extends Entity {
+// Bodenschleim der periodisch springt. Synchronisiert sich auch mit der Sprungtaste des Spielers —
+// wenn der Spieler springt während dieser Schleim bereit ist, springt er gleichzeitig.
+//Schleimgegner der Sprungbewegungen nutzt um den Spieler unter Druck zu setzen.
+public class JumpSlime extends Entity {
 
     private final GamePanel gp;
     private final Random random = new Random();
+    private final int jumpStrength = 20; // aufwärts Geschwindigkeit die beim Sprung angewendet wird
+    private int jumpPower;               // sammelt sich jeden Frame an; löst bei 300 oder beim Spielersprung bei 60 einen Sprung aus
 
     // Animationsframes als Felder
     private BufferedImage frame1;
     private BufferedImage frame2;
 
-    public GreenSlime(GamePanel gp) {
+    public JumpSlime(GamePanel gp) {
         super();
         this.gp = gp;
 
         type = TYPE_MONSTER;
-        name = "Green Slime";
+        name = "Jump Slime";
         speed = 2;
         width = gp.tileSize;
         height = gp.tileSize;
         direction = 'L';
         directionBeforeKnockBack = 'L';
 
+        maxLife = 4;
+        life = maxLife;
+
         // Kollisionsbox setzen
         solidArea = new Rectangle(0, 0, 48, 48);
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
 
-        maxLife = 3;
-        life = maxLife;
-
         // Bilder beim Erstellen laden, nicht jeden Frame neu
-        frame1 = imgLoader.scaleImage("/monsters/greenslime.png", width, height);
-        frame2 = imgLoader.scaleImage("/monsters/greenslime1.png", width, height);
+        frame1 = imgLoader.scaleImage("/monsters/jumpslime.png", width, height);
+        frame2 = imgLoader.scaleImage("/monsters/jumpslime1.png", width, height);
         image = frame1; // Startbild setzen
     }
 
@@ -72,6 +75,8 @@ public class GreenSlime extends Entity {
 
     @Override
     public void update() {
+        jumpPower++; // Sprungladung jeden Frame aufbauen
+
         // Unverwundbarkeits-Frames nach einem Treffer herunterzählen
         if (invincible) {
             invincibleCounter++;
@@ -80,6 +85,13 @@ public class GreenSlime extends Entity {
                 invincible = false;
                 invincibleCounter = 0;
             }
+        }
+
+        // Springt wenn der Spieler springt und dieser Schleim genug Ladung hat (60),
+        // ODER automatisch nach 300 Frames — hält den Spieler auf Trab
+        if ((gp.keyHandler.jumpPressed && onGround && jumpPower >= 60) || (jumpPower >= 300 && onGround)) {
+            gp.movementSystem.startJump(this, jumpStrength);
+            jumpPower = 0;
         }
 
         // Während des Rückstoßes in Trefferrichtung bewegen und normale KI überspringen
@@ -104,7 +116,7 @@ public class GreenSlime extends Entity {
         int screenX = x - gp.camera.x;
         int screenY = y - gp.camera.y;
 
-        // Außerhalb des Bildschirms: nicht zeichnen — kein Projektil für diesen Gegner
+        // Außerhalb des Bildschirms: nicht zeichnen
         if (x + width < gp.camera.x ||
                 x > gp.camera.x + gp.screenWidth ||
                 y + height < gp.camera.y ||

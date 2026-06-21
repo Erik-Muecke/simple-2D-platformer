@@ -45,7 +45,6 @@ public class UI {
             drawPlayerLife();
         }
         if(gp.gameState == gp.gameOver) {
-            drawPlayerLife();
             drawGameOver();
         }
 
@@ -147,8 +146,8 @@ public class UI {
             g2.drawString(">", x - 40, y);
         }
 
-        //Spiel beenden
-        text = "QUIT";
+        //Spiel laden
+        text = "LOAD";
         x = getXforCenteredText(text);
         y += gp.tileSize;
         g2.drawString(text, x, y);
@@ -157,6 +156,15 @@ public class UI {
             g2.drawString(">", x - 40, y);
         }
 
+        //Spiel beenden
+        text = "QUIT";
+        x = getXforCenteredText(text);
+        y += gp.tileSize;
+        g2.drawString(text, x, y);
+
+        if(gp.keyHandler.commandNum == 2) {
+            g2.drawString(">", x - 40, y);
+        }
     }
 
     public void drawGameOver() {
@@ -224,7 +232,7 @@ public class UI {
 
         // Zeichnen des Charakterbildes
         int imgX = gp.screenWidth / 2 - (gp.tileSize * 2) / 2;
-        int imgY = gp.tileSize * 5;
+        int imgY = gp.tileSize * 4;
 
         g2.drawImage(titleImage, imgX, imgY, null);
 
@@ -246,10 +254,16 @@ public class UI {
         // Menü
         g2.setFont(arial_40);
 
-        text = "This is everything. You now can quit. Or you play it again.";
+        text = "This is everything. You can quit. Or you play it again.";
         x = getXforCenteredText(text);
-        y += gp.tileSize * 5;
+        y += gp.tileSize * 4;
         g2.drawString(text, x, y);
+
+        text = "You collected " + gp.player.hasCoin + " / " + this.maxCoins + " coins.";
+        x = getXforCenteredText(text);
+        y += gp.tileSize * 1;
+        g2.drawString(text, x, y);
+
 
         // Neues Spiel
         text = "NEW GAME";
@@ -272,6 +286,7 @@ public class UI {
         }
     }
 
+    int maxCoins = 5;
 
     public void drawPlayerLife() {
 
@@ -309,6 +324,13 @@ public class UI {
             i++;
             x += gp.tileSize;
         }
+
+        // Coin-Anzeige unter den Herzen
+        g2.setFont(new Font("Arial", Font.BOLD, 30));
+        g2.setColor(Color.YELLOW);
+
+        String coinText = "Coins: " + gp.player.hasCoin + " / " + this.maxCoins;
+        g2.drawString(coinText, gp.tileSize / 4, gp.tileSize + 40);
     }
 
     // Berechnet die x-Koordinate, um den gegebenen Text zentriert auf dem Bildschirm zu platzieren,

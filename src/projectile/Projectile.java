@@ -49,6 +49,12 @@ public class Projectile extends Entity {
             // Der Wert wird zur x Position addiert, damit es sich nach rechts bewegt.
         }
 
+        if(direction == 'D') {
+            y += speed + gp.player.speed - 2; // Projektilgeschwindigkeit plus Spielerbewegung, damit es sich mit dem Spieler bewegt.
+            // Der Wert am ende wird abgezogen, damit sich das projektil nicht zu schnell bewegt.
+            // Der Wert wird zur y Position addiert, damit es sich nach unten bewegt.
+        }
+
         gp.collisionsystem.collidesT(this); // Überprüft Kollisionen mit der Tilemap
         gp.collisionsystem.collidesWithObject(this); // Überprüft Kollisionen mit Objekten
 
@@ -65,6 +71,15 @@ public class Projectile extends Entity {
         }
     }
 
+    public Rectangle getCollisionBox() { // Kollisionsbereich des Projektils
+        return new Rectangle(
+                x + solidArea.x, // echte x-Position der Hitbox
+                y + solidArea.y, // echte y-Position der Hitbox
+                solidArea.width,  // Breite der Hitbox
+                solidArea.height  // Höhe der Hitbox
+        );
+    }
+
     public void draw(Graphics2D g2) {
 
         //Überprüfen der Richtung des Projektils, damit es in die richtige Richtung zeigt. Es wird nur gezeichnet, wenn das Projektil noch lebt.
@@ -76,6 +91,10 @@ public class Projectile extends Entity {
 
                 case 'R':
                     image = img2;
+                    break;
+
+                case 'D':
+                    image = img3;
                     break;
             }
 

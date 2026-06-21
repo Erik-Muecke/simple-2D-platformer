@@ -9,10 +9,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
+import java.awt.Rectangle;
 
-// Der einfachste Gegner — ein langsamer Bodenschleim, der zufällig links/rechts läuft
-// und Berührungsschaden verursacht. Hat keinen Fernkampfangriff.
-public class GreenSlime extends Entity {
+//Schneller Schleimgegner, der aggressiver als normale Schleime vorgeht.
+public class SpeedSlime extends Entity {
 
     private final GamePanel gp;
     private final Random random = new Random();
@@ -21,12 +21,12 @@ public class GreenSlime extends Entity {
     private BufferedImage frame1;
     private BufferedImage frame2;
 
-    public GreenSlime(GamePanel gp) {
+    public SpeedSlime(GamePanel gp) {
         super();
         this.gp = gp;
 
         type = TYPE_MONSTER;
-        name = "Green Slime";
+        name = "Speed Slime";
         speed = 2;
         width = gp.tileSize;
         height = gp.tileSize;
@@ -38,19 +38,19 @@ public class GreenSlime extends Entity {
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
 
-        maxLife = 3;
+        maxLife = 4;
         life = maxLife;
 
         // Bilder beim Erstellen laden, nicht jeden Frame neu
-        frame1 = imgLoader.scaleImage("/monsters/greenslime.png", width, height);
-        frame2 = imgLoader.scaleImage("/monsters/greenslime1.png", width, height);
+        frame1 = imgLoader.scaleImage("/monsters/speedslime.png", width, height);
+        frame2 = imgLoader.scaleImage("/monsters/speedslime1.png", width, height);
         image = frame1; // Startbild setzen
     }
+
 
     // Wechselt alle 120 Frames zufällig die Richtung
     public void setAction() {
         actionLockCounter++;
-
         if (actionLockCounter >= 120) {
             direction = random.nextBoolean() ? 'L' : 'R';
             actionLockCounter = 0;
@@ -60,7 +60,6 @@ public class GreenSlime extends Entity {
     // Wechselt zwischen zwei Frames für eine einfache Laufanimation
     public void setWalking() {
         walkingCounter++;
-
         if (walkingCounter >= 20) {
             image = frame1;
         }
@@ -70,12 +69,22 @@ public class GreenSlime extends Entity {
         }
     }
 
+    // Verdoppelt die Geschwindigkeit, wenn der Spieler innerhalb von ~5 Tiles ist; kehrt zur normalen Geschwindigkeit zurück, wenn er weiter entfernt ist
+    public void setSpeed() {
+        if (gp.player.x > this.x + 6 * gp.tileSize || gp.player.x < this.x - 5 * gp.tileSize) {
+            speed = 2; // normale Patrouilliengeschwindigkeit wenn Spieler weit entfernt
+        } else {
+            speed = 4; // aggressive Geschwindigkeit wenn Spieler in der Nähe
+        }
+    }
+
     @Override
     public void update() {
+        setSpeed(); // Geschwindigkeit jeden Frame basierend auf Spielernähe aktualisieren
+
         // Unverwundbarkeits-Frames nach einem Treffer herunterzählen
         if (invincible) {
             invincibleCounter++;
-
             if (invincibleCounter > 40) {
                 invincible = false;
                 invincibleCounter = 0;
@@ -104,7 +113,7 @@ public class GreenSlime extends Entity {
         int screenX = x - gp.camera.x;
         int screenY = y - gp.camera.y;
 
-        // Außerhalb des Bildschirms: nicht zeichnen — kein Projektil für diesen Gegner
+        // Außerhalb des Bildschirms: nicht zeichnen
         if (x + width < gp.camera.x ||
                 x > gp.camera.x + gp.screenWidth ||
                 y + height < gp.camera.y ||

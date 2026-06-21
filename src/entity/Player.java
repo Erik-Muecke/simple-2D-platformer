@@ -9,7 +9,7 @@ import tile.TileManager;
 
 import main.GamePanel;
 import main.KeyHandler;
-import main.ImageLoader;
+
 import system.MovementSystem;
 
 public class Player extends Entity {
@@ -20,8 +20,8 @@ public class Player extends Entity {
     private int jumpStrength = 34;
     private MovementSystem movementSystem;
     public int hasKey = 0;
+    public int hasCoin = 0;
 
-    ImageLoader imgLoader = new ImageLoader();
 
     public int maxLife;
     public int life;
@@ -29,11 +29,24 @@ public class Player extends Entity {
     public int invincibleCounter = 0;
     // Player additions
     public Projectile projectile;
+    private int cooldownCounter = 0;
 
     public int lastgroundposX;
     public int lastgroundposY;
 
     public int floorY;
+
+    public int normalSpeed = 6;
+    public int speedBoostCounter = 0;
+    public boolean speedBoostActive = false;
+
+    public int normalJumpStrength = 34;
+    public int jumpStrengthBoostCounter = 0;
+    public boolean jumpStrengthBoostActive = false;
+
+    public int spriteCounter = 0;
+    public int spriteNumber = 1;
+
     public Player(GamePanel gp, KeyHandler keyH) {
         super(); // Aufruf des Konstruktors der Entity-Klasse
         speed = 6; //Geschwindigkeit des Spielers, wie viele Pixel er sich pro Update bewegen soll
@@ -69,15 +82,31 @@ public class Player extends Entity {
 
     // Laden der Spielerbilder aus den Ressourcen
     public void loadPlayerImage() {
-            img1 = imgLoader.loadImage("/player/kartoni1.png");
-            img2 = imgLoader.loadImage("/player/kartoni2.png");
-            img3 = imgLoader.loadImage("/player/kartoni3.png");
-            img4 = imgLoader.loadImage("/player/kartoni4.png");
-            img5 = imgLoader.loadImage("/player/kartoni5.png");
-            img6 = imgLoader.loadImage("/player/kartoni6.png");
+        img1 = imgLoader.loadImage("/player/kartoni1.png");
+        img2 = imgLoader.loadImage("/player/kartoni2.png");
+        img3 = imgLoader.loadImage("/player/kartoni3.png");
+        img4 = imgLoader.loadImage("/player/kartoni4.png");
     }
 
     public void update() {
+        if (speedBoostActive) {
+            speedBoostCounter++;
+            if (speedBoostCounter >= 300) {
+                speed = normalSpeed;
+                speedBoostActive = false;
+                speedBoostCounter = 0;
+            }
+        }
+
+        if (jumpStrengthBoostActive) {
+            jumpStrengthBoostCounter++;
+            if (jumpStrengthBoostCounter >= 300) {
+                jumpStrength = normalJumpStrength;
+                jumpStrengthBoostActive = false;
+                jumpStrengthBoostCounter = 0;
+            }
+        }
+
         // Horizontaler Input
         if (keyH.leftPressed) {
             direction = 'L';
@@ -111,10 +140,15 @@ public class Player extends Entity {
             }
         }
 
+        //Abklingen lassen des Cooldowns
+        if (cooldownCounter >= 0){
+            cooldownCounter--;
+        }
+
         // Überprüft, ob der Spieler ein Projektil abfeuern möchte und ob das Projektil nicht bereits aktiv ist.
         // Wenn beide Bedingungen erfüllt sind, wird die Position des Projektils auf die Mitte des Spielers gesetzt und
         // die Richtung entsprechend der aktuellen Blickrichtung des Spielers festgelegt.
-        if(keyH.shotKeyPressed && !projectile.alive) {
+        if(keyH.shotKeyPressed && !projectile.alive && cooldownCounter <= 0) {
             int projectileX = x + (width - projectile.width) / 2;
             int projectileY = y + (height - projectile.height) / 2;
             char projectileDirection = direction;
@@ -125,13 +159,8 @@ public class Player extends Entity {
 
             projectile.set(projectileX, projectileY, projectileDirection, true);
             keyH.shotKeyPressed = false;
-        }
 
-        //Speichert die letzt bekannte Position des Spielers auf dem Boden, um ihn dorthin zurückzusetzen, falls er aus der Welt fällt.
-        if (onGround && y < floorY - 20) {
-            lastgroundposX = x;
-            lastgroundposY = y;
-            System.out.println("On ground. Last ground position updated: (" + lastgroundposX + ", " + lastgroundposY + ")");
+            cooldownCounter = 90;//setzen des Cooldown
         }
 
         // Überprüft, ob der Spieler unter die Bodenhöhe gefallen ist, und setzt ihn zurück, wenn dies der Fall ist.
@@ -141,7 +170,23 @@ public class Player extends Entity {
         int objectIndex = gp.collisionsystem.collisionObject(this, true);
         InteractObject(objectIndex);
 
+        //Speichert die letzt bekannte Position des Spielers auf dem Boden, um ihn dorthin zurückzusetzen, falls er aus der Welt fällt.
+        boolean onSpike = gp.collisionsystem.isOnSpikeTile(this);
+        if (onGround && y < floorY - 20 && !onSpike) {
+            lastgroundposX = x;
+            lastgroundposY = y;
+            System.out.println("On ground. Last ground position updated: (" + lastgroundposX + ", " + lastgroundposY + ")");
+        }
 
+        spriteCounter++;
+        if (spriteCounter > 30) {
+            if (spriteNumber == 1) {
+                spriteNumber = 2;
+            } else if (spriteNumber == 2) {
+                spriteNumber = 1;
+            }
+            spriteCounter = 0;
+        }
 
         // Delegieren aller Bewegungs- und Kollisionslogik an das MovementSystem, um die Update-Methode des Spielers übersichtlich zu halten.
         movementSystem.updatePlayer(this);
@@ -155,6 +200,7 @@ public class Player extends Entity {
                 case "Key":
                     hasKey++;
                     System.out.println("You got a key! Total: " + hasKey);
+                    gp.saveHndlr.saveKeys(hasKey);
                     gp.obj[i] = null;
                     break;
 
@@ -168,7 +214,7 @@ public class Player extends Entity {
                     }
                     break;
 
-                case "Flag": // Das Flag-Objekt ist für das rhöhen der mapIndicator verantwortlich, damit die nächste Karte geladen wird.
+                case "Flag": // Das Flag-Objekt ist für das erhöhen des mapIndicator verantwortlich, damit die nächste Karte geladen wird.
                     velocityX = 0;
                     velocityY = 0;
                     gp.mapIndicator++;
@@ -179,15 +225,60 @@ public class Player extends Entity {
                         life++;
                     }
                     if (life < maxLife) {
-                            life++;
+                        life++;
                         System.out.println("You healed! Current life: " + life);
                     } else {
                         System.out.println("Your life is already full!");
                     }
                     gp.obj[i] = null; // heart disappears
                     break;
+
+                case "SpeedBoost":
+                    activateSpeedBoost();
+                    gp.obj[i] = null;
+                    break;
+
+                case "SpeedBooster":
+                    activateSpeedBoost();
+                    break;
+
+                case "JumpBoost":
+                    activateJumpBoost();
+                    gp.obj[i] = null;
+                    break;
+
+                case "JumpBooster":
+                    activateJumpBoost();
+                    break;
+
+                case "Coin":
+                    hasCoin++;
+                    gp.saveHndlr.saveCoins(hasCoin);
+                    gp.obj[i] = null;
+                    break;
             }
         }
+    }
+
+    public void activateSpeedBoost() {
+        speed = normalSpeed + 2;
+        speedBoostActive = true;
+        speedBoostCounter = 0;
+    }
+
+    public void activateJumpBoost() {
+        jumpStrength = normalJumpStrength + 10;
+        jumpStrengthBoostActive = true;
+        jumpStrengthBoostCounter = 0;
+    }
+
+    public void resetBoosts() {
+        speed = normalSpeed;
+        jumpStrength = normalJumpStrength;
+        speedBoostActive = false;
+        jumpStrengthBoostActive = false;
+        speedBoostCounter = 0;
+        jumpStrengthBoostCounter = 0;
     }
 
     // Berechnet die Position und Größe des Angriffsrechtecks basierend auf der aktuellen Blickrichtung des Spielers
@@ -276,6 +367,10 @@ public class Player extends Entity {
         if (!monster.invincible) {
             monster.life--;
             monster.invincible = true;
+            monster.knockBack = true;
+            monster.knockBackCounter = 0;
+            monster.directionBeforeKnockBack = monster.direction; // Monsterrichtung speichern
+            monster.direction = this.direction;                   // Spielerrichtung setzen, Monster fliegt weg
 
             if (monster.life <= 0) {
                 monster.isDead = true;
@@ -286,7 +381,6 @@ public class Player extends Entity {
     // Reduziert die Lebenspunkte des Spielers um 1, wenn er nicht unverwundbar ist
     // und setzt ihn für kurze Zeit unverwundbar, um zu verhindern, dass er sofort wieder Schaden nimmt.
     public void damagePlayer() {
-
         if (!invincible) {
             life -= 1;
             invincible = true;
@@ -309,19 +403,36 @@ public class Player extends Entity {
         if (invincible) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         }
+        BufferedImage image = null;
+        switch (direction) { //Wechselt das Bild des Spielers je nach Richtung, in die er schaut
+            case 'U': image = img1;
+            break;
+            case 'D': image = img1;
+            break;
+            case 'L':
+                if (spriteNumber == 1) {
+                    image = img1;
+                } else if (spriteNumber == 2) {
+                    image = img2;
+                }
+                    break;
+            case 'R':
+                if (spriteNumber == 1) {
+                image = img3;
+            } else if (spriteNumber == 2) {
+                image = img4;
+            }
+                break;
+            default: image = img3;
+            break;
+        }
 
-        BufferedImage img = switch (direction) { //Wechselt das Bild des Spielers je nach Richtung, in die er schaut
-            case 'U' -> img1;
-            case 'D' -> img1;
-            case 'L' -> img1;
-            case 'R' -> img2;
-            default -> img1;
-        };
-        if (img != null) {
+
+        if (image != null) {
             int screenX = x - gp.camera.x;
             int screenY = y - gp.camera.y;
 
-            g2.drawImage(img, screenX, screenY, width, height, null);
+            g2.drawImage(image, screenX, screenY, width, height, null);
         }//using the camera for the player
 
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));

@@ -38,5 +38,6 @@ public class PT_Fireball extends Projectile {
         // Lädt die Bilder für die Feuerball-Projektile und skaliert sie auf die Größe der Kacheln.
         img1 = imgLoader.scaleImage("/projectile/fireball_right.png", gp.tileSize, gp.tileSize);
         img2 = imgLoader.scaleImage("/projectile/fireball_left.png", gp.tileSize, gp.tileSize);
+        img3 = imgLoader.scaleImage("/projectile/fireball_down.png", gp.tileSize, gp.tileSize);
     }
 }

@@ -10,23 +10,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
 
-// Der einfachste Gegner — ein langsamer Bodenschleim, der zufällig links/rechts läuft
-// und Berührungsschaden verursacht. Hat keinen Fernkampfangriff.
-public class GreenSlime extends Entity {
+// Ein zäher fliegender Feind mit hoher Gesundheit. Fliegt auf den Spieler zu und verursacht Berührungsschaden.
+// Ignoriert Rückstoß — er setzt seinen Kurs nach einem Treffer einfach fort.
+//Robuster fliegender Gegner mit langsamerer Bewegung und höherer Gesundheit.
+public class HeavyFlyer extends Entity {
 
     private final GamePanel gp;
-    private final Random random = new Random();
 
-    // Animationsframes als Felder
-    private BufferedImage frame1;
-    private BufferedImage frame2;
-
-    public GreenSlime(GamePanel gp) {
+    public HeavyFlyer(GamePanel gp) {
         super();
         this.gp = gp;
 
         type = TYPE_MONSTER;
-        name = "Green Slime";
+        name = "Heavy Flyer";
         speed = 2;
         width = gp.tileSize;
         height = gp.tileSize;
@@ -38,73 +34,52 @@ public class GreenSlime extends Entity {
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
 
-        maxLife = 3;
+        maxLife = 10; // deutlich mehr Gesundheit als normale Flyer
         life = maxLife;
-
-        // Bilder beim Erstellen laden, nicht jeden Frame neu
-        frame1 = imgLoader.scaleImage("/monsters/greenslime.png", width, height);
-        frame2 = imgLoader.scaleImage("/monsters/greenslime1.png", width, height);
-        image = frame1; // Startbild setzen
+        image = imgLoader.scaleImage("/monsters/HeavyFlyer.png", width, height); // Bild auf die Größe der Kacheln skalieren
     }
 
-    // Wechselt alle 120 Frames zufällig die Richtung
-    public void setAction() {
-        actionLockCounter++;
-
-        if (actionLockCounter >= 120) {
-            direction = random.nextBoolean() ? 'L' : 'R';
-            actionLockCounter = 0;
-        }
-    }
-
-    // Wechselt zwischen zwei Frames für eine einfache Laufanimation
-    public void setWalking() {
-        walkingCounter++;
-
-        if (walkingCounter >= 20) {
-            image = frame1;
-        }
-        if (walkingCounter >= 40) {
-            image = frame2;
-            walkingCounter = 0;
-        }
-    }
 
     @Override
     public void update() {
         // Unverwundbarkeits-Frames nach einem Treffer herunterzählen
         if (invincible) {
             invincibleCounter++;
-
             if (invincibleCounter > 40) {
                 invincible = false;
                 invincibleCounter = 0;
             }
         }
 
-        // Während des Rückstoßes in Trefferrichtung bewegen und normale KI überspringen
+        // HeavyFlyer ignoriert Rückstoßbewegung — Blickrichtung vor dem Treffer einfach wiederherstellen
         if (knockBack) {
-            gp.movementSystem.updateMonsterKnockBack(this);
-            return;
+            direction = directionBeforeKnockBack;
+            knockBackCounter = 0;
+            knockBack = false;
         }
 
-        // Freeze-Frames pausieren kurz die Bewegung nach einem Treffer
+        // Freeze-Frames pausieren kurz alle Bewegungen nach einem Treffer
         if (freezeFrames > 0) {
             freezeFrames--;
             return;
         }
 
-        setAction();
-        setWalking();
-        gp.movementSystem.updateWalkingMonster(this);
+        // Berührungsschaden verursachen wenn der Spieler in diesen Gegner läuft
+        if (gp.collisionsystem.collidesWithPlayer(this)) {
+            gp.player.damagePlayer();
+        }
+        collisionOn = false; // Flag zurücksetzen das als Nebeneffekt von collidesWithPlayer gesetzt wurde
+
+        gp.movementSystem.updateFlyingMonster(this);
     }
+
 
     @Override
     public void draw(Graphics2D g2) {
         int screenX = x - gp.camera.x;
         int screenY = y - gp.camera.y;
 
-        // Außerhalb des Bildschirms: nicht zeichnen — kein Projektil für diesen Gegner
+        // Zeichnen komplett überspringen wenn außerhalb des Bildschirms — kein Projektil zu zeichnen
         if (x + width < gp.camera.x ||
                 x > gp.camera.x + gp.screenWidth ||
                 y + height < gp.camera.y ||
@@ -112,22 +87,15 @@ public class GreenSlime extends Entity {
             return;
         }
 
-        // Halbtransparent blinken während der Unverwundbarkeit
+        // Halbtransparent blinken während der Unverwundbarkeit um Trefferfeedback zu geben
         if (invincible) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         }
 
-        // Bild zeichnen oder rotes Rechteck als Fallback, falls kein Bild vorhanden
-        if (image != null) {
-            g2.drawImage(image, screenX, screenY, width, height, null);
-        } else {
-            g2.setColor(Color.RED);
-            g2.fillRect(screenX, screenY, width, height);
-        }
-
+        g2.drawImage(image, screenX, screenY, width, height, null);
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
-        // Lebensanzeige sobald Schaden erlitten wurde
+        // Lebensanzeige über dem Gegner sobald er Schaden erlitten hat
         if (life < maxLife) {
             int barWidth = width - 12;
             int currentLifeWidth = barWidth * life / maxLife;
